@@ -4,17 +4,47 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 public class RobotContainer {
+
+  public final Joystick driverController = new Joystick(0);
+  public final Joystick manipulatorController = new Joystick(1);
+  public final PowerDistribution pd = new PowerDistribution();
+
   public RobotContainer() {
-    configureBindings();
+    configureButtonBindingsDriver();
+    configureButtonBindingsManipulator();
   }
 
-  private void configureBindings() {}
+  private void configureButtonBindingsDriver() {}
+  private void configureButtonBindingsManipulator() {}
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
   }
+
+  private double getStickValue(Joystick stick, XboxController.Axis axis) {
+    return stick.getRawAxis(axis.value) * (axis == XboxController.Axis.kLeftY || axis == XboxController.Axis.kRightY ? -1 : 1);
+  }
+
+  /**
+   * Processes an input from the joystick into a value between -1 and 1
+   * 
+   * @param value The value to be processed.
+   * @return The processed value.
+   */
+  private double inputProcessing(double value) {
+    double processedInput;
+    // processedInput =
+    // (((1-Math.cos(value*Math.PI))/2)*((1-Math.cos(value*Math.PI))/2))*(value/Math.abs(value));
+    processedInput = Math.copySign(((1 - Math.cos(value * Math.PI)) / 2) * ((1 - Math.cos(value * Math.PI)) / 2),
+        value);
+    return processedInput;
+  }
+
 }
