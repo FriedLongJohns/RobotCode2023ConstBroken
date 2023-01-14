@@ -4,9 +4,13 @@
 
 package org.carlmontrobotics.robotcode2023;
 
+import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
+import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -16,9 +20,19 @@ public class RobotContainer {
   public final Joystick manipulatorController = new Joystick(1);
   public final PowerDistribution pd = new PowerDistribution();
 
+  public final Drivetrain drivetrain = new Drivetrain();
+
   public RobotContainer() {
     configureButtonBindingsDriver();
     configureButtonBindingsManipulator();
+
+    drivetrain.setDefaultCommand(new TeleopDrive(
+      drivetrain,
+      () -> inputProcessing(getStickValue(driverController, Axis.kLeftY)),
+      () -> inputProcessing(getStickValue(driverController, Axis.kLeftX)),
+      () -> inputProcessing(getStickValue(driverController, Axis.kRightX)),
+      () -> driverController.getRawButton(Constants.OI.Driver.slowDriveButton)
+    ));
   }
 
   private void configureButtonBindingsDriver() {}
