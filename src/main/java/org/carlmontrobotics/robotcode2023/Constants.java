@@ -91,15 +91,15 @@ public final class Constants {
         public static final SwerveConfig swerveConfig = new SwerveConfig(wheelDiameterMeters, driveGearing, mu, autoCentripetalAccel, kForwardVolts, kForwardVels, kForwardAccels, kBackwardVolts, kBackwardVels, kBackwardAccels, drivekP, drivekI, drivekD, turnkP, turnkI, turnkD, turnkS, turnkV, turnkA, turnZero, driveInversion, reversed);
 
 
-        public static final int driveFrontLeftPort = 1;
-        public static final int driveFrontRightPort = 16;
-        public static final int driveBackLeftPort = 3;
-        public static final int driveBackRightPort = 14;
+        public static final int driveFrontLeftPort = 15;
+        public static final int driveFrontRightPort = 13;
+        public static final int driveBackLeftPort = 5;
+        public static final int driveBackRightPort = 4;
 
-        public static final int turnFrontLeftPort = 2;
-        public static final int turnFrontRightPort = 15;
-        public static final int turnBackLeftPort = 4;
-        public static final int turnBackRightPort = 13;
+        public static final int turnFrontLeftPort = 20;
+        public static final int turnFrontRightPort = 14;
+        public static final int turnBackLeftPort = 6;
+        public static final int turnBackRightPort = 10;
 
         public static final int canCoderPortFL = 1;
         public static final int canCoderPortFR = 2;
