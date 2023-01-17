@@ -11,6 +11,7 @@ import org.carlmontrobotics.lib199.path.SwerveDriveInterface;
 import org.carlmontrobotics.lib199.swerve.SwerveModule;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -73,26 +74,26 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         Supplier<Float> pitchSupplier = () -> initPitch;
         Supplier<Float> rollSupplier = () -> initRoll;
         SwerveModule moduleFL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FL,
-                MotorControllerFactory.createSparkMax(driveFrontLeftPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createSparkMax(turnFrontLeftPort, TemperatureLimit.NEO),
+                createSparkMax(driveFrontLeftPort, TemperatureLimit.NEO),
+                createSparkMax(turnFrontLeftPort, TemperatureLimit.NEO),
                 MotorControllerFactory.createCANCoder(canCoderPortFL), driveModifier, maxSpeed,
                 0, pitchSupplier, rollSupplier);
         // Forward-Right
         SwerveModule moduleFR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FR,
-                MotorControllerFactory.createSparkMax(driveFrontRightPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createSparkMax(turnFrontRightPort, TemperatureLimit.NEO),
+                createSparkMax(driveFrontRightPort, TemperatureLimit.NEO),
+                createSparkMax(turnFrontRightPort, TemperatureLimit.NEO),
                 MotorControllerFactory.createCANCoder(canCoderPortFR), driveModifier, maxSpeed,
                 1, pitchSupplier, rollSupplier);
         // Backward-Left
         SwerveModule moduleBL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BL,
-                MotorControllerFactory.createSparkMax(driveBackLeftPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createSparkMax(turnBackLeftPort, TemperatureLimit.NEO),
+                createSparkMax(driveBackLeftPort, TemperatureLimit.NEO),
+                createSparkMax(turnBackLeftPort, TemperatureLimit.NEO),
                 MotorControllerFactory.createCANCoder(canCoderPortBL), driveModifier, maxSpeed,
                 2, pitchSupplier, rollSupplier);
         // Backward-Right
         SwerveModule moduleBR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BR,
-                MotorControllerFactory.createSparkMax(driveBackRightPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createSparkMax(turnBackRightPort, TemperatureLimit.NEO),
+                createSparkMax(driveBackRightPort, TemperatureLimit.NEO),
+                createSparkMax(turnBackRightPort, TemperatureLimit.NEO),
                 MotorControllerFactory.createCANCoder(canCoderPortBR), driveModifier, maxSpeed,
                 3, pitchSupplier, rollSupplier);
         modules = new SwerveModule[] { moduleFL, moduleFR, moduleBL, moduleBR };
@@ -101,6 +102,12 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         SmartDashboard.putBoolean("Teleop Face Direction of Travel", false);
         SmartDashboard.putBoolean("Field Oriented", true);
         fieldOriented = SmartDashboard.getBoolean("Field Oriented", true);
+    }
+
+    CANSparkMax createSparkMax(int port, TemperatureLimit limit) {
+        CANSparkMax spark = MotorControllerFactory.createSparkMax(port, limit);
+        spark.setInverted(true);
+        return spark;
     }
 
     @Override
