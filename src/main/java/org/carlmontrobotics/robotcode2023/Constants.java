@@ -45,6 +45,7 @@ public final class Constants {
         public static final double maxRCW = maxSpeed / swerveRadius;
 
         public static final boolean[] reversed = {false, false, false, false};
+        // public static final boolean[] reversed = {true, true, true, true};
         // Determine correct turnZero constants (FL, FR, BL, BR)
         public static final double[] turnZero = {-6.9433, 180-4.2188, -72.9492, 180-4.9218};
 
@@ -67,6 +68,7 @@ public final class Constants {
         public static final double[] drivekI = {0, 0, 0, 0};
         public static final double[] drivekD = {0,0,0,0};
         public static final boolean[] driveInversion = {true, true, true, true};
+        // public static final boolean[] driveInversion = {false, false, false, false};
 
         public static final double[] kForwardVolts = {0.129, 0.108, 0.14, 0.125};
         public static final double[] kBackwardVolts = {0.115, 0.169, 0.13, 0.148};

@@ -74,25 +74,25 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         Supplier<Float> pitchSupplier = () -> initPitch;
         Supplier<Float> rollSupplier = () -> initRoll;
         SwerveModule moduleFL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FL,
-                createSparkMax(driveFrontLeftPort, TemperatureLimit.NEO),
+                MotorControllerFactory.createSparkMax(driveFrontLeftPort, TemperatureLimit.NEO),
                 createSparkMax(turnFrontLeftPort, TemperatureLimit.NEO),
                 MotorControllerFactory.createCANCoder(canCoderPortFL), driveModifier, maxSpeed,
                 0, pitchSupplier, rollSupplier);
         // Forward-Right
         SwerveModule moduleFR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FR,
-                createSparkMax(driveFrontRightPort, TemperatureLimit.NEO),
+                MotorControllerFactory.createSparkMax(driveFrontRightPort, TemperatureLimit.NEO),
                 createSparkMax(turnFrontRightPort, TemperatureLimit.NEO),
                 MotorControllerFactory.createCANCoder(canCoderPortFR), driveModifier, maxSpeed,
                 1, pitchSupplier, rollSupplier);
         // Backward-Left
         SwerveModule moduleBL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BL,
-                createSparkMax(driveBackLeftPort, TemperatureLimit.NEO),
+                MotorControllerFactory.createSparkMax(driveBackLeftPort, TemperatureLimit.NEO),
                 createSparkMax(turnBackLeftPort, TemperatureLimit.NEO),
                 MotorControllerFactory.createCANCoder(canCoderPortBL), driveModifier, maxSpeed,
                 2, pitchSupplier, rollSupplier);
         // Backward-Right
         SwerveModule moduleBR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BR,
-                createSparkMax(driveBackRightPort, TemperatureLimit.NEO),
+                MotorControllerFactory.createSparkMax(driveBackRightPort, TemperatureLimit.NEO),
                 createSparkMax(turnBackRightPort, TemperatureLimit.NEO),
                 MotorControllerFactory.createCANCoder(canCoderPortBR), driveModifier, maxSpeed,
                 3, pitchSupplier, rollSupplier);
@@ -115,7 +115,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         for (int i = 0; i < 4; i++) {
             modules[i].periodic();
             // Uncommenting the following line will contribute to loop overrun errors
-            // modules[i].updateSmartDashboard();
+            modules[i].updateSmartDashboard();
         }
 
         // Update the odometry with current heading and encoder position
@@ -125,7 +125,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // odometry.getPoseMeters().getTranslation().getX());
         // SmartDashboard.putNumber("Odometry Y",
         // odometry.getPoseMeters().getTranslation().getY());;
-        // SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
+        SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
         SmartDashboard.putNumber("Robot Heading", getHeading());
         fieldOriented = SmartDashboard.getBoolean("Field Oriented", true);
         // SmartDashboard.putNumber("Gyro Compass Heading", gyro.getCompassHeading());
@@ -174,6 +174,13 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
     @Override
     public void drive(SwerveModuleState[] moduleStates) {
+        int num = 0;
+        for (SwerveModuleState state : moduleStates) {
+            num++;
+            SmartDashboard.putNumber("state_angle_" + num, state.angle.getDegrees());
+            SmartDashboard.putNumber("state_speed_" + num, state.speedMetersPerSecond);
+        }
+
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, maxSpeed);
 
         // Move the modules based on desired (normalized) speed, desired angle, max
@@ -220,7 +227,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
      *         FR, etc.).
      */
     private SwerveModuleState[] getSwerveStates(double forward, double strafe, double rotation) {
-        return kinematics.toSwerveModuleStates(getChassisSpeeds(forward, -strafe, -rotation));
+        return kinematics.toSwerveModuleStates(getChassisSpeeds(forward, -strafe, rotation));
     }
 
     public void toggleMode() {
