@@ -37,8 +37,8 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     private static final boolean isGyroReversed = true;
     private static boolean fieldOriented = true;
     private double initTimestamp = 0;
-    private final float initPitch;
-    private final float initRoll;
+    public final float initPitch;
+    public final float initRoll;
 
     public Drivetrain() {
         gyro.calibrate();
@@ -73,6 +73,10 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         initRoll = 0;
         Supplier<Float> pitchSupplier = () -> initPitch;
         Supplier<Float> rollSupplier = () -> initRoll;
+        // initPitch = gyro.getPitch();
+        // initRoll = gyro.getRoll();
+        // Supplier<Float> pitchSupplier = () -> gyro.getPitch();
+        // Supplier<Float> rollSupplier = () -> gyro.getRoll();
         SwerveModule moduleFL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FL,
                 MotorControllerFactory.createSparkMax(driveFrontLeftPort, TemperatureLimit.NEO),
                 createSparkMax(turnFrontLeftPort, TemperatureLimit.NEO),
@@ -104,6 +108,14 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         fieldOriented = SmartDashboard.getBoolean("Field Oriented", true);
     }
 
+    public double getPitch() {
+        return gyro.getPitch();
+    }
+
+    public double getRoll() {
+        return gyro.getRoll();
+    }
+
     CANSparkMax createSparkMax(int port, TemperatureLimit limit) {
         CANSparkMax spark = MotorControllerFactory.createSparkMax(port, limit);
         spark.setInverted(true);
@@ -115,7 +127,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         for (int i = 0; i < 4; i++) {
             modules[i].periodic();
             // Uncommenting the following line will contribute to loop overrun errors
-            modules[i].updateSmartDashboard();
+            // modules[i].updateSmartDashboard();
         }
 
         // Update the odometry with current heading and encoder position
@@ -125,6 +137,8 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // odometry.getPoseMeters().getTranslation().getX());
         // SmartDashboard.putNumber("Odometry Y",
         // odometry.getPoseMeters().getTranslation().getY());;
+        SmartDashboard.putNumber("Pitch", gyro.getPitch());
+        SmartDashboard.putNumber("Roll", gyro.getRoll());
         SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
         SmartDashboard.putNumber("Robot Heading", getHeading());
         fieldOriented = SmartDashboard.getBoolean("Field Oriented", true);
@@ -142,6 +156,10 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     @Override
     public SwerveDriveOdometry getOdometry() {
         return odometry;
+    }
+
+    public void resetFieldOrientation() {
+        SmartDashboard.putNumber("Field Offset from North (degrees)", gyro.getAngle());
     }
 
     public void resetOdometry() {
