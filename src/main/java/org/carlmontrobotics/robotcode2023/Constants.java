@@ -68,7 +68,7 @@ public final class Constants {
         public static final double[] drivekI = {0, 0, 0, 0};
         public static final double[] drivekD = {0,0,0,0};
         public static final boolean[] driveInversion = {true, true, true, true};
-        // public static final boolean[] driveInversion = {false, false, false, false};
+        public static final boolean[] turnInversion = {true, true, true, true};
 
         public static final double[] kForwardVolts = {0.129, 0.108, 0.14, 0.125};
         public static final double[] kBackwardVolts = {0.115, 0.169, 0.13, 0.148};
@@ -90,7 +90,7 @@ public final class Constants {
         public static final double[] yPIDController = {4, 0.0, 0.0};
         public static final double[] thetaPIDController = {4, 0.0, 0.0};
 
-        public static final SwerveConfig swerveConfig = new SwerveConfig(wheelDiameterMeters, driveGearing, mu, autoCentripetalAccel, kForwardVolts, kForwardVels, kForwardAccels, kBackwardVolts, kBackwardVels, kBackwardAccels, drivekP, drivekI, drivekD, turnkP, turnkI, turnkD, turnkS, turnkV, turnkA, turnZero, driveInversion, reversed);
+        public static final SwerveConfig swerveConfig = new SwerveConfig(wheelDiameterMeters, driveGearing, mu, autoCentripetalAccel, kForwardVolts, kForwardVels, kForwardAccels, kBackwardVolts, kBackwardVels, kBackwardAccels, drivekP, drivekI, drivekD, turnkP, turnkI, turnkD, turnkS, turnkV, turnkA, turnZero, driveInversion, reversed, driveModifier, turnInversion);
 
 
         public static final int driveFrontLeftPort = 15;
