@@ -7,6 +7,7 @@ package org.carlmontrobotics.robotcode2023;
 import org.carlmontrobotics.lib199.swerve.SwerveConfig;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.XboxController;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -114,6 +115,11 @@ public final class Constants {
         public static final double kAlignMultiplier = 1D/3D;
         public static final double kAlignForward = 0.6;
 
+        public static final double chargeStationAlignTolerance = 2.5;
+        public static final double chargeStationAlignSpeed = 0.3 / 13;
+        public static final double chargeStationAlignTime = 500;
+        public static final double chargeStationAlignFF = 0.1;
+
     }
 
     public static final class OI {
@@ -123,7 +129,9 @@ public final class Constants {
         public static final class Driver {
             public static final int port = 0;
 
-            public static final int slowDriveButton = 1;
+            public static final int slowDriveButton = XboxController.Button.kLeftBumper.value;
+            public static final int chargeStationAlignButton = XboxController.Button.kA.value;
+            public static final int resetFieldOrientationButton = XboxController.Button.kB.value;
         }
         public static final class Manipulator {
             public static final int port = 1;
