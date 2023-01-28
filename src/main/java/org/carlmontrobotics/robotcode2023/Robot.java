@@ -29,7 +29,18 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    new Thread(() -> {
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+        return;
+      }
+
+      robotContainer.drivetrain.coast();
+    }).start();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -39,6 +50,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    robotContainer.drivetrain.brake();
     robotContainer.getAutonomousCommand().schedule();
   }
 
@@ -51,6 +63,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
+    robotContainer.drivetrain.brake();
   }
 
   @Override
@@ -62,6 +75,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+    robotContainer.drivetrain.brake();
   }
 
   @Override
