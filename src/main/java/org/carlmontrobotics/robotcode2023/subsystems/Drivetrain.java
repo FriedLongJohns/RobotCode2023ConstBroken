@@ -122,58 +122,25 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     }
 
     @Override
-    public void setOdometry(SwerveDriveOdometry odometry) {
-        this.odometry = odometry;
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+
+        for(SwerveModule module : modules) SendableRegistry.addChild(this, module);
+
+        builder.addBooleanProperty("Magnetic Field Disturbance", gyro::isMagneticDisturbance, null);
+        builder.addBooleanProperty("Gyro Calibrating", gyro::isCalibrating, null);
+        builder.addBooleanProperty("Field Oriented", () -> fieldOriented, fieldOriented -> this.fieldOriented = fieldOriented);
+        builder.addDoubleProperty("Odometry X", () -> odometry.getPoseMeters().getX(), null);
+        builder.addDoubleProperty("Odometry Y", () -> odometry.getPoseMeters().getY(), null);
+        builder.addDoubleProperty("Odometry Heading", () -> odometry.getPoseMeters().getRotation().getDegrees(), null);
+        builder.addDoubleProperty("Robot Heading", () -> getHeading(), null);
+        builder.addDoubleProperty("Raw Gyro Angle", gyro::getAngle, null);
+        builder.addDoubleProperty("Pitch", gyro::getPitch, null);
+        builder.addDoubleProperty("Roll", gyro::getRoll, null);
+        builder.addDoubleProperty("Field Offset", () -> fieldOffset, fieldOffset -> this.fieldOffset = fieldOffset);
     }
 
-    @Override
-    public SwerveDriveOdometry getOdometry() {
-        return odometry;
-    }
-
-    public double getPitch() {
-        return gyro.getPitch();
-    }
-
-    public double getRoll() {
-        return gyro.getRoll();
-    }
-
-    public boolean getFieldOriented() {
-        return fieldOriented;
-    }
-
-    public void setFieldOriented(boolean fieldOriented) {
-        this.fieldOriented = fieldOriented;
-    }
-
-    public void resetFieldOrientation() {
-        fieldOffset = gyro.getAngle();
-    }
-
-    public void resetOdometry() {
-        odometry.resetPosition(new Rotation2d(), getModulePositions(), new Pose2d());
-        gyro.reset();
-    }
-
-    public double getHeading() {
-        double x = gyro.getAngle();
-        if (fieldOriented) { //TODO: field oriented
-            x -= fieldOffset;
-        }
-        return Math.IEEEremainder(x * (isGyroReversed ? -1.0 : 1.0), 360);
-    }
-
-    // Resets the gyro, so that the direction the robotic currently faces is
-    // considered "forward"
-    public void resetHeading() {
-        gyro.reset();
-    }
-
-    @Override
-    public SwerveDriveKinematics getKinematics() {
-        return kinematics;
-    }
+    //#region Drive Methods
 
     public void drive(double forward, double strafe, double rotation) {
         drive(getSwerveStates(forward, strafe, rotation));
@@ -192,9 +159,9 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         }
     }
 
-    public ChassisSpeeds getSpeeds() {
-        return kinematics.toChassisSpeeds(Arrays.stream(modules).map(SwerveModule::getCurrentState)
-            .toArray(SwerveModuleState[]::new));
+    @Override
+    public void stop() {
+        for(SwerveModule module: modules) module.move(0, 0);
     }
 
     /**
@@ -230,6 +197,77 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         return kinematics.toSwerveModuleStates(getChassisSpeeds(forward, -strafe, rotation));
     }
 
+    //#endregion
+
+    //#region Getters and Setters
+
+    public double getHeading() {
+        double x = gyro.getAngle();
+        if (fieldOriented) x -= fieldOffset;
+        return Math.IEEEremainder(x * (isGyroReversed ? -1.0 : 1.0), 360);
+    }
+
+    @Override
+    public double getHeadingDeg() {
+        return getHeading();
+    }
+
+    @Override
+    public SwerveModulePosition[] getModulePositions() {
+        return Arrays.stream(modules).map(SwerveModule::getCurrentPosition).toArray(SwerveModulePosition[]::new);
+    }
+
+    @Override
+    public void setOdometry(SwerveDriveOdometry odometry) {
+        this.odometry = odometry;
+    }
+
+    @Override
+    public SwerveDriveOdometry getOdometry() {
+        return odometry;
+    }
+
+    // Resets the gyro, so that the direction the robotic currently faces is
+    // considered "forward"
+    public void resetHeading() {
+        gyro.reset();
+    }
+
+    public double getPitch() {
+        return gyro.getPitch();
+    }
+
+    public double getRoll() {
+        return gyro.getRoll();
+    }
+
+    public boolean getFieldOriented() {
+        return fieldOriented;
+    }
+
+    public void setFieldOriented(boolean fieldOriented) {
+        this.fieldOriented = fieldOriented;
+    }
+
+    public void resetFieldOrientation() {
+        fieldOffset = gyro.getAngle();
+    }
+
+    public void resetOdometry() {
+        odometry.resetPosition(new Rotation2d(), getModulePositions(), new Pose2d());
+        gyro.reset();
+    }
+
+    @Override
+    public SwerveDriveKinematics getKinematics() {
+        return kinematics;
+    }
+
+    public ChassisSpeeds getSpeeds() {
+        return kinematics.toChassisSpeeds(Arrays.stream(modules).map(SwerveModule::getCurrentState)
+            .toArray(SwerveModuleState[]::new));
+    }
+
     public void toggleMode() {
         for (SwerveModule module: modules)
             module.toggleMode();
@@ -256,16 +294,6 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     }
 
     @Override
-    public double getHeadingDeg() {
-        return getHeading();
-    }
-
-    @Override
-    public void stop() {
-        for(SwerveModule module: modules) module.move(0, 0);
-    }
-
-    @Override
     public double[][] getPIDConstants() {
         return new double[][] {
             xPIDController,
@@ -274,28 +302,6 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         };
     }
 
-    @Override
-    public SwerveModulePosition[] getModulePositions() {
-        return Arrays.stream(modules).map(SwerveModule::getCurrentPosition).toArray(SwerveModulePosition[]::new);
-    }
-
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
-
-        for(SwerveModule module : modules) SendableRegistry.addChild(this, module);
-
-        builder.addBooleanProperty("Magnetic Field Disturbance", gyro::isMagneticDisturbance, null);
-        builder.addBooleanProperty("Gyro Calibrating", gyro::isCalibrating, null);
-        builder.addBooleanProperty("Field Oriented", () -> fieldOriented, fieldOriented -> this.fieldOriented = fieldOriented);
-        builder.addDoubleProperty("Odometry X", () -> odometry.getPoseMeters().getX(), null);
-        builder.addDoubleProperty("Odometry Y", () -> odometry.getPoseMeters().getY(), null);
-        builder.addDoubleProperty("Odometry Heading", () -> odometry.getPoseMeters().getRotation().getDegrees(), null);
-        builder.addDoubleProperty("Robot Heading", () -> getHeading(), null);
-        builder.addDoubleProperty("Raw Gyro Angle", gyro::getAngle, null);
-        builder.addDoubleProperty("Pitch", gyro::getPitch, null);
-        builder.addDoubleProperty("Roll", gyro::getRoll, null);
-        builder.addDoubleProperty("Field Offset", () -> fieldOffset, fieldOffset -> this.fieldOffset = fieldOffset);
-    }
+    //#endregion
 
 }

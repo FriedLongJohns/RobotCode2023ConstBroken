@@ -22,6 +22,9 @@ public final class Constants {
     public static final double g = 9.81; //meters per second squared
 
     public static final class Drivetrain {
+
+        //#region Subsystem Constants
+
         public static final double wheelBase = Units.inchesToMeters(28.75);
         public static final double trackWidth = Units.inchesToMeters(19.75);
         // "swerveRadius" is the distance from the center of the robot to one of the modules
@@ -95,6 +98,9 @@ public final class Constants {
 
         public static final SwerveConfig swerveConfig = new SwerveConfig(wheelDiameterMeters, driveGearing, mu, autoCentripetalAccel, kForwardVolts, kForwardVels, kForwardAccels, kBackwardVolts, kBackwardVels, kBackwardAccels, drivekP, drivekI, drivekD, turnkP, turnkI, turnkD, turnkS, turnkV, turnkA, turnZero, driveInversion, reversed, driveModifier, turnInversion);
 
+        //#endregion
+
+        //#region Ports
 
         public static final int driveFrontLeftPort = 15;
         public static final int driveFrontRightPort = 13;
@@ -111,6 +117,9 @@ public final class Constants {
         public static final int canCoderPortBL = 3;
         public static final int canCoderPortBR = 4;
 
+        //#endregion
+
+        //#region Command Constants
 
         public static final double kSlowDriveSpeed = 0.25;
         public static final double kSlowDriveRotation = 0.30;
@@ -121,6 +130,8 @@ public final class Constants {
         public static final double chargeStationAlignSpeed = 0.3 / 13;
         public static final double chargeStationAlignTime = 500;
         public static final double chargeStationAlignFF = 0.1;
+
+        //#endregion
 
     }
 
