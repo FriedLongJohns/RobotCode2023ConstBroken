@@ -132,6 +132,7 @@ public final class Constants {
             public static final int slowDriveButton = XboxController.Button.kLeftBumper.value;
             public static final int chargeStationAlignButton = XboxController.Button.kA.value;
             public static final int resetFieldOrientationButton = XboxController.Button.kB.value;
+            public static final int toggleFieldOrientedButton = XboxController.Button.kX.value;
         }
         public static final class Manipulator {
             public static final int port = 1;

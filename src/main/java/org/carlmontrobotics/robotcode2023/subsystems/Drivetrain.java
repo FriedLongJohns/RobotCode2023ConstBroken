@@ -26,8 +26,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
-    // compassOffset is magnetic north relative to the current heading
-    private final double compassOffset;
     private final AHRS gyro = new AHRS(SerialPort.Port.kMXP); // Also try kUSB and kUSB2
 
     private SwerveDriveKinematics kinematics = null;
@@ -57,7 +55,6 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         System.out.println("NavX-MXP firmware version: " + gyro.getFirmwareVersion());
         SmartDashboard.putBoolean("Magnetic Field Disturbance", gyro.isMagneticDisturbance());
         System.out.println("Magnetometer is calibrated: " + gyro.isMagnetometerCalibrated());
-        compassOffset = gyro.getCompassHeading();
         // Define the corners of the robot relative to the center of the robot using
         // Translation2d objects.
         // Positive x-values represent moving toward the front of the robot whereas
@@ -193,13 +190,6 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
     @Override
     public void drive(SwerveModuleState[] moduleStates) {
-        int num = 0;
-        for (SwerveModuleState state : moduleStates) {
-            num++;
-            SmartDashboard.putNumber("state_angle_" + num, state.angle.getDegrees());
-            SmartDashboard.putNumber("state_speed_" + num, state.speedMetersPerSecond);
-        }
-
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, maxSpeed);
 
         // Move the modules based on desired (normalized) speed, desired angle, max
