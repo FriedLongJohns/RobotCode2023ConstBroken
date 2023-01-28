@@ -20,9 +20,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
@@ -31,111 +32,93 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     private SwerveDriveKinematics kinematics = null;
     private SwerveDriveOdometry odometry = null;
     private SwerveModule modules[];
-    private static final boolean isGyroReversed = true;
-    private static boolean fieldOriented = true;
-    private double initTimestamp = 0;
+    private boolean fieldOriented = true;
+    private double fieldOffset = 0;
+
     public final float initPitch;
     public final float initRoll;
 
     public Drivetrain() {
-        gyro.calibrate();
-        initTimestamp = Timer.getFPGATimestamp();
-        double currentTimestamp = initTimestamp;
-        while (gyro.isCalibrating() && currentTimestamp - initTimestamp < 10) {
-            currentTimestamp = Timer.getFPGATimestamp();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                break;
+        // Calibrate Gyro
+        {
+            gyro.calibrate();
+            double initTimestamp = Timer.getFPGATimestamp();
+            double currentTimestamp = initTimestamp;
+            while (gyro.isCalibrating() && currentTimestamp - initTimestamp < 10) {
+                currentTimestamp = Timer.getFPGATimestamp();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    break;
+                }
+                System.out.println("Calibrating the gyro...");
             }
-            System.out.println("Calibrating the gyro...");
+            gyro.reset();
+            System.out.println("NavX-MXP firmware version: " + gyro.getFirmwareVersion());
+            System.out.println("Magnetometer is calibrated: " + gyro.isMagnetometerCalibrated());
         }
-        gyro.reset();
-        System.out.println("NavX-MXP firmware version: " + gyro.getFirmwareVersion());
-        SmartDashboard.putBoolean("Magnetic Field Disturbance", gyro.isMagneticDisturbance());
-        System.out.println("Magnetometer is calibrated: " + gyro.isMagnetometerCalibrated());
-        // Define the corners of the robot relative to the center of the robot using
-        // Translation2d objects.
-        // Positive x-values represent moving toward the front of the robot whereas
-        // positive y-values represent moving toward the left of the robot.
-        Translation2d locationFL = new Translation2d(wheelBase / 2, trackWidth / 2);
-        Translation2d locationFR = new Translation2d(wheelBase / 2, -trackWidth / 2);
-        Translation2d locationBL = new Translation2d(-wheelBase / 2, trackWidth / 2);
-        Translation2d locationBR = new Translation2d(-wheelBase / 2, -trackWidth / 2);
 
-        kinematics = new SwerveDriveKinematics(locationFL, locationFR, locationBL, locationBR);
-        initPitch = 0;
-        initRoll = 0;
-        Supplier<Float> pitchSupplier = () -> initPitch;
-        Supplier<Float> rollSupplier = () -> initRoll;
-        // initPitch = gyro.getPitch();
-        // initRoll = gyro.getRoll();
-        // Supplier<Float> pitchSupplier = () -> gyro.getPitch();
-        // Supplier<Float> rollSupplier = () -> gyro.getRoll();
-        SwerveModule moduleFL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FL,
-                MotorControllerFactory.createSparkMax(driveFrontLeftPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createSparkMax(turnFrontLeftPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createCANCoder(canCoderPortFL), 0,
-                pitchSupplier, rollSupplier);
-        // Forward-Right
-        SwerveModule moduleFR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FR,
-                MotorControllerFactory.createSparkMax(driveFrontRightPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createSparkMax(turnFrontRightPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createCANCoder(canCoderPortFR), 1,
-                pitchSupplier, rollSupplier);
-        // Backward-Left
-        SwerveModule moduleBL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BL,
-                MotorControllerFactory.createSparkMax(driveBackLeftPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createSparkMax(turnBackLeftPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createCANCoder(canCoderPortBL), 2,
-                pitchSupplier, rollSupplier);
-        // Backward-Right
-        SwerveModule moduleBR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BR,
-                MotorControllerFactory.createSparkMax(driveBackRightPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createSparkMax(turnBackRightPort, TemperatureLimit.NEO),
-                MotorControllerFactory.createCANCoder(canCoderPortBR), 3,
-                pitchSupplier, rollSupplier);
-        modules = new SwerveModule[] { moduleFL, moduleFR, moduleBL, moduleBR };
+        // Setup Kinematics
+        {
+            // Define the corners of the robot relative to the center of the robot using
+            // Translation2d objects.
+            // Positive x-values represent moving toward the front of the robot whereas
+            // positive y-values represent moving toward the left of the robot.
+            Translation2d locationFL = new Translation2d(wheelBase / 2, trackWidth / 2);
+            Translation2d locationFR = new Translation2d(wheelBase / 2, -trackWidth / 2);
+            Translation2d locationBL = new Translation2d(-wheelBase / 2, trackWidth / 2);
+            Translation2d locationBR = new Translation2d(-wheelBase / 2, -trackWidth / 2);
+
+            kinematics = new SwerveDriveKinematics(locationFL, locationFR, locationBL, locationBR);
+        }
+
+        // Initialize modules
+        {
+            initPitch = 0;
+            initRoll = 0;
+            Supplier<Float> pitchSupplier = () -> initPitch;
+            Supplier<Float> rollSupplier = () -> initRoll;
+            // initPitch = gyro.getPitch();
+            // initRoll = gyro.getRoll();
+            // Supplier<Float> pitchSupplier = () -> gyro.getPitch();
+            // Supplier<Float> rollSupplier = () -> gyro.getRoll();
+
+            SwerveModule moduleFL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FL,
+                    MotorControllerFactory.createSparkMax(driveFrontLeftPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createSparkMax(turnFrontLeftPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createCANCoder(canCoderPortFL), 0,
+                    pitchSupplier, rollSupplier);
+            // Forward-Right
+            SwerveModule moduleFR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FR,
+                    MotorControllerFactory.createSparkMax(driveFrontRightPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createSparkMax(turnFrontRightPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createCANCoder(canCoderPortFR), 1,
+                    pitchSupplier, rollSupplier);
+            // Backward-Left
+            SwerveModule moduleBL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BL,
+                    MotorControllerFactory.createSparkMax(driveBackLeftPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createSparkMax(turnBackLeftPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createCANCoder(canCoderPortBL), 2,
+                    pitchSupplier, rollSupplier);
+            // Backward-Right
+            SwerveModule moduleBR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BR,
+                    MotorControllerFactory.createSparkMax(driveBackRightPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createSparkMax(turnBackRightPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createCANCoder(canCoderPortBR), 3,
+                    pitchSupplier, rollSupplier);
+            modules = new SwerveModule[] { moduleFL, moduleFR, moduleBL, moduleBR };
+        }
+
         odometry = new SwerveDriveOdometry(kinematics, Rotation2d.fromDegrees(getHeading()), getModulePositions());
-
-        SmartDashboard.putBoolean("Teleop Face Direction of Travel", false);
-        SmartDashboard.putBoolean("Field Oriented", true);
-        fieldOriented = SmartDashboard.getBoolean("Field Oriented", true);
-    }
-
-    public double getPitch() {
-        return gyro.getPitch();
-    }
-
-    public double getRoll() {
-        return gyro.getRoll();
     }
 
     @Override
     public void periodic() {
-        for (int i = 0; i < 4; i++) {
-            modules[i].periodic();
-            // Uncommenting the following line will contribute to loop overrun errors
-            // modules[i].updateSmartDashboard();
-        }
+        for (SwerveModule module : modules) module.periodic();
 
         // Update the odometry with current heading and encoder position
         odometry.update(Rotation2d.fromDegrees(getHeading()), getModulePositions());
-
-        // SmartDashboard.putNumber("Odometry X",
-        // odometry.getPoseMeters().getTranslation().getX());
-        // SmartDashboard.putNumber("Odometry Y",
-        // odometry.getPoseMeters().getTranslation().getY());;
-        SmartDashboard.putNumber("Pitch", gyro.getPitch());
-        SmartDashboard.putNumber("Roll", gyro.getRoll());
-        SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
-        SmartDashboard.putNumber("Robot Heading", getHeading());
-        fieldOriented = SmartDashboard.getBoolean("Field Oriented", true);
-        // SmartDashboard.putNumber("Gyro Compass Heading", gyro.getCompassHeading());
-        // SmartDashboard.putNumber("Compass Offset", compassOffset);
-        // SmartDashboard.putBoolean("Current Magnetic Field Disturbance",
-        // gyro.isMagneticDisturbance());
     }
 
     @Override
@@ -148,27 +131,35 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         return odometry;
     }
 
+    public double getPitch() {
+        return gyro.getPitch();
+    }
+
+    public double getRoll() {
+        return gyro.getRoll();
+    }
+
     public boolean getFieldOriented() {
         return fieldOriented;
     }
 
     public void setFieldOriented(boolean fieldOriented) {
-        SmartDashboard.putBoolean("Field Oriented", fieldOriented);
+        this.fieldOriented = fieldOriented;
     }
 
     public void resetFieldOrientation() {
-        SmartDashboard.putNumber("Field Offset from North (degrees)", gyro.getAngle());
+        fieldOffset = gyro.getAngle();
     }
 
     public void resetOdometry() {
-        odometry.resetPosition(Rotation2d.fromDegrees(0), getModulePositions(), new Pose2d());
+        odometry.resetPosition(new Rotation2d(), getModulePositions(), new Pose2d());
         gyro.reset();
     }
 
     public double getHeading() {
         double x = gyro.getAngle();
         if (fieldOriented) { //TODO: field oriented
-            x -= SmartDashboard.getNumber("Field Offset from North (degrees)", 0);
+            x -= fieldOffset;
         }
         return Math.IEEEremainder(x * (isGyroReversed ? -1.0 : 1.0), 360);
     }
@@ -286,6 +277,25 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     @Override
     public SwerveModulePosition[] getModulePositions() {
         return Arrays.stream(modules).map(SwerveModule::getCurrentPosition).toArray(SwerveModulePosition[]::new);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+
+        for(SwerveModule module : modules) SendableRegistry.addChild(this, module);
+
+        builder.addBooleanProperty("Magnetic Field Disturbance", gyro::isMagneticDisturbance, null);
+        builder.addBooleanProperty("Gyro Calibrating", gyro::isCalibrating, null);
+        builder.addBooleanProperty("Field Oriented", () -> fieldOriented, fieldOriented -> this.fieldOriented = fieldOriented);
+        builder.addDoubleProperty("Odometry X", () -> odometry.getPoseMeters().getX(), null);
+        builder.addDoubleProperty("Odometry Y", () -> odometry.getPoseMeters().getY(), null);
+        builder.addDoubleProperty("Odometry Heading", () -> odometry.getPoseMeters().getRotation().getDegrees(), null);
+        builder.addDoubleProperty("Robot Heading", () -> getHeading(), null);
+        builder.addDoubleProperty("Raw Gyro Angle", gyro::getAngle, null);
+        builder.addDoubleProperty("Pitch", gyro::getPitch, null);
+        builder.addDoubleProperty("Roll", gyro::getRoll, null);
+        builder.addDoubleProperty("Field Offset", () -> fieldOffset, fieldOffset -> this.fieldOffset = fieldOffset);
     }
 
 }
