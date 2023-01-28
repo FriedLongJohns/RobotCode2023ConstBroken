@@ -13,6 +13,11 @@ package org.carlmontrobotics.robotcode2023;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    public static final int grabber_motor_port = 6;
+
+    public static final double grabber_open_position = 4.0; //TODO find real value
+
     public static final class OI {
         public static final class Driver {
             public static final int port = 0;

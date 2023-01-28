@@ -4,40 +4,31 @@
 
 package org.carlmontrobotics.robotcode2023;
 
-import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.MotorErrors;
-import org.carlmontrobotics.lib199.SparkVelocityPIDController;
-import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
-
-import com.revrobotics.CANSparkMax;
+import org.subsystems.Grabber;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
 
   private RobotContainer robotContainer;
-  private CANSparkMax motor = MotorControllerFactory.createSparkMax(6, TemperatureLimit.NEO);
+  private Grabber grabber;
 
   @Override
   public void robotInit() {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
     robotContainer = new RobotContainer();
-    SmartDashboard.putNumber("Motor Voltage", 0);
-    SmartDashboard.putNumber("Max Current", 0);
+    grabber = new Grabber();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     MotorErrors.printSparkMaxErrorMessages();
-    motor.setSmartCurrentLimit((int) SmartDashboard.getNumber("Max Current", 0));
-    motor.set(SmartDashboard.getNumber("Motor Voltage", 0));
-
   }
 
 
