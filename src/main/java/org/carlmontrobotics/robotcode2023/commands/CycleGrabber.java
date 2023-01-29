@@ -25,18 +25,22 @@ public class CycleGrabber extends CommandBase {
 
   @Override
   public void execute() {
-    SmartDashboard.putNumber("Motor Voltage", SmartDashboard.getNumber(opening ? "Open Speed" : "Close Speed", 0));
+    if (opening) {
+      SmartDashboard.putNumber("Motor Voltage", SmartDashboard.getNumber("Open Speed", 0.05));
+    } else {
+      SmartDashboard.putNumber("Motor Voltage", SmartDashboard.getNumber("Close Speed", -0.05));
+    }
   }
 
   @Override
   public void end(boolean interrupted) {
     SmartDashboard.putNumber("Motor Voltage", 0);
+    SmartDashboard.putBoolean("open and close", false);
   }
 
   @Override
   public boolean isFinished() {
-    return opening ? 
-    SmartDashboard.getNumber("Motor Position", 0) >= Constants.grabber_open_position : 
-    !SmartDashboard.getBoolean("open/close", false);
+    return (opening && SmartDashboard.getNumber("Motor Position", 0) >= Constants.grabber_open_position) ||
+    (!opening && SmartDashboard.getNumber("Motor Position", 0) <= Constants.grabber_closed_position);
   }
 }

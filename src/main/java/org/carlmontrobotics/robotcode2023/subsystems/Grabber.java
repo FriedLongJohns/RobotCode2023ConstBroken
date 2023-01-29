@@ -13,8 +13,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Grabber extends SubsystemBase {
@@ -23,12 +21,12 @@ public class Grabber extends SubsystemBase {
 
   public Grabber() {
     SmartDashboard.putNumber("Motor Voltage", 0);
-    SmartDashboard.putNumber("Max Current", 0);
+    SmartDashboard.putNumber("Max Current", 20);
 
-    SmartDashboard.putBoolean("open/close", false);
+    SmartDashboard.putBoolean("open and close", false);
 
-    SmartDashboard.putNumber("Open Speed", 0.1);
-    SmartDashboard.putNumber("Close speed", -1);
+    SmartDashboard.putNumber("Open Speed", 0.2);
+    SmartDashboard.putNumber("Close Speed", -0.2);
 
     motor.setIdleMode(IdleMode.kCoast);
   }
@@ -39,7 +37,7 @@ public class Grabber extends SubsystemBase {
     motor.set(SmartDashboard.getNumber("Motor Voltage", 0));
     SmartDashboard.putNumber("Motor Position", motor.getEncoder().getPosition());
 
-    if (SmartDashboard.getBoolean("open/close", false)) {
+    if (SmartDashboard.getBoolean("open and close", false)) {
       new CycleGrabber(this).schedule();
     }
   }

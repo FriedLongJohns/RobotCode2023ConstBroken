@@ -16,7 +16,8 @@ public final class Constants {
 
     public static final int grabber_motor_port = 6;
 
-    public static final double grabber_open_position = 4.0; //TODO find real value
+    public static final double grabber_open_position = 2.8;
+    public static final double grabber_closed_position = -6.9;
 
     public static final class OI {
         public static final class Driver {
