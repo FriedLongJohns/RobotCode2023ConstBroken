@@ -5,6 +5,7 @@ import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.*;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
+import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.lib199.path.SwerveDriveInterface;
@@ -225,6 +226,11 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     @Override
     public SwerveDriveOdometry getOdometry() {
         return odometry;
+    }
+
+    public void updateOdometryFromLimelight(Limelight lime) {
+        Pose2d position = lime.getTransform(Limelight.Transform.BOTPOSE).toPose2d();
+        odometry.resetPosition(Rotation2d.fromDegrees(getHeading()), getModulePositions(), position);
     }
 
     // Resets the gyro, so that the direction the robotic currently faces is
