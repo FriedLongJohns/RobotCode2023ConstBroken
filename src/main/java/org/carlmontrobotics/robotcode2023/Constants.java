@@ -18,6 +18,10 @@ public final class Constants {
 
     public static final double grabber_open_position = 2.8;
     public static final double grabber_closed_position = -6.9;
+    public static final class Arm{
+        public static final int portL = 7;
+        public static final int portR = 8;
+    }
 
     public static final class OI {
         public static final class Driver {
