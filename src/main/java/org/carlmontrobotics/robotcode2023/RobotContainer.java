@@ -4,6 +4,12 @@
 
 package org.carlmontrobotics.robotcode2023;
 
+import java.util.HashMap;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+
 import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.path.PPRobotPath;
 import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
@@ -12,6 +18,7 @@ import org.carlmontrobotics.robotcode2023.commands.AlignChargingStation;
 import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
 import org.carlmontrobotics.robotcode2023.commands.UpdateLimelightOdometry;
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
+import org.opencv.video.TrackerGOTURN;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
@@ -64,7 +71,8 @@ public class RobotContainer {
   private void configureButtonBindingsManipulator() {}
 
   public Command getAutonomousCommand() {
-    PPRobotPath autoPath = null;
+    PPRobotPath autoPath = new PPRobotPath("bruh", drivetrain, false, new HashMap<>());
+    /*
     for(int i = 0; i < autoSelectors.length; i++) {
       if(!autoSelectors[i].get()) {
         System.out.println("Using Path: " + i);
@@ -73,6 +81,8 @@ public class RobotContainer {
       }
     }
     return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoPath.getPathCommand(true, true);
+    */
+    return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
   }
 
   private double getStickValue(Joystick stick, Axis axis) {
