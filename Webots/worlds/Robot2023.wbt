@@ -1,0 +1,252 @@
+#VRML_SIM R2023a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/floors/protos/RectangleArena.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation 0.025136856835230526 0.993658082225516 -0.10959814805166522 0.45357890794057154
+  position -3.6015980012672255 -0.018258551052983463 1.9816714907220996
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  rotation 0 1 0 0
+  floorSize 17 9
+}
+Robot {
+  translation 0 0 0.062
+  rotation 0 1 0 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+      }
+      geometry Box {
+        size 0.864 0.635 0.054
+      }
+      castShadows FALSE
+    }
+    Gyro {
+    }
+    Hinge2Joint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor 0.365 0.25 -0.018
+      }
+      jointParameters2 JointParameters {
+        axis 0 1 0
+      }
+      device [
+        PositionSensor {
+          name "CANCoder[1]"
+        }
+        RotationalMotor {
+          name "SparkMax[20]"
+          multiplier -1
+        }
+      ]
+      device2 [
+        PositionSensor {
+          name "RelativeEncoder[15]"
+        }
+        RotationalMotor {
+          name "SparkMax[15]"
+          maxVelocity 44.0288
+          maxTorque 25.3125
+          multiplier -1
+        }
+      ]
+      endPoint Solid {
+        translation 0.365 0.25 -0.018
+        rotation 0.999995935722301 -0.0020147672586437212 -0.002017238650463337 1.5708000263003465
+        children [
+          Shape {
+            appearance PBRAppearance {
+            }
+            geometry Cylinder {
+              height 0.042
+              radius 0.0445
+            }
+          }
+        ]
+        boundingObject Cylinder {
+          height 0.042
+          radius 0.0445
+        }
+        physics Physics {
+          density -1
+          mass 2.31423
+        }
+      }
+    }
+    Hinge2Joint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor 0.365 -0.25 -0.018
+      }
+      jointParameters2 JointParameters {
+        axis 0 1 0
+      }
+      device [
+        PositionSensor {
+          name "CANCoder[2]"
+        }
+        RotationalMotor {
+          name "SparkMax[14]"
+          multiplier -1
+        }
+      ]
+      device2 [
+        PositionSensor {
+          name "RelativeEncoder[13]"
+        }
+        RotationalMotor {
+          name "SparkMax[13]"
+          maxVelocity 44.0288
+          maxTorque 25.3125
+          multiplier -1
+        }
+      ]
+      endPoint Solid {
+        translation 0.365 -0.2667 -0.018
+        rotation 0.9999956932105948 -0.002073949438434368 -0.0020766063634797137 1.5708002732968551
+        children [
+          Shape {
+            appearance PBRAppearance {
+            }
+            geometry Cylinder {
+              height 0.042
+              radius 0.0445
+            }
+          }
+        ]
+        name "solid(1)"
+        boundingObject Cylinder {
+          height 0.042
+          radius 0.0445
+        }
+        physics Physics {
+          density -1
+          mass 2.31423
+        }
+      }
+    }
+    Hinge2Joint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor -0.365 0.25 -0.018
+      }
+      jointParameters2 JointParameters {
+        axis 0 1 0
+      }
+      device [
+        PositionSensor {
+          name "CANCoder[3]"
+        }
+        RotationalMotor {
+          name "SparkMax[6]"
+          multiplier -1
+        }
+      ]
+      device2 [
+        PositionSensor {
+          name "RelativeEncoder[5]"
+        }
+        RotationalMotor {
+          name "SparkMax[5]"
+          maxVelocity 44.0288
+          maxTorque 25.3125
+          multiplier -1
+        }
+      ]
+      endPoint Solid {
+        translation -0.365 0.25 -0.018
+        rotation 0.999995834988514 -0.0020402405564719003 -0.0020414269755644056 1.5708001331858248
+        children [
+          Shape {
+            appearance PBRAppearance {
+            }
+            geometry Cylinder {
+              height 0.042
+              radius 0.0445
+            }
+          }
+        ]
+        name "solid(2)"
+        boundingObject Cylinder {
+          height 0.042
+          radius 0.0445
+        }
+        physics Physics {
+          density -1
+          mass 2.31423
+        }
+      }
+    }
+    Hinge2Joint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor -0.365 -0.25 -0.018
+      }
+      jointParameters2 JointParameters {
+        axis 0 1 0
+      }
+      device [
+        PositionSensor {
+          name "CANCoder[4]"
+        }
+        RotationalMotor {
+          name "SparkMax[10]"
+          multiplier -1
+        }
+      ]
+      device2 [
+        PositionSensor {
+          name "RelativeEncoder[4]"
+        }
+        RotationalMotor {
+          name "SparkMax[4]"
+          maxVelocity 44.0288
+          maxTorque 25.3125
+          multiplier -1
+        }
+      ]
+      endPoint Solid {
+        translation -0.365 -0.25 -0.018
+        rotation 0.9999999999825446 4.045950331919291e-06 4.305950755350222e-06 1.5707960000590258
+        children [
+          Shape {
+            appearance PBRAppearance {
+            }
+            geometry Cylinder {
+              height 0.042
+              radius 0.0445
+            }
+          }
+        ]
+        name "solid(3)"
+        boundingObject Cylinder {
+          height 0.042
+          radius 0.0445
+        }
+        physics Physics {
+          density -1
+          mass 2.31423
+        }
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.864 0.635 0.054
+  }
+  physics Physics {
+    density -1
+    mass 48.733
+  }
+  controller "DeepBlueSim"
+  supervisor TRUE
+}
