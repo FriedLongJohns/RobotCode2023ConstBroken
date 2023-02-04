@@ -21,10 +21,14 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
@@ -35,12 +39,14 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     private SwerveModule modules[];
     private boolean fieldOriented = true;
     private double fieldOffset = 0;
+    private long startTime;
 
     public final float initPitch;
     public final float initRoll;
 
     public Drivetrain() {
         // Calibrate Gyro
+        startTime = (long)Timer.getFPGATimestamp();
         {
             gyro.calibrate();
             double initTimestamp = Timer.getFPGATimestamp();
@@ -120,6 +126,28 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
         // Update the odometry with current heading and encoder position
         odometry.update(Rotation2d.fromDegrees(getHeading()), getModulePositions());
+
+        DataLog log = DataLogManager.getLog();
+        DoubleLogEntry xLog = new DoubleLogEntry(log, "/my/x");
+        DoubleLogEntry yLog = new DoubleLogEntry(log, "/my/y");
+        DoubleLogEntry degLog = new DoubleLogEntry(log, "/my/deg");
+        xLog.append(odometry.getPoseMeters().getX(), (long) Timer.getFPGATimestamp() - startTime);
+        yLog.append(odometry.getPoseMeters().getY(), (long) Timer.getFPGATimestamp() - startTime);
+        degLog.append(odometry.getPoseMeters().getRotation().getDegrees(), (long) Timer.getFPGATimestamp() - startTime);
+
+        // SmartDashboard.putNumber("Odometry X",
+        // odometry.getPoseMeters().getTranslation().getX());
+        // SmartDashboard.putNumber("Odometry Y",
+        // odometry.getPoseMeters().getTranslation().getY());;
+        //SmartDashboard.putNumber("Pitch", gyro.getPitch());
+        //SmartDashboard.putNumber("Roll", gyro.getRoll());
+       // SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
+        //SmartDashboard.putNumber("Robot Heading", getHeading());
+        fieldOriented = SmartDashboard.getBoolean("Field Oriented", true);
+        // SmartDashboard.putNumber("Gyro Compass Heading", gyro.getCompassHeading());
+        // SmartDashboard.putNumber("Compass Offset", compassOffset);
+        // SmartDashboard.putBoolean("Current Magnetic Field Disturbance",
+        // gyro.isMagneticDisturbance());
     }
 
     @Override

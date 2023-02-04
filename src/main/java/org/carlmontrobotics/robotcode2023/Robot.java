@@ -6,6 +6,8 @@ package org.carlmontrobotics.robotcode2023;
 
 import org.carlmontrobotics.lib199.MotorErrors;
 
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -19,6 +21,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
+    
     robotContainer = new RobotContainer();
   }
 
