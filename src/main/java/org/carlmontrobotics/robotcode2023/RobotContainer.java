@@ -4,6 +4,8 @@
 
 package org.carlmontrobotics.robotcode2023;
 
+import org.carlmontrobotics.robotcode2023.subsystems.Arm;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
@@ -15,6 +17,7 @@ public class RobotContainer {
   public final Joystick driverController = new Joystick(0);
   public final Joystick manipulatorController = new Joystick(1);
   public final PowerDistribution pd = new PowerDistribution();
+  public final Arm arm = new Arm();
 
   public RobotContainer() {
     configureButtonBindingsDriver();
