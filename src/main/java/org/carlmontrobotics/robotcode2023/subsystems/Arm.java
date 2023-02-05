@@ -29,7 +29,21 @@ public class Arm extends SubsystemBase
   private double FFaccel = 1;
   private ArmFeedforward armFeed = new ArmFeedforward(kS,kG,kV,kA);
 
+  private final double coneIntake = 0;
+  private final double cubeIntake = 0;
+  private final double coneLowRow = 0;
+  private final double cubeLowRow = 0;
+  private final double coneMidRow = 0;
+  private final double cubeMidRow = 0;
+  private final double coneHighRow = 0;
+  private final double cubeHighRow = 0;
+
+
   public double goalPos;
+
+  public enum armPreset {
+    CONEINTAKE, CUBEINTAKE, CONELOWROW, CUBELOWROW, CONEMIDROW, CUBEMIDROW, CONEHIGHROW, CUBEHIGHROW
+  }
 
 
 
@@ -50,6 +64,7 @@ public class Arm extends SubsystemBase
     SmartDashboard.putNumber("FF: Acceleration", FFaccel);
 
     SmartDashboard.putNumber("GoalPosition", goalPos);
+    
   }
 
   @Override
@@ -129,4 +144,33 @@ public class Arm extends SubsystemBase
       }
     }
   }
+  
+
+  public void setPreset(armPreset preset){
+    switch (preset){
+      case CONEINTAKE:
+        goalPos = coneIntake;
+      case CUBEINTAKE:
+        goalPos = cubeIntake;
+      case CONELOWROW:
+        goalPos = coneLowRow;
+      case CUBELOWROW:
+        goalPos = cubeLowRow;
+      case CONEMIDROW:
+        goalPos = coneMidRow;
+      case CUBEMIDROW:
+        goalPos = cubeMidRow;
+      case CONEHIGHROW: 
+        goalPos = coneHighRow;
+      case CUBEHIGHROW:
+        goalPos = cubeHighRow;
+      default:
+        goalPos = cubeIntake;
+        
+
+    }
+
+    
+  }
+
 }
