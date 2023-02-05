@@ -5,12 +5,15 @@
 package org.carlmontrobotics.robotcode2023;
 
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
+import org.carlmontrobotics.robotcode2023.subsystems.Arm.armPreset;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer {
 
@@ -25,7 +28,17 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsDriver() {}
-  private void configureButtonBindingsManipulator() {}
+  private void configureButtonBindingsManipulator() {
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cone).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.intake)).whileTrue(new InstantCommand(()->arm.setPreset(armPreset.CONEINTAKE)));
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cone).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeLow)).whileTrue(new InstantCommand(()->arm.setPreset(armPreset.CONELOWROW)));
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cone).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeMid)).whileTrue(new InstantCommand(()->arm.setPreset(armPreset.CONEMIDROW)));
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cone).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeHigh)).whileTrue(new InstantCommand(()->arm.setPreset(armPreset.CONEHIGHROW)));
+
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cube).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.intake)).whileTrue(new InstantCommand(()->arm.setPreset(armPreset.CUBEINTAKE)));
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cube).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeLow)).whileTrue(new InstantCommand(()->arm.setPreset(armPreset.CUBELOWROW)));
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cube).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeMid)).whileTrue(new InstantCommand(()->arm.setPreset(armPreset.CUBEMIDROW)));
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cube).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeHigh)).whileTrue(new InstantCommand(()->arm.setPreset(armPreset.CUBEHIGHROW)));
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
