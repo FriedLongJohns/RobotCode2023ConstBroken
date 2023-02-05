@@ -71,7 +71,7 @@ public class RobotContainer {
   private void configureButtonBindingsManipulator() {}
 
   public Command getAutonomousCommand() {
-    PPRobotPath autoPath = new PPRobotPath("bruh", drivetrain, false, new HashMap<>());
+    PPRobotPath autoPath = new PPRobotPath("New Path", drivetrain, false, new HashMap<>());
     /*
     for(int i = 0; i < autoSelectors.length; i++) {
       if(!autoSelectors[i].get()) {
