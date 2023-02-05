@@ -4,6 +4,10 @@
 
 package org.carlmontrobotics.robotcode2023;
 
+import java.awt.Color;
+
+import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
+import org.carlmontrobotics.robotcode2023.commands.SetRoller;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -11,6 +15,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer {
 
@@ -25,7 +30,10 @@ public class RobotContainer {
     configureButtonBindingsManipulator();
   }
 
-  private void configureButtonBindingsDriver() {}
+  private void configureButtonBindingsDriver() {
+    new JoystickButton(driverController, Driver.rollerIntakePort).onTrue(new SetRoller(roller, Roller.coneIntakeConeOuttakeSpeed, Color.YELLOW));
+    new JoystickButton(driverController, Driver.rollerOuttakePort).onTrue(new SetRoller(roller, Roller.coneOuttakeConeIntakeSpeed, Color.MAGENTA));
+  }
   private void configureButtonBindingsManipulator() {}
 
   public Command getAutonomousCommand() {
