@@ -143,6 +143,13 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
     //#region Drive Methods
 
+    /**
+     * Drives the robot using the given x, y, and rotation speed
+     * 
+     * @param forward  The desired forward speed, in m/s. Forward is positive.
+     * @param strafe   The desired strafe speed, in m/s. Left is positive.
+     * @param rotation The desired rotation speed, in rad/s. Counter clockwise is positive
+     */
     public void drive(double forward, double strafe, double rotation) {
         drive(getSwerveStates(forward, strafe, rotation));
     }
@@ -169,15 +176,15 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
      * Constructs and returns a ChassisSpeeds objects using forward, strafe, and
      * rotation values.
      * 
-     * @param forward  The desired forward speed, in m/s.
-     * @param strafe   The desired strafe speed, in m/s.
-     * @param rotation The desired rotation speed, in rad/s.
+     * @param forward  The desired forward speed, in m/s. Forward is positive.
+     * @param strafe   The desired strafe speed, in m/s. Left is positive.
+     * @param rotation The desired rotation speed, in rad/s. Counter clockwise is positive.
      * @return A ChassisSpeeds object.
      */
     private ChassisSpeeds getChassisSpeeds(double forward, double strafe, double rotation) {
         ChassisSpeeds speeds;
         if (fieldOriented) { //TODO: field oriented
-            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Rotation2d.fromDegrees(getHeading()).rotateBy(new Rotation2d(Math.PI)));
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Rotation2d.fromDegrees(getHeading()));
         } else {
             speeds = new ChassisSpeeds(forward, strafe, rotation);
         }
@@ -188,9 +195,9 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
      * Constructs and returns four SwerveModuleState objects, one for each side,
      * using forward, strafe, and rotation values.
      * 
-     * @param forward  The desired forward speed, in m/s.
-     * @param strafe   The desired strafe speed, in m/s.
-     * @param rotation The desired rotation speed, in rad/s.
+     * @param forward  The desired forward speed, in m/s. Forward is positive.
+     * @param strafe   The desired strafe speed, in m/s. Left is positive.
+     * @param rotation The desired rotation speed, in rad/s. Counter clockwise is positive.
      * @return A SwerveModuleState array, one for each side of the drivetrain (FL,
      *         FR, etc.).
      */

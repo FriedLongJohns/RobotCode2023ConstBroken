@@ -5,10 +5,12 @@
 package org.carlmontrobotics.robotcode2023;
 
 import org.carlmontrobotics.lib199.MotorErrors;
+import org.carlmontrobotics.lib199.sim.MockedSparkEncoder;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
@@ -20,6 +22,14 @@ public class Robot extends TimedRobot {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
     robotContainer = new RobotContainer();
+  }
+
+  @Override
+  public void simulationInit() {
+    MockedSparkEncoder.setGearing(Constants.Drivetrain.driveFrontLeftPort, Constants.Drivetrain.driveGearing);
+    MockedSparkEncoder.setGearing(Constants.Drivetrain.driveFrontLeftPort, Constants.Drivetrain.driveGearing);
+    MockedSparkEncoder.setGearing(Constants.Drivetrain.driveFrontLeftPort, Constants.Drivetrain.driveGearing);
+    MockedSparkEncoder.setGearing(Constants.Drivetrain.driveFrontLeftPort, Constants.Drivetrain.driveGearing);
   }
 
   @Override

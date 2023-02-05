@@ -7,7 +7,8 @@ package org.carlmontrobotics.robotcode2023;
 import org.carlmontrobotics.lib199.swerve.SwerveConfig;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.XboxController.Button;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -51,7 +52,9 @@ public final class Constants {
         public static final boolean[] reversed = {false, false, false, false};
         // public static final boolean[] reversed = {true, true, true, true};
         // Determine correct turnZero constants (FL, FR, BL, BR)
-        public static final double[] turnZero = {-6.9433, 180-4.2188, -72.9492, 180-4.9218};
+        public static final double[] turnZero = RobotBase.isSimulation() ?
+            new double[] {0, 0, 0, 0} :
+            new double[] {-6.9433, 175.7812, -72.9492, 175.0782};
 
         // kP, kI, and kD constants for turn motor controllers in the order of front-left, front-right, back-left, back-right.
         // Determine correct turn PID constants
@@ -70,7 +73,7 @@ public final class Constants {
         // Backward: 1.92, 1.92, 2.11, 1.89
         public static final double[] drivekP = {1.82, 1.815, 2.015, 1.915};
         public static final double[] drivekI = {0, 0, 0, 0};
-        public static final double[] drivekD = {0,0,0,0};
+        public static final double[] drivekD = {0, 0, 0, 0};
         public static final boolean[] driveInversion = {true, true, true, true};
         public static final boolean[] turnInversion = {true, true, true, true};
 
@@ -89,7 +92,7 @@ public final class Constants {
         // a = mu * 9.8 m/s^2
         public static final double autoCentripetalAccel = mu * g * 2;
 
-        public static final boolean isGyroReversed = true;
+        public static final boolean isGyroReversed = false;
 
         // PID values are listed in the order kP, kI, and kD
         public static final double[] xPIDController = {4, 0.0, 0.0};
@@ -144,11 +147,11 @@ public final class Constants {
         public static final class Driver {
             public static final int port = 0;
 
-            public static final int slowDriveButton = XboxController.Button.kLeftBumper.value;
-            public static final int chargeStationAlignButton = XboxController.Button.kA.value;
-            public static final int resetFieldOrientationButton = XboxController.Button.kB.value;
-            public static final int toggleFieldOrientedButton = XboxController.Button.kX.value;
-            public static final int updateLimelightOdometryButton = XboxController.Button.kY.value;
+            public static final int slowDriveButton = Button.kLeftBumper.value;
+            public static final int chargeStationAlignButton = Button.kA.value;
+            public static final int resetFieldOrientationButton = Button.kB.value;
+            public static final int toggleFieldOrientedButton = Button.kX.value;
+            public static final int updateLimelightOdometryButton = Button.kY.value;
         }
         public static final class Manipulator {
             public static final int port = 1;

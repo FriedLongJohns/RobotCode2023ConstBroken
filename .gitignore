@@ -222,3 +222,4 @@ gradle-app.setting
 .classpath
 
 !Webots/**/*.jar
+*.wpilog
