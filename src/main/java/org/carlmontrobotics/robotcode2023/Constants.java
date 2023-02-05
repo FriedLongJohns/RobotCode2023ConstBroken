@@ -29,6 +29,12 @@ public final class Constants {
         }
         public static final class Manipulator {
             public static final int port = 1;
+            public static final int cone = 0;
+            public static final int cube = 0;
+            public static final int intake = 0;
+            public static final int outtakeLow = 0;
+            public static final int outtakeMid = 0;
+            public static final int outtakeHigh = 0;
         }
     }
 
