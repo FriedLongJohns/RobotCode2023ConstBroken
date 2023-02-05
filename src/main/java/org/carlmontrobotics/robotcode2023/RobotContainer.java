@@ -31,8 +31,8 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsDriver() {
-    new JoystickButton(driverController, Driver.rollerIntakePort).onTrue(new SetRoller(roller, Roller.coneIntakeConeOuttakeSpeed, Color.YELLOW));
-    new JoystickButton(driverController, Driver.rollerOuttakePort).onTrue(new SetRoller(roller, Roller.coneOuttakeConeIntakeSpeed, Color.MAGENTA));
+    new JoystickButton(driverController, Driver.rollerIntakePort).onTrue(new SetRoller(roller, Roller.coneIntakeConeOuttakeSpeed, new Color(150, 150, 0)));
+    new JoystickButton(driverController, Driver.rollerOuttakePort).onTrue(new SetRoller(roller, Roller.coneOuttakeConeIntakeSpeed, new Color(50, 0, 200)));
   }
   private void configureButtonBindingsManipulator() {}
 
