@@ -223,3 +223,6 @@ gradle-app.setting
 
 !Webots/**/*.jar
 *.wpilog
+simgui-ds.json
+simgui.json
+.DataLogTool/datalogtool.json
