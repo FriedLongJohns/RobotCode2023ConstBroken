@@ -74,7 +74,7 @@ public final class Constants {
         public static final double[] drivekP = {1.82, 1.815, 2.015, 1.915};
         public static final double[] drivekI = {0, 0, 0, 0};
         public static final double[] drivekD = {0, 0, 0, 0};
-        public static final boolean[] driveInversion = {true, true, true, true};
+        public static final boolean[] driveInversion = {false, false, false, false};
         public static final boolean[] turnInversion = {true, true, true, true};
 
         public static final double[] kForwardVolts = {0.129, 0.108, 0.14, 0.125};
@@ -110,7 +110,7 @@ public final class Constants {
         public static final int driveBackLeftPort = 11;
         public static final int driveBackRightPort = 13;
 
-        public static final int turnFrontLeftPort = 20;
+        public static final int turnFrontLeftPort = 6;
         public static final int turnFrontRightPort = 7;
         public static final int turnBackLeftPort = 12;
         public static final int turnBackRightPort = 14;
