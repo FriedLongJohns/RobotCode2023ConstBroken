@@ -7,22 +7,18 @@ package org.carlmontrobotics.robotcode2023.subsystems;
 import java.awt.Color;
 
 import org.carlmontrobotics.lib199.MotorControllerFactory;
-import org.carlmontrobotics.lib199.SparkVelocityPIDController;
 import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.robotcode2023.Constants;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -35,10 +31,15 @@ public class Roller extends SubsystemBase {
 
     private final AddressableLED led = new AddressableLED(8);
     private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(84);
-    private double maxCurrent = 100;
-    private boolean motorInverted = false;
     private boolean hadGamePiece = false;
-    private Command resetColorCommand = new WaitCommand(5).andThen(new InstantCommand(() -> new Color(0, 0, 200), this));
+    private Command resetColorCommand = new SequentialCommandGroup(
+        new WaitCommand(5),
+        new InstantCommand(() -> new Color(0, 0, 200), this))
+    {
+        public boolean runsWhenDisabled() {
+            return true;
+        };
+    };
 
     public Roller() {
         led.setLength(ledBuffer.getLength());
@@ -51,11 +52,16 @@ public class Roller extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Roller Current", motor.getOutputCurrent());
         SmartDashboard.putBoolean("Roller Has Game Piece", hasGamePiece());
-        if (hasGamePiece() && !hadGamePiece) {
-            hadGamePiece = true;
-            setLedColor(new Color(0, 200, 0));
-            resetColorCommand.schedule();
-        } else hadGamePiece = false;
+
+        // LED Update
+        {
+            boolean hasGamePiece = hasGamePiece();
+            if (hasGamePiece && !hadGamePiece) {
+                setLedColor(new Color(0, 200, 0));
+                resetColorCommand.schedule();
+            }
+            hadGamePiece = hasGamePiece;
+        }
     }
 
     public void setSpeed(double speed) {
