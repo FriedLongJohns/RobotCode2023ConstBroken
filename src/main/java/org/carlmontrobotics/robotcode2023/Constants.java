@@ -4,6 +4,8 @@
 
 package org.carlmontrobotics.robotcode2023;
 
+import edu.wpi.first.wpilibj.XboxController.Button;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -14,7 +16,7 @@ package org.carlmontrobotics.robotcode2023;
  */
 public final class Constants {
 
-    public static final int grabber_motor_port = 6;
+    public static final int grabber_motor_port = 0;
 
     public static final double grabber_open_position = 2.8;
     public static final double grabber_closed_position = -6.9;
@@ -25,16 +27,16 @@ public final class Constants {
 
     public static final class OI {
         public static final class Driver {
-            public static final int port = 0;
+            public static final int port = 1;
         }
         public static final class Manipulator {
-            public static final int port = 1;
-            public static final int cone = 0;
-            public static final int cube = 0;
-            public static final int intake = 0;
-            public static final int outtakeLow = 0;
-            public static final int outtakeMid = 0;
-            public static final int outtakeHigh = 0;
+            public static final int port = 0;
+            public static final int cone = Button.kRightBumper.value;
+            public static final int cube = Button.kLeftBumper.value;
+            public static final int intake = Button.kA.value;
+            public static final int outtakeLow = Button.kX.value;
+            public static final int outtakeMid = Button.kB.value;
+            public static final int outtakeHigh = Button.kY.value;
         }
     }
 
