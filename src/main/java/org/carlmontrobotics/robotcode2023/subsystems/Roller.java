@@ -8,7 +8,7 @@ import java.awt.Color;
 
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
-import org.carlmontrobotics.robotcode2023.Constants;
+import static org.carlmontrobotics.robotcode2023.Constants.Roller.*;
 
 import com.revrobotics.CANSparkMax;
 
@@ -24,17 +24,16 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Roller extends SubsystemBase {
 
-    private final CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.ROLLER_PORT, TemperatureLimit.NEO_550);
-    private final DigitalInput beambreak = new DigitalInput(9);
-    public static final double coneIntakeConeOuttakeSpeed = -.1;
-    public static final double coneOuttakeConeIntakeSpeed = .1;
+    private final CANSparkMax motor = MotorControllerFactory.createSparkMax(rollerPort, TemperatureLimit.NEO_550);
+    private final DigitalInput beambreak = new DigitalInput(beambreakPort);
+    private final AddressableLED led = new AddressableLED(ledPort);
+    private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(ledLength);
 
-    private final AddressableLED led = new AddressableLED(8);
-    private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(84);
     private boolean hadGamePiece = false;
+
     private Command resetColorCommand = new SequentialCommandGroup(
-        new WaitCommand(5),
-        new InstantCommand(() -> new Color(0, 0, 200), this))
+        new WaitCommand(ledDefaultColorRestoreTime),
+        new InstantCommand(() -> setLedColor(defaultColor), this))
     {
         public boolean runsWhenDisabled() {
             return true;
@@ -43,21 +42,19 @@ public class Roller extends SubsystemBase {
 
     public Roller() {
         led.setLength(ledBuffer.getLength());
-        // led.setData(ledBuffer);
-        setLedColor(new Color(0, 0, 200));
+        setLedColor(defaultColor);
         led.start();
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Roller Current", motor.getOutputCurrent());
-        SmartDashboard.putBoolean("Roller Has Game Piece", hasGamePiece());
+        SmartDashboard.putBoolean("Has Game Piece", hasGamePiece());
 
         // LED Update
         {
             boolean hasGamePiece = hasGamePiece();
             if (hasGamePiece && !hadGamePiece) {
-                setLedColor(new Color(0, 200, 0));
+                setLedColor(pickupSuccessColor);
                 resetColorCommand.schedule();
             }
             hadGamePiece = hasGamePiece;

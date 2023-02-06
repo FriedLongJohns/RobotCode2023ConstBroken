@@ -4,8 +4,6 @@
 
 package org.carlmontrobotics.robotcode2023;
 
-import java.awt.Color;
-
 import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
 import org.carlmontrobotics.robotcode2023.commands.SetRoller;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller;
@@ -31,8 +29,10 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsDriver() {
-    new JoystickButton(driverController, Driver.rollerIntakePort).onTrue(new SetRoller(roller, Roller.coneIntakeConeOuttakeSpeed, new Color(150, 150, 0)));
-    new JoystickButton(driverController, Driver.rollerOuttakePort).onTrue(new SetRoller(roller, Roller.coneOuttakeConeIntakeSpeed, new Color(50, 0, 200)));
+    new JoystickButton(driverController, Driver.rollerIntakePort)
+      .onTrue(new SetRoller(roller, Constants.Roller.coneIntakeConeOuttakeSpeed, Constants.Roller.conePickupColor));
+    new JoystickButton(driverController, Driver.rollerOuttakePort)
+      .onTrue(new SetRoller(roller, Constants.Roller.coneOuttakeConeIntakeSpeed, Constants.Roller.cubePickupColor));
   }
   private void configureButtonBindingsManipulator() {}
 

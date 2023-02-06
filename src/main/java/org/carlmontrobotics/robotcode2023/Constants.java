@@ -4,6 +4,8 @@
 
 package org.carlmontrobotics.robotcode2023;
 
+import java.awt.Color;
+
 import edu.wpi.first.wpilibj.XboxController.Button;
 
 /**
@@ -15,6 +17,37 @@ import edu.wpi.first.wpilibj.XboxController.Button;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    public static final class Roller {
+        //#region Subsystem Constants
+
+        public static final double coneIntakeConeOuttakeSpeed = -.1;
+        public static final double coneOuttakeConeIntakeSpeed = .1;
+
+        public static final int ledLength = 84;
+        public static final double ledDefaultColorRestoreTime = 5; // The time in seconds after picking up a game piece to restore the LED color to defaultColor
+        public static final Color defaultColor = new Color(0, 0, 200);
+        public static final Color pickupSuccessColor = new Color(0, 200, 0);
+        public static final Color conePickupColor = new Color(150, 150, 0);
+        public static final Color cubePickupColor = new Color(50, 0, 200);
+
+        //#endregion
+
+
+        //#region Ports
+
+        public static final int rollerPort = 6;
+        public static final int beambreakPort = 9;
+        public static final int ledPort = 8;
+
+        //#endregion
+
+
+        //#region Command Constants
+
+        //#endregion
+    }
+
     public static final class OI {
         public static final class Driver {
             public static final int port = 0;
@@ -26,7 +59,5 @@ public final class Constants {
             public static final int port = 1;
         }
     }
-
-    public static final int ROLLER_PORT = 6;
 
 }
