@@ -18,32 +18,44 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Roller extends SubsystemBase {
 
     private final CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.ROLLER_PORT, TemperatureLimit.NEO_550);
-
-    public static final double coneIntakeConeOuttakeSpeed = .1;
-    public static final double coneOuttakeConeIntakeSpeed = -.1;
+    private final DigitalInput beambreak = new DigitalInput(9);
+    public static final double coneIntakeConeOuttakeSpeed = -.1;
+    public static final double coneOuttakeConeIntakeSpeed = .1;
 
     private final AddressableLED led = new AddressableLED(8);
     private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(84);
     private double maxCurrent = 100;
     private boolean motorInverted = false;
+    private boolean hadGamePiece = false;
+    private Command resetColorCommand = new WaitCommand(5).andThen(new InstantCommand(() -> new Color(0, 0, 200), this));
 
     public Roller() {
         led.setLength(ledBuffer.getLength());
         // led.setData(ledBuffer);
-        setLedColor(new Color(0, 200, 0));
+        setLedColor(new Color(0, 0, 200));
         led.start();
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Roller Current", motor.getOutputCurrent());
+        SmartDashboard.putBoolean("Roller Has Game Piece", hasGamePiece());
+        if (hasGamePiece() && !hadGamePiece) {
+            hadGamePiece = true;
+            setLedColor(new Color(0, 200, 0));
+            resetColorCommand.schedule();
+        } else hadGamePiece = false;
     }
 
     public void setSpeed(double speed) {
@@ -57,6 +69,6 @@ public class Roller extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
-        return motor.getOutputCurrent() > maxCurrent;
+        return !beambreak.get();
     }
 }
