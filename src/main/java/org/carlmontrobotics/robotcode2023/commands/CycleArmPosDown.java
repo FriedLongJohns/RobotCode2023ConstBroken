@@ -12,10 +12,10 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class CycleArmPos extends CommandBase {
+public class CycleArmPosDown extends CommandBase {
   Arm arm;
   /** Creates a new ArmCycle. */
-  public CycleArmPos(Arm arm) {
+  public CycleArmPosDown(Arm arm) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(arm);
   }
@@ -23,7 +23,7 @@ public class CycleArmPos extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    arm.cyclePosition();
+    arm.cycleDown();
     //hmm maybe the arm subsystem does a little TOO MUCH stuff
   }
 
