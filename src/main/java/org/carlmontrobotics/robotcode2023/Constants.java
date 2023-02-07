@@ -92,7 +92,7 @@ public final class Constants {
         // a = mu * 9.8 m/s^2
         public static final double autoCentripetalAccel = mu * g * 2;
 
-        public static final boolean isGyroReversed = false;
+        public static final boolean isGyroReversed = true;
 
         // PID values are listed in the order kP, kI, and kD
         public static final double[] xPIDController = {4, 0.0, 0.0};
