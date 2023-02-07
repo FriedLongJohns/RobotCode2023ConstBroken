@@ -25,7 +25,7 @@ public final class Constants {
         public static final double coneOuttakeConeIntakeSpeed = .1;
 
         public static final int ledLength = 84;
-        public static final double ledDefaultColorRestoreTime = 5; // The time in seconds after picking up a game piece to restore the LED color to defaultColor
+        public static final double ledDefaultColorRestoreTime = 3; // The time in seconds after picking up a game piece to restore the LED color to defaultColor
         public static final Color defaultColor = new Color(0, 0, 200);
         public static final Color pickupSuccessColor = new Color(0, 200, 0);
         public static final Color conePickupColor = new Color(150, 150, 0);
