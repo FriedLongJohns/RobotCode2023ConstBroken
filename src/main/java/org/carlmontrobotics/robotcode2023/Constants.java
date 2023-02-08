@@ -34,9 +34,10 @@ public final class Constants {
             public static final int cone = Button.kRightBumper.value;
             public static final int cube = Button.kLeftBumper.value;
             public static final int intake = Button.kA.value;
-            public static final int outtakeLow = Button.kX.value;
-            public static final int outtakeMid = Button.kB.value;
-            public static final int outtakeHigh = Button.kY.value;
+            
+            public static final int cycleUp = Button.kX.value;
+            public static final int cycleDown = Button.kB.value;
+            public static final int swapItemType = Button.kY.value;
         }
     }
 

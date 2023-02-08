@@ -29,6 +29,7 @@ public class RobotContainer {
 
   private void configureButtonBindingsDriver() {}
   private void configureButtonBindingsManipulator() {
+    /*
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cone).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.intake)).whileTrue(new InstantCommand(()->arm.setPreset(ArmPreset.CONEINTAKE)));
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cone).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeLow)).whileTrue(new InstantCommand(()->arm.setPreset(ArmPreset.CONELOWROW)));
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cone).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeMid)).whileTrue(new InstantCommand(()->arm.setPreset(ArmPreset.CONEMIDROW)));
@@ -38,11 +39,11 @@ public class RobotContainer {
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cube).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeLow)).whileTrue(new InstantCommand(()->arm.setPreset(ArmPreset.CUBELOWROW)));
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cube).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeMid)).whileTrue(new InstantCommand(()->arm.setPreset(ArmPreset.CUBEMIDROW)));
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cube).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeHigh)).whileTrue(new InstantCommand(()->arm.setPreset(ArmPreset.CUBEHIGHROW)));
-    /*
+    */
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cycleUp).whileTrue(new InstantCommand(()->arm.cycleUp()));
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cycleDown).whileTrue(new InstantCommand(()->arm.cycleDown()));
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.swapItemType).whileTrue(new InstantCommand(()->arm.swapType()));
-    */
+    
   }
 
   public Command getAutonomousCommand() {

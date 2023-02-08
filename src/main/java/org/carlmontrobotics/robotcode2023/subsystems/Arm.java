@@ -32,7 +32,7 @@ public class Arm extends SubsystemBase
   public double goalPos;
 
   public enum ArmPreset {
-    CONEINTAKE(0), CUBEINTAKE(0), CONELOWROW(0), CUBELOWROW(0), CONEMIDROW(0), CUBEMIDROW(0), CONEHIGHROW(0), CUBEHIGHROW(0), ERROR(-1);
+    CONEINTAKE(0), CUBEINTAKE(0), CONELOWROW(.15), CUBELOWROW(.1), CONEMIDROW(.35), CUBEMIDROW(.3), CONEHIGHROW(.55), CUBEHIGHROW(.5), ERROR(-1);
     
     public double value;//not static so SmartDashboard can touch
     ArmPreset(double value){
@@ -111,7 +111,8 @@ public class Arm extends SubsystemBase
   //MotorL is the leader btw
   public Arm(){
     motorR.follow(motorL, true);
-    //TODO: Assign the 60:1 gear ratio to the motors
+    motorLencoder.setPositionConversionFactor(1/60);
+    motorRencoder.setPositionConversionFactor(1/60);
 
     SmartDashboard.putNumber("ConeIntake", ArmPreset.CONEINTAKE.value);
     SmartDashboard.putNumber("ConeLOW", ArmPreset.CONELOWROW.value);
