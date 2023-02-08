@@ -131,10 +131,10 @@ public class Arm extends SubsystemBase
 
 
     double difference = goalPos-motorLencoder.getPosition();
-//    if (difference>encoderErrorTolerance){//even PID needs an acceptable error sometimes
+    if (difference>encoderErrorTolerance){//even PID needs an acceptable error sometimes
       //assuming calculate() is some sort of PID-esque thing
     motorL.set(armFeed.calculate(difference, FFvelocity, FFaccel));
-//    }
+    }
   }
 
   //Snaps raw encoder pos to one of our cycle positions
