@@ -20,38 +20,37 @@ public class Arm extends SubsystemBase
 
   public double encoderErrorTolerance = .05;
 
-  private double kS = .2; //volts | base speed
-  private double kG = .1; //volts | gravity... something
-  private double kV = .2; //volts*secs/rad | extra velocity
-  private double kA = .3; //volts*secs^2/rad | vacceleration
+  private double kS = .01; //volts | base speed
+  private double kG = .01; //volts | gravity... something
+  private double kV = .01; //volts*secs/rad | extra velocity
+  private double kA = .01; //volts*secs^2/rad | vacceleration
   /// these are all units ^ , actual arm speed is determined by values in .calculate
-  private double FFvelocity = 2;
-  private double FFaccel = 1;
+  private double FFvelocity = .01;
+  private double FFaccel = .01;
   private ArmFeedforward armFeed = new ArmFeedforward(kS,kG,kV,kA);
 
   public double goalPos;
 
   public enum ArmPreset {
-    CONEINTAKE(0), CUBEINTAKE(0), CONELOWROW(.15), CUBELOWROW(.1), CONEMIDROW(.35), CUBEMIDROW(.3), CONEHIGHROW(.55), CUBEHIGHROW(.5), ERROR(-1);
+    CONEINTAKE(0), CUBEINTAKE(.05), LOW(.1), MID(.35), CONEHIGHROW(.55), CUBEHIGHROW(.5), ERROR(-1);
     
-    public double value;//not static so SmartDashboard can touch
+    public double value;//not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
+    private boolean cone = true;
     ArmPreset(double value){
       this.value=value;
     }
     public ArmPreset next(){//will stay Cone/Cube values even upon return
       switch (this){
         case CONEINTAKE:
-          return ArmPreset.CONELOWROW;
+          return ArmPreset.LOW;
         case CUBEINTAKE:
-          return ArmPreset.CUBELOWROW;
-        case CONELOWROW:
-          return ArmPreset.CONEMIDROW;
-        case CUBELOWROW:
-          return ArmPreset.CUBEMIDROW;
-        case CONEMIDROW:
+          return ArmPreset.LOW;
+        case LOW:
+          return ArmPreset.MID;
+        case MID:
+          if (cone){
           return ArmPreset.CONEHIGHROW;
-        case CUBEMIDROW:
-          return ArmPreset.CUBEHIGHROW;
+          }return ArmPreset.CUBEHIGHROW;
         case CONEHIGHROW:
           return ArmPreset.CONEINTAKE;
         case CUBEHIGHROW:
@@ -66,41 +65,32 @@ public class Arm extends SubsystemBase
           return ArmPreset.CONEHIGHROW;
         case CUBEINTAKE:
           return ArmPreset.CUBEHIGHROW;
-        case CONELOWROW:
+        case LOW:
+          if (cone){
           return ArmPreset.CONEINTAKE;
-        case CUBELOWROW:
-          return ArmPreset.CUBEINTAKE;
-        case CONEMIDROW:
-          return ArmPreset.CONELOWROW;
-        case CUBEMIDROW:
-          return ArmPreset.CUBELOWROW;
+          }return ArmPreset.CUBEINTAKE;
+        case MID:
+          return ArmPreset.LOW;
         case CONEHIGHROW:
-          return ArmPreset.CONEMIDROW;
+          return ArmPreset.MID;
         case CUBEHIGHROW:
-          return ArmPreset.CUBEMIDROW;
+          return ArmPreset.MID;
         default:
           return this;
       }
     }
     public ArmPreset swapType(){//change from cone to cube and vice versa
+      cone=(!cone);
       switch (this){
         case CONEINTAKE:
           return ArmPreset.CUBEINTAKE;
         case CUBEINTAKE:
           return ArmPreset.CONEINTAKE;
-        case CONELOWROW:
-          return ArmPreset.CUBELOWROW;
-        case CUBELOWROW:
-          return ArmPreset.CONELOWROW;
-        case CONEMIDROW:
-          return ArmPreset.CUBEMIDROW;
-        case CUBEMIDROW:
-          return ArmPreset.CONEMIDROW;
         case CONEHIGHROW:
           return ArmPreset.CUBEHIGHROW;
         case CUBEHIGHROW:
           return ArmPreset.CONEHIGHROW;
-        default://ERROR
+        default://ERROR/MID/LOW
           return this;
       }
     }
@@ -116,15 +106,6 @@ public class Arm extends SubsystemBase
     motorLencoder.setPosition(0.0);
     motorRencoder.setPosition(0.0);
 
-    SmartDashboard.putNumber("ConeIntake", ArmPreset.CONEINTAKE.value);
-    SmartDashboard.putNumber("ConeLOW", ArmPreset.CONELOWROW.value);
-    SmartDashboard.putNumber("ConeMID", ArmPreset.CONEMIDROW.value);
-    SmartDashboard.putNumber("ConeHIGH", ArmPreset.CONEHIGHROW.value);
-    SmartDashboard.putNumber("CubeIntake", ArmPreset.CUBEINTAKE.value);
-    SmartDashboard.putNumber("CubeLOW", ArmPreset.CUBELOWROW.value);
-    SmartDashboard.putNumber("CubeMID", ArmPreset.CUBEMIDROW.value);
-    SmartDashboard.putNumber("CubeHIGH", ArmPreset.CUBEHIGHROW.value);
-
     SmartDashboard.putNumber("FeedForward:kS", kS);
     SmartDashboard.putNumber("FeedForward:kG", kG);
     SmartDashboard.putNumber("FeedForward:kV", kV);
@@ -138,16 +119,6 @@ public class Arm extends SubsystemBase
 
   @Override
   public void periodic() {
-    //you can do this because enum is just a class :)
-    ArmPreset.CONEINTAKE.value = SmartDashboard.getNumber("ConeIntake", ArmPreset.CONEINTAKE.value);
-    ArmPreset.CONELOWROW.value = SmartDashboard.getNumber("ConeLOW", ArmPreset.CONELOWROW.value);
-    ArmPreset.CONEMIDROW.value = SmartDashboard.getNumber("ConeMID", ArmPreset.CONEMIDROW.value);
-    ArmPreset.CONEHIGHROW.value = SmartDashboard.getNumber("ConeHIGH", ArmPreset.CONEHIGHROW.value);
-    ArmPreset.CUBEINTAKE.value = SmartDashboard.getNumber("CubeIntake", ArmPreset.CUBEINTAKE.value);
-    ArmPreset.CUBELOWROW.value = SmartDashboard.getNumber("CubeLOW", ArmPreset.CUBELOWROW.value);
-    ArmPreset.CUBEMIDROW.value = SmartDashboard.getNumber("CubeMID", ArmPreset.CUBEMIDROW.value);
-    ArmPreset.CUBEHIGHROW.value = SmartDashboard.getNumber("CubeHIGH", ArmPreset.CUBEHIGHROW.value);
-
     kS = SmartDashboard.getNumber("FeedForward: kS", kS);
     kG = SmartDashboard.getNumber("FeedForward: kG", kG);
     kV = SmartDashboard.getNumber("FeedForward: kV", kV);
@@ -155,15 +126,15 @@ public class Arm extends SubsystemBase
     FFvelocity = SmartDashboard.getNumber("FF: Velocity", FFvelocity);
     FFaccel = SmartDashboard.getNumber("FF: Acceleration", FFaccel);
 
-    goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);//pls no touch while arm is cycle-ing
+    goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
     SmartDashboard.putNumber("ArmLencoderPos", motorLencoder.getPosition());
 
 
     double difference = goalPos-motorLencoder.getPosition();
-    if (difference>encoderErrorTolerance){//even PID needs an acceptable error sometimes
+//    if (difference>encoderErrorTolerance){//even PID needs an acceptable error sometimes
       //assuming calculate() is some sort of PID-esque thing
-      motorL.set(armFeed.calculate(difference, FFvelocity, FFaccel));
-    }
+    motorL.set(armFeed.calculate(difference, FFvelocity, FFaccel));
+//    }
   }
 
   //Snaps raw encoder pos to one of our cycle positions
@@ -195,20 +166,26 @@ public class Arm extends SubsystemBase
   }
 
   public void cycleUp(){//because most people won't remember/want to do this long function chain
-    goalPos = closeSnappedArmPos()!=ArmPreset.ERROR ? closeSnappedArmPos().next().value : snappedArmPos().next().value;
+    SmartDashboard.putNumber("GoalPosition", 
+    closeSnappedArmPos()!=ArmPreset.ERROR ? closeSnappedArmPos().next().value : snappedArmPos().next().value
+    );
     //if closeSnappedArmPos is working, swap based on it - otherwise use less accurate snapping
   }
   
   public void cycleDown(){
-    goalPos = closeSnappedArmPos()!=ArmPreset.ERROR ? closeSnappedArmPos().prev().value : snappedArmPos().prev().value;
+    SmartDashboard.putNumber("GoalPosition", 
+    closeSnappedArmPos()!=ArmPreset.ERROR ? closeSnappedArmPos().prev().value : snappedArmPos().prev().value
+    );
   }
   
   public void swapType(){
-    goalPos = closeSnappedArmPos()!=ArmPreset.ERROR ? closeSnappedArmPos().swapType().value : snappedArmPos().swapType().value;
+    SmartDashboard.putNumber("GoalPosition", 
+    closeSnappedArmPos()!=ArmPreset.ERROR ? closeSnappedArmPos().swapType().value : snappedArmPos().swapType().value
+    );
   }
 
   public void setPreset(ArmPreset preset){
-    goalPos=preset.value;
+    SmartDashboard.putNumber("GoalPosition", preset.value);
   }
 
 }
