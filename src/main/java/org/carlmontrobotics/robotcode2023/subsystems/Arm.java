@@ -113,6 +113,8 @@ public class Arm extends SubsystemBase
     motorR.follow(motorL, true);
     motorLencoder.setPositionConversionFactor(1/60);
     motorRencoder.setPositionConversionFactor(1/60);
+    motorLencoder.setPosition(0.0);
+    motorRencoder.setPosition(0.0);
 
     SmartDashboard.putNumber("ConeIntake", ArmPreset.CONEINTAKE.value);
     SmartDashboard.putNumber("ConeLOW", ArmPreset.CONELOWROW.value);
@@ -154,6 +156,7 @@ public class Arm extends SubsystemBase
     FFaccel = SmartDashboard.getNumber("FF: Acceleration", FFaccel);
 
     goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);//pls no touch while arm is cycle-ing
+    SmartDashboard.putNumber("ArmLencoderPos", motorLencoder.getPosition());
 
 
     double difference = goalPos-motorLencoder.getPosition();
@@ -168,9 +171,9 @@ public class Arm extends SubsystemBase
     double encoderPos = motorLencoder.getPosition();
     
     for(ArmPreset check : ArmPreset.values()){
-        double predist=(check.value-check.prev().value)/2;
+        double lowdist=(check.value-check.prev().value)/2;
         double hidist=(check.next().value-check.value)/2;//get the halfway points between each position and it's neighbors
-        if (check.value-predist < encoderPos && encoderPos < check.value+predist){//seperate high and low instead of ABS because maybe difference isn't constant between each position of arm
+        if (check.value-lowdist < encoderPos && encoderPos < check.value+hidist){//seperate high and low instead of ABS because maybe difference isn't constant between each position of arm
             //and yes it still works for lowest and highest value
             return check;
         }

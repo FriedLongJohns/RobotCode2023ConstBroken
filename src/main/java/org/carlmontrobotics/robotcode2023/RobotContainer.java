@@ -40,9 +40,9 @@ public class RobotContainer {
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cube).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeMid)).whileTrue(new InstantCommand(()->arm.setPreset(ArmPreset.CUBEMIDROW)));
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cube).and(new JoystickButton(manipulatorController, Constants.OI.Manipulator.outtakeHigh)).whileTrue(new InstantCommand(()->arm.setPreset(ArmPreset.CUBEHIGHROW)));
     */
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cycleUp).whileTrue(new InstantCommand(()->arm.cycleUp()));
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cycleDown).whileTrue(new InstantCommand(()->arm.cycleDown()));
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.swapItemType).whileTrue(new InstantCommand(()->arm.swapType()));
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cycleUp).onTrue(new InstantCommand(()->arm.cycleUp()));
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cycleDown).onTrue(new InstantCommand(()->arm.cycleDown()));
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.swapItemType).onTrue(new InstantCommand(()->arm.swapType()));
     
   }
 
