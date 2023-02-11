@@ -29,7 +29,7 @@ public class AlignChargingStation extends CommandBase {
         double roll = getRoll();
         double forward = fwd && Math.abs(pitch) > chargeStationAlignTolerance ? chargeStationAlignSpeed * pitch + chargeStationAlignFF : 0;
         double strafe = !fwd && Math.abs(roll) > chargeStationAlignTolerance ? chargeStationAlignSpeed * roll + chargeStationAlignFF : 0;
-        drivetrain.drive(-forward, -strafe, 0);
+        drivetrain.drive(-forward, strafe, 0);
     }
 
     @Override

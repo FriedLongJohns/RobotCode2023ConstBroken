@@ -7,7 +7,8 @@ package org.carlmontrobotics.robotcode2023;
 import org.carlmontrobotics.lib199.swerve.SwerveConfig;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.XboxController.Button;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -22,6 +23,9 @@ public final class Constants {
     public static final double g = 9.81; //meters per second squared
 
     public static final class Drivetrain {
+
+        //#region Subsystem Constants
+
         public static final double wheelBase = Units.inchesToMeters(28.75);
         public static final double trackWidth = Units.inchesToMeters(19.75);
         // "swerveRadius" is the distance from the center of the robot to one of the modules
@@ -48,7 +52,9 @@ public final class Constants {
         public static final boolean[] reversed = {false, false, false, false};
         // public static final boolean[] reversed = {true, true, true, true};
         // Determine correct turnZero constants (FL, FR, BL, BR)
-        public static final double[] turnZero = {-6.9433, 180-4.2188, -72.9492, 180-4.9218};
+        public static final double[] turnZero = RobotBase.isSimulation() ?
+            new double[] {0, 0, 0, 0} :
+            new double[] {-6.9433, 175.7812, -72.9492, 175.0782};
 
         // kP, kI, and kD constants for turn motor controllers in the order of front-left, front-right, back-left, back-right.
         // Determine correct turn PID constants
@@ -67,8 +73,8 @@ public final class Constants {
         // Backward: 1.92, 1.92, 2.11, 1.89
         public static final double[] drivekP = {1.82, 1.815, 2.015, 1.915};
         public static final double[] drivekI = {0, 0, 0, 0};
-        public static final double[] drivekD = {0,0,0,0};
-        public static final boolean[] driveInversion = {true, true, true, true};
+        public static final double[] drivekD = {0, 0, 0, 0};
+        public static final boolean[] driveInversion = {false, false, false, false};
         public static final boolean[] turnInversion = {true, true, true, true};
 
         public static final double[] kForwardVolts = {0.129, 0.108, 0.14, 0.125};
@@ -86,6 +92,8 @@ public final class Constants {
         // a = mu * 9.8 m/s^2
         public static final double autoCentripetalAccel = mu * g * 2;
 
+        public static final boolean isGyroReversed = true;
+
         // PID values are listed in the order kP, kI, and kD
         public static final double[] xPIDController = {4, 0.0, 0.0};
         public static final double[] yPIDController = {4, 0.0, 0.0};
@@ -93,22 +101,28 @@ public final class Constants {
 
         public static final SwerveConfig swerveConfig = new SwerveConfig(wheelDiameterMeters, driveGearing, mu, autoCentripetalAccel, kForwardVolts, kForwardVels, kForwardAccels, kBackwardVolts, kBackwardVels, kBackwardAccels, drivekP, drivekI, drivekD, turnkP, turnkI, turnkD, turnkS, turnkV, turnkA, turnZero, driveInversion, reversed, driveModifier, turnInversion);
 
+        //#endregion
 
-        public static final int driveFrontLeftPort = 15;
-        public static final int driveFrontRightPort = 13;
-        public static final int driveBackLeftPort = 5;
-        public static final int driveBackRightPort = 4;
+        //#region Ports
 
-        public static final int turnFrontLeftPort = 20;
-        public static final int turnFrontRightPort = 14;
-        public static final int turnBackLeftPort = 6;
-        public static final int turnBackRightPort = 10;
+        public static final int driveFrontLeftPort = 5;
+        public static final int driveFrontRightPort = 8;
+        public static final int driveBackLeftPort = 11;
+        public static final int driveBackRightPort = 13;
+
+        public static final int turnFrontLeftPort = 6;
+        public static final int turnFrontRightPort = 7;
+        public static final int turnBackLeftPort = 12;
+        public static final int turnBackRightPort = 14;
 
         public static final int canCoderPortFL = 1;
         public static final int canCoderPortFR = 2;
         public static final int canCoderPortBL = 3;
         public static final int canCoderPortBR = 4;
 
+        //#endregion
+
+        //#region Command Constants
 
         public static final double kSlowDriveSpeed = 0.25;
         public static final double kSlowDriveRotation = 0.30;
@@ -120,6 +134,10 @@ public final class Constants {
         public static final double chargeStationAlignTime = 500;
         public static final double chargeStationAlignFF = 0.1;
 
+        public static final double minLimelightOdometryUpdateSpeed = 0.01;
+
+        //#endregion
+
     }
 
     public static final class OI {
@@ -129,9 +147,11 @@ public final class Constants {
         public static final class Driver {
             public static final int port = 0;
 
-            public static final int slowDriveButton = XboxController.Button.kLeftBumper.value;
-            public static final int chargeStationAlignButton = XboxController.Button.kA.value;
-            public static final int resetFieldOrientationButton = XboxController.Button.kB.value;
+            public static final int slowDriveButton = Button.kLeftBumper.value;
+            public static final int chargeStationAlignButton = Button.kA.value;
+            public static final int resetFieldOrientationButton = Button.kB.value;
+            public static final int toggleFieldOrientedButton = Button.kX.value;
+            public static final int updateLimelightOdometryButton = Button.kY.value;
         }
         public static final class Manipulator {
             public static final int port = 1;

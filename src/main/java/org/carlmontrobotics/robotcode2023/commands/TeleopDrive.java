@@ -76,7 +76,7 @@ public class TeleopDrive extends CommandBase {
       currentStrafe = 0;
     double driveMultiplier = slow.getAsBoolean() ? kSlowDriveSpeed : 1;
     double rotationMultiplier = slow.getAsBoolean() ? kSlowDriveRotation : 0.55;
-    return new double[] {currentForward * driveMultiplier, currentStrafe * driveMultiplier, rotateClockwise * rotationMultiplier};
+    return new double[] {currentForward * driveMultiplier, currentStrafe * driveMultiplier, -rotateClockwise * rotationMultiplier};
   }
 
   // Called once the command ends or is interrupted.
