@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer {
@@ -33,6 +34,7 @@ public class RobotContainer {
       .onTrue(new SetRoller(roller, Constants.Roller.coneIntakeConeOuttakeSpeed, Constants.Roller.conePickupColor));
     new JoystickButton(driverController, Driver.rollerOuttakePort)
       .onTrue(new SetRoller(roller, Constants.Roller.coneOuttakeConeIntakeSpeed, Constants.Roller.cubePickupColor));
+    new JoystickButton(driverController, Driver.rollerStopPort).onTrue(new InstantCommand(() -> roller.setSpeed(0)));
   }
   private void configureButtonBindingsManipulator() {}
 

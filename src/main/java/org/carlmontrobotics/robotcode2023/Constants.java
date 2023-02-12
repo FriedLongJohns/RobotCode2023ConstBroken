@@ -21,8 +21,8 @@ public final class Constants {
     public static final class Roller {
         //#region Subsystem Constants
 
-        public static final double coneIntakeConeOuttakeSpeed = -.1;
-        public static final double coneOuttakeConeIntakeSpeed = .1;
+        public static final double coneIntakeConeOuttakeSpeed = -.3;
+        public static final double coneOuttakeConeIntakeSpeed = .7;
 
         public static final int ledLength = 84;
         public static final double ledDefaultColorRestoreTime = 3; // The time in seconds after picking up a game piece to restore the LED color to defaultColor
@@ -54,6 +54,7 @@ public final class Constants {
 
             public static final int rollerIntakePort = Button.kA.value;
             public static final int rollerOuttakePort = Button.kB.value;
+            public static final int rollerStopPort = Button.kY.value;
         }
         public static final class Manipulator {
             public static final int port = 1;
