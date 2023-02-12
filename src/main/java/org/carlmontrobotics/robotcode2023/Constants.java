@@ -17,8 +17,7 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 public final class Constants {
 
     public static final class Arm{
-        public static final int portL = 6;
-        public static final int portR = 8;
+        public static final int port = 6;
     }
 
     public static final class OI {
