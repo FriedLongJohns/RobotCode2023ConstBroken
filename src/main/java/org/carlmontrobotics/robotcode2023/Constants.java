@@ -151,7 +151,6 @@ public final class Constants {
             public static final int chargeStationAlignButton = Button.kA.value;
             public static final int resetFieldOrientationButton = Button.kB.value;
             public static final int toggleFieldOrientedButton = Button.kX.value;
-            public static final int updateLimelightOdometryButton = Button.kY.value;
         }
         public static final class Manipulator {
             public static final int port = 1;

@@ -13,19 +13,17 @@ import org.carlmontrobotics.lib199.swerve.SwerveModule;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.util.datalog.DataLog;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,18 +33,19 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     private final AHRS gyro = new AHRS(SerialPort.Port.kMXP); // Also try kUSB and kUSB2
 
     private SwerveDriveKinematics kinematics = null;
-    private SwerveDriveOdometry odometry = null;
+    private SwerveDrivePoseEstimator odometry = null;
     private SwerveModule modules[];
+    private Limelight lime;
     private boolean fieldOriented = true;
     private double fieldOffset = 0;
-    private long startTime;
 
     public final float initPitch;
     public final float initRoll;
 
-    public Drivetrain() {
+    public Drivetrain(Limelight lime) {
+        this.lime = lime;
+
         // Calibrate Gyro
-        startTime = (long)Timer.getFPGATimestamp();
         {
             gyro.calibrate();
             double initTimestamp = Timer.getFPGATimestamp();
@@ -117,7 +116,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
             modules = new SwerveModule[] { moduleFL, moduleFR, moduleBL, moduleBR };
         }
 
-        odometry = new SwerveDriveOdometry(kinematics, Rotation2d.fromDegrees(getHeading()), getModulePositions());
+        odometry = new SwerveDrivePoseEstimator(kinematics, Rotation2d.fromDegrees(getHeading()), getModulePositions(), new Pose2d());
     }
 
     @Override
@@ -127,13 +126,10 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // Update the odometry with current heading and encoder position
         odometry.update(Rotation2d.fromDegrees(getHeading()), getModulePositions());
 
-        DataLog log = DataLogManager.getLog();
-        DoubleLogEntry xLog = new DoubleLogEntry(log, "/my/x");
-        DoubleLogEntry yLog = new DoubleLogEntry(log, "/my/y");
-        DoubleLogEntry degLog = new DoubleLogEntry(log, "/my/deg");
-        xLog.append(odometry.getPoseMeters().getX(), (long) Timer.getFPGATimestamp() - startTime);
-        yLog.append(odometry.getPoseMeters().getY(), (long) Timer.getFPGATimestamp() - startTime);
-        degLog.append(odometry.getPoseMeters().getRotation().getDegrees(), (long) Timer.getFPGATimestamp() - startTime);
+        // Update the odometry with limelight
+        if(lime != null && lime.hasTarget()) {
+            odometry.addVisionMeasurement(lime.getTransform(Limelight.Transform.BOTPOSE).toPose2d(), WPIUtilJNI.now() * 1.0e-6 /* From the odometry.update implementation */);
+        }
 
         // SmartDashboard.putNumber("Odometry X",
         // odometry.getPoseMeters().getTranslation().getX());
@@ -159,9 +155,9 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         builder.addBooleanProperty("Magnetic Field Disturbance", gyro::isMagneticDisturbance, null);
         builder.addBooleanProperty("Gyro Calibrating", gyro::isCalibrating, null);
         builder.addBooleanProperty("Field Oriented", () -> fieldOriented, fieldOriented -> this.fieldOriented = fieldOriented);
-        builder.addDoubleProperty("Odometry X", () -> odometry.getPoseMeters().getX(), null);
-        builder.addDoubleProperty("Odometry Y", () -> odometry.getPoseMeters().getY(), null);
-        builder.addDoubleProperty("Odometry Heading", () -> odometry.getPoseMeters().getRotation().getDegrees(), null);
+        builder.addDoubleProperty("Odometry X", () -> getPose().getX(), null);
+        builder.addDoubleProperty("Odometry Y", () -> getPose().getY(), null);
+        builder.addDoubleProperty("Odometry Heading", () -> getPose().getRotation().getDegrees(), null);
         builder.addDoubleProperty("Robot Heading", () -> getHeading(), null);
         builder.addDoubleProperty("Raw Gyro Angle", gyro::getAngle, null);
         builder.addDoubleProperty("Pitch", gyro::getPitch, null);
@@ -254,18 +250,13 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     }
 
     @Override
-    public void setOdometry(SwerveDriveOdometry odometry) {
-        this.odometry = odometry;
+    public Pose2d getPose() {
+        return odometry.getEstimatedPosition();
     }
 
     @Override
-    public SwerveDriveOdometry getOdometry() {
-        return odometry;
-    }
-
-    public void updateOdometryFromLimelight(Limelight lime) {
-        Pose2d position = lime.getTransform(Limelight.Transform.BOTPOSE).toPose2d();
-        odometry.resetPosition(Rotation2d.fromDegrees(getHeading()), getModulePositions(), position);
+    public void setPose(Pose2d initialPose) {
+        odometry.resetPosition(Rotation2d.fromDegrees(getHeading()), getModulePositions(), initialPose);
     }
 
     // Resets the gyro, so that the direction the robotic currently faces is
