@@ -26,8 +26,8 @@ public final class Constants {
 
         //#region Subsystem Constants
 
-        public static final double wheelBase = Units.inchesToMeters(28.75);
-        public static final double trackWidth = Units.inchesToMeters(19.75);
+        public static final double wheelBase = Units.inchesToMeters(19.75);
+        public static final double trackWidth = Units.inchesToMeters(28.75);
         // "swerveRadius" is the distance from the center of the robot to one of the modules
         public static final double swerveRadius = Math.sqrt(Math.pow(wheelBase / 2, 2) + Math.pow(trackWidth / 2, 2));
         // The gearing reduction from the drive motor controller to the wheels
@@ -54,7 +54,7 @@ public final class Constants {
         // Determine correct turnZero constants (FL, FR, BL, BR)
         public static final double[] turnZero = RobotBase.isSimulation() ?
             new double[] {0, 0, 0, 0} :
-            new double[] {-6.9433, 175.7812, -72.9492, 175.0782};
+            new double[] {85.7812, 85.0782 , -96.9433, -162.9492};
 
         // kP, kI, and kD constants for turn motor controllers in the order of front-left, front-right, back-left, back-right.
         // Determine correct turn PID constants
@@ -105,15 +105,15 @@ public final class Constants {
 
         //#region Ports
 
-        public static final int driveFrontLeftPort = 5;
-        public static final int driveFrontRightPort = 8;
-        public static final int driveBackLeftPort = 11;
-        public static final int driveBackRightPort = 13;
+        public static final int driveFrontLeftPort = 8;
+        public static final int driveFrontRightPort = 13;
+        public static final int driveBackLeftPort = 5;
+        public static final int driveBackRightPort = 11;
 
-        public static final int turnFrontLeftPort = 6;
-        public static final int turnFrontRightPort = 7;
-        public static final int turnBackLeftPort = 12;
-        public static final int turnBackRightPort = 14;
+        public static final int turnFrontLeftPort = 7;
+        public static final int turnFrontRightPort = 14;
+        public static final int turnBackLeftPort = 6;
+        public static final int turnBackRightPort = 12;
 
         public static final int canCoderPortFL = 1;
         public static final int canCoderPortFR = 2;
