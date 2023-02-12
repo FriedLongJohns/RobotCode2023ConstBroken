@@ -14,9 +14,7 @@ import com.revrobotics.RelativeEncoder;
 public class Arm extends SubsystemBase
 {
   public CANSparkMax motorL = MotorControllerFactory.createSparkMax(Constants.Arm.portL, TemperatureLimit.NEO);
-  public CANSparkMax motorR = MotorControllerFactory.createSparkMax(Constants.Arm.portR, TemperatureLimit.NEO);
   public RelativeEncoder motorLencoder = motorL.getEncoder();
-  public RelativeEncoder motorRencoder = motorR.getEncoder();
 
   public double encoderErrorTolerance = .05;
 
@@ -100,11 +98,8 @@ public class Arm extends SubsystemBase
 
   //MotorL is the leader btw
   public Arm(){
-    motorR.follow(motorL, true);
     motorLencoder.setPositionConversionFactor(1/60);
-    motorRencoder.setPositionConversionFactor(1/60);
     motorLencoder.setPosition(0.0);
-    motorRencoder.setPosition(0.0);
 
     SmartDashboard.putNumber("FeedForward:kS", kS);
     SmartDashboard.putNumber("FeedForward:kG", kG);
@@ -187,5 +182,4 @@ public class Arm extends SubsystemBase
   public void setPreset(ArmPreset preset){
     SmartDashboard.putNumber("GoalPosition", preset.value);
   }
-
 }

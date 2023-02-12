@@ -35,7 +35,7 @@ public class CycleArmPosDown extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     if (interrupted){
-      arm.goalPos=arm.motorLencoder.getPosition();
+      arm.goalPos = arm.motorLencoder.getPosition();
     }
   }
 
@@ -43,6 +43,6 @@ public class CycleArmPosDown extends CommandBase {
   @Override
   public boolean isFinished(){
     //If the arm goes too far then it should try to go back and this will wait until then
-    return (arm.closeSnappedArmPos().value==arm.snappedArmPos().value);
+    return (arm.closeSnappedArmPos().value == arm.snappedArmPos().value);
   }
 }
