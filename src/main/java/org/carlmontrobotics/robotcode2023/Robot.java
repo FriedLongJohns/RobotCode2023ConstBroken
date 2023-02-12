@@ -7,6 +7,8 @@ package org.carlmontrobotics.robotcode2023;
 import org.carlmontrobotics.lib199.MotorErrors;
 import org.carlmontrobotics.lib199.sim.MockedSparkEncoder;
 
+import com.pathplanner.lib.server.PathPlannerServer;
+
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -23,7 +25,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
-    
+    if(!DriverStation.isFMSAttached()) PathPlannerServer.startServer(5811);
     robotContainer = new RobotContainer();
   }
 

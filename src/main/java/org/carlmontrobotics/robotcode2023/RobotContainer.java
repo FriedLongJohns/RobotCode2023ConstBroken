@@ -44,7 +44,9 @@ public class RobotContainer {
   public RobotContainer() {
 
     autoPaths = new PPRobotPath[] {
-      null
+      null,
+      new PPRobotPath("New Path", drivetrain, false, new HashMap<>()),
+      new PPRobotPath("3 game piece", drivetrain, false, new HashMap<>())
     };
 
     autoSelectors = new DigitalInput[Math.min(autoPaths.length, 26)];
@@ -71,8 +73,8 @@ public class RobotContainer {
   private void configureButtonBindingsManipulator() {}
 
   public Command getAutonomousCommand() {
-    PPRobotPath autoPath = new PPRobotPath("New Path", drivetrain, false, new HashMap<>());
-    /*
+    // PPRobotPath autoPath = new PPRobotPath("New Path", drivetrain, false, new HashMap<>());
+    PPRobotPath autoPath = null;
     for(int i = 0; i < autoSelectors.length; i++) {
       if(!autoSelectors[i].get()) {
         System.out.println("Using Path: " + i);
@@ -81,8 +83,7 @@ public class RobotContainer {
       }
     }
     return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoPath.getPathCommand(true, true);
-    */
-    return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
+    // return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
   }
 
   private double getStickValue(Joystick stick, Axis axis) {
