@@ -5,7 +5,6 @@ import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.maxSpeed;
 
 import java.util.HashMap;
 
-import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.path.PPRobotPath;
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 
@@ -14,13 +13,10 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 
+// Extend ProxyCommand so path is regenerated at runtime
 public class DriveToPoint extends ProxyCommand {
-
-    private final Drivetrain drivetrain;
 
     public DriveToPoint(Pose2d targetPose, Drivetrain drivetrain) {
         super(() ->
@@ -28,7 +24,7 @@ public class DriveToPoint extends ProxyCommand {
                 PathPlanner.generatePath(
                     new PathConstraints(maxSpeed, autoMaxAccelMps2),
                     PathPoint.fromCurrentHolonomicState(
-                        drivetrain.getOdometry().getPoseMeters(),
+                        drivetrain.getPose(),
                         drivetrain.getSpeeds()
                     ),
                     PathPoint.fromCurrentHolonomicState(
@@ -40,12 +36,7 @@ public class DriveToPoint extends ProxyCommand {
                 new HashMap<>()
             ).getPathCommand(true, true)
         );
-        addRequirements(this.drivetrain = drivetrain);
+        addRequirements(drivetrain);
     }
 
-    public Command realignAt(Pose2d alignPoint, Limelight lime) {
-        return new DriveToPoint(alignPoint, drivetrain)
-            .andThen(new InstantCommand(() -> drivetrain.updateOdometryFromLimelight(lime)))
-            .andThen(this);
-    }
 }

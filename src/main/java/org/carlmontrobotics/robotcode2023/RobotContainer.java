@@ -6,19 +6,13 @@ package org.carlmontrobotics.robotcode2023;
 
 import java.util.HashMap;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-
 import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.path.PPRobotPath;
 import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
 import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.commands.AlignChargingStation;
 import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
-import org.carlmontrobotics.robotcode2023.commands.UpdateLimelightOdometry;
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
-import org.opencv.video.TrackerGOTURN;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
@@ -35,8 +29,8 @@ public class RobotContainer {
   public final Joystick manipulatorController = new Joystick(Manipulator.port);
   public final PowerDistribution pd = new PowerDistribution();
 
-  public final Drivetrain drivetrain = new Drivetrain();
   public final Limelight lime = new Limelight();
+  public final Drivetrain drivetrain = new Drivetrain(lime);
 
   public final PPRobotPath[] autoPaths;
   public final DigitalInput[] autoSelectors;
@@ -44,7 +38,9 @@ public class RobotContainer {
   public RobotContainer() {
 
     autoPaths = new PPRobotPath[] {
-      null
+      null,
+      new PPRobotPath("New Path", drivetrain, false, new HashMap<>()),
+      new PPRobotPath("3 game piece", drivetrain, false, new HashMap<>())
     };
 
     autoSelectors = new DigitalInput[Math.min(autoPaths.length, 26)];
@@ -66,13 +62,12 @@ public class RobotContainer {
     new JoystickButton(driverController, Driver.chargeStationAlignButton).onTrue(new AlignChargingStation(drivetrain));
     new JoystickButton(driverController, Driver.resetFieldOrientationButton).onTrue(new InstantCommand(drivetrain::resetFieldOrientation));
     new JoystickButton(driverController, Driver.toggleFieldOrientedButton).onTrue(new InstantCommand(() -> drivetrain.setFieldOriented(!drivetrain.getFieldOriented())));
-    new JoystickButton(driverController, Driver.updateLimelightOdometryButton).onTrue(new UpdateLimelightOdometry(drivetrain, lime));
   }
   private void configureButtonBindingsManipulator() {}
 
   public Command getAutonomousCommand() {
-    PPRobotPath autoPath = new PPRobotPath("New Path", drivetrain, false, new HashMap<>());
-    /*
+    // PPRobotPath autoPath = new PPRobotPath("New Path", drivetrain, false, new HashMap<>());
+    PPRobotPath autoPath = null;
     for(int i = 0; i < autoSelectors.length; i++) {
       if(!autoSelectors[i].get()) {
         System.out.println("Using Path: " + i);
@@ -81,8 +76,7 @@ public class RobotContainer {
       }
     }
     return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoPath.getPathCommand(true, true);
-    */
-    return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
+    // return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
   }
 
   private double getStickValue(Joystick stick, Axis axis) {
