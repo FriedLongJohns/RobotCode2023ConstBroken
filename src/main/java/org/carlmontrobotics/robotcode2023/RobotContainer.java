@@ -42,7 +42,6 @@ public class RobotContainer {
     */
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cycleUp).onTrue(new InstantCommand(()->arm.cycleUp()));
     new JoystickButton(manipulatorController, Constants.OI.Manipulator.cycleDown).onTrue(new InstantCommand(()->arm.cycleDown()));
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.swapItemType).onTrue(new InstantCommand(()->arm.swapType()));
     
   }
 

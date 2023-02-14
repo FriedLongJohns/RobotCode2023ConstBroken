@@ -1,4 +1,5 @@
 package org.carlmontrobotics.robotcode2023.subsystems;
+
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.robotcode2023.Constants;
@@ -30,67 +31,27 @@ public class Arm extends SubsystemBase
   public double goalPos;
 
   public enum ArmPreset {
-    CONEINTAKE(0), CUBEINTAKE(.05), LOW(.1), MID(.35), CONEHIGHROW(.55), CUBEHIGHROW(.5), ERROR(-1);
+    INTAKE(0.31), MID(-1.74), HIGH(-1.83);
     
     public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
-    private boolean cone = true;
     ArmPreset(double value) {
       this.value = value;
     }
-    public ArmPreset next() {//will stay Cone/Cube values even upon return
-      switch (this){
-        case CONEINTAKE:
-        case CUBEINTAKE:
-          return ArmPreset.LOW;
-        case LOW:
-          return ArmPreset.MID;
-        case MID:
-          if (cone){
-            return ArmPreset.CONEHIGHROW;
-          }
-          return ArmPreset.CUBEHIGHROW;
-        case CONEHIGHROW:
-          return ArmPreset.CONEINTAKE;
-        case CUBEHIGHROW:
-          return ArmPreset.CUBEINTAKE;
-        default:
-          return this;
+    public ArmPreset next() {
+      switch (this) {
+        case INTAKE: return MID;
+        case MID: return HIGH;
+        case HIGH: return INTAKE;
       }
+      return null;
     }
     public ArmPreset prev(){
-      switch (this){
-        case CONEINTAKE:
-          return ArmPreset.CONEHIGHROW;
-        case CUBEINTAKE:
-          return ArmPreset.CUBEHIGHROW;
-        case LOW:
-          if (cone){
-          return ArmPreset.CONEINTAKE;
-          }return ArmPreset.CUBEINTAKE;
-        case MID:
-          return ArmPreset.LOW;
-        case CONEHIGHROW:
-          return ArmPreset.MID;
-        case CUBEHIGHROW:
-          return ArmPreset.MID;
-        default:
-          return this;
+      switch (this) {
+        case INTAKE: return HIGH;
+        case MID: return INTAKE;
+        case HIGH: return MID;
       }
-    }
-    public ArmPreset swapType(){//change from cone to cube and vice versa
-      cone=(!cone);
-      switch (this){
-        case CONEINTAKE:
-          return ArmPreset.CUBEINTAKE;
-        case CUBEINTAKE:
-          return ArmPreset.CONEINTAKE;
-        case CONEHIGHROW:
-          return ArmPreset.CUBEHIGHROW;
-        case CUBEHIGHROW:
-          return ArmPreset.CONEHIGHROW;
-        default://ERROR/MID/LOW
-          return this;
-      }
+      return null;
     }
   }
 
@@ -121,16 +82,16 @@ public class Arm extends SubsystemBase
     double encoderPos = motorLencoder.getPosition();
     
     for(ArmPreset check : ArmPreset.values()){
-        double lowdist = (check.value - check.prev().value) / 2;
-        double hidist = (check.next().value - check.value) / 2; // get the halfway points between each position and it's neighbors
-        if (check.value - lowdist < encoderPos && encoderPos < check.value + hidist){
-          //seperate high and low instead of ABS because maybe difference isn't constant between each position of arm
-            //and yes it still works for lowest and highest value
-            return check;
-        }
+      double lowdist = (check.value - check.prev().value) / 2;
+      double hidist = (check.next().value - check.value) / 2; // get the halfway points between each position and it's neighbors
+      if (check.value - lowdist < encoderPos && encoderPos < check.value + hidist){
+        //seperate high and low instead of ABS because maybe difference isn't constant between each position of arm
+          //and yes it still works for lowest and highest value
+          return check;
+      }
     }
     //help something went wrong
-    return ArmPreset.ERROR;
+    return null;
   }
 
   public ArmPreset closeSnappedArmPos() {//more precise snapping
@@ -142,28 +103,22 @@ public class Arm extends SubsystemBase
         }
     }
     //help something went wrong
-    return ArmPreset.ERROR;
+    return null;
   }
 
   public void cycleUp(){ 
     // because most people won't remember/want to do this long function chain
     SmartDashboard.putNumber("GoalPosition", 
-    closeSnappedArmPos() != ArmPreset.ERROR ? closeSnappedArmPos().next().value : snappedArmPos().next().value);
+    closeSnappedArmPos() != null ? closeSnappedArmPos().next().value : snappedArmPos().next().value);
     // if closeSnappedArmPos is working, swap based on it - otherwise use less accurate snapping
   }
   
   public void cycleDown(){
     SmartDashboard.putNumber("GoalPosition", 
-    closeSnappedArmPos()!=ArmPreset.ERROR ? closeSnappedArmPos().prev().value : snappedArmPos().prev().value
+    closeSnappedArmPos() != null ? closeSnappedArmPos().prev().value : snappedArmPos().prev().value
     );
   }
   
-  public void swapType(){
-    SmartDashboard.putNumber("GoalPosition", 
-    closeSnappedArmPos()!=ArmPreset.ERROR ? closeSnappedArmPos().swapType().value : snappedArmPos().swapType().value
-    );
-  }
-
   public void setPreset(ArmPreset preset){
     SmartDashboard.putNumber("GoalPosition", preset.value);
   }
