@@ -24,6 +24,8 @@ public final class Constants {
     public static final double grabber_closed_position = -6.9;
     public static final class Arm{
         public static final int port = 6;
+        public static int portR;
+        public static int portL;
     }
 
     public static final class OI {
