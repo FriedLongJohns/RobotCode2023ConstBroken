@@ -6,8 +6,9 @@ import org.carlmontrobotics.robotcode2023.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -24,11 +25,23 @@ public class Arm extends SubsystemBase
   private double kV = .019762; //volts*secs/rad | extra velocity
   private double kA = .00039212; //volts*secs^2/rad | vacceleration
   /// these are all units ^ , actual arm speed is determined by values in .calculate
+  private double Kp = 8.0781;
+  private double Kd = 3.0113;
+  private double Ki = 0.0;
+  
+  private double setpoint = 2.2;
   private double FFvelocity = .01;
   private double FFaccel = .01;
   private ArmFeedforward armFeed = new ArmFeedforward(kS, kG, kV, kA);
   
-
+  public void ArmWithFeedforwardPID(double VelocitySetpoint) {
+    
+    
+    motor.setVoltage(ArmFeedforward.calculate(VelocitySetpoint)
+        + pid.calculate(motorLencoder.getVelocity(),VelocitySetpoint));
+  } 
+  
+  private PIDController pid = new PIDController(Kp, Ki, Kd);
   
   public double goalPos;
   private double Radians = motorLencoder.getPosition();
@@ -56,6 +69,7 @@ public class Arm extends SubsystemBase
       }
       return null;
     }
+    
   }
 
   public Arm(){
@@ -72,7 +86,11 @@ public class Arm extends SubsystemBase
     FFaccel = SmartDashboard.getNumber("FF: Acceleration", FFaccel);
     goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
     SmartDashboard.putNumber("ArmLencoderPos", motorLencoder.getPosition());
+    pid.setTolerance(2.5,10);
+    pid.atSetpoint();
 
+    
+    motor.set(pid.calculate( motorLencoder.getPosition(), setpoint));
     double difference = goalPos - motorLencoder.getPosition();
     if (difference > encoderErrorTolerance){//even PID needs an acceptable error sometimes
       //assuming calculate() is some sort of PID-esque thing
