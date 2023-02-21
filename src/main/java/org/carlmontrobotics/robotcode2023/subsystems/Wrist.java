@@ -75,6 +75,50 @@ public class Wrist extends SubsystemBase {
       motorL.set(wristFeed.calculate(difference, FFvelocity, FFaccel));
     }
   }
+  public WristPreset snappedArmPos(){
+    double encoderPos = motorLEncoder.getPosition();
+    
+    for(WristPreset check : WristPreset.values()){
+      double lowdist = (check.value - check.prev().value) / 2;
+      double hidist = (check.next().value - check.value) / 2; // get the halfway points between each position and it's neighbors
+      if (check.value - lowdist < encoderPos && encoderPos < check.value + hidist){
+        //seperate high and low instead of ABS because maybe difference isn't constant between each position of arm
+          //and yes it still works for lowest and highest value
+          return check;
+      }
+    }
+    //help something went wrong
+    return null;
+  }
+
+  public WristPreset closeSnappedArmPos() {//more precise snapping
+    double encoderPos = motorLEncoder.getPosition();
+    
+    for(WristPreset check : WristPreset.values()){
+        if (Math.abs(check.value - encoderPos) > encoderErrorTolerance) {//maybe will break if cone/cube values are close, but if they are close then lower error or only use one enum
+            return check;
+        }
+    }
+    //help something went wrong
+    return null;
+  }
+
+  public void cycleUp(){ 
+    // because most people won't remember/want to do this long function chain
+    SmartDashboard.putNumber("GoalPosition", 
+    closeSnappedArmPos() != null ? closeSnappedArmPos().next().value : snappedArmPos().next().value);
+    // if closeSnappedArmPos is working, swap based on it - otherwise use less accurate snapping
+  }
+  
+  public void cycleDown(){
+    SmartDashboard.putNumber("GoalPosition", 
+    closeSnappedArmPos() != null ? closeSnappedArmPos().prev().value : snappedArmPos().prev().value
+    );
+  }
+  
+  public void setPreset(WristPreset preset){
+    SmartDashboard.putNumber("GoalPosition", preset.value);
+  }
   }
 
 
