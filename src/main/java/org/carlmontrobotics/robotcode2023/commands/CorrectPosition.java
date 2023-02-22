@@ -18,7 +18,7 @@ public class CorrectPosition extends CommandBase {
   /** Creates a new CorrectPosition. */
 
   // see DistanceSensor subsystem
-  private int errorType;
+  private Constants.Roller.ErrorType errorType;
   private DistanceSensor sensor;
   private Drivetrain dt;
   private Limelight lime;

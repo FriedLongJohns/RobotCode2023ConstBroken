@@ -162,6 +162,11 @@ public final class Constants {
         public static final double width = 26;
         public static final double acceptableLeftLimit = 7;
         public static final double acceptableRightLimit = 19;
+        public enum ErrorType {
+            LEFT,
+            RIGHT,
+            MIDDLE
+        }
     }
 
 }

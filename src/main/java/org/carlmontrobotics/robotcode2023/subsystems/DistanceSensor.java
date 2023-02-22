@@ -50,14 +50,14 @@ public class DistanceSensor extends SubsystemBase {
     SmartDashboard.putString("Status", distSensor.getStatus().toString());
   }
 
-  public int getErrorType() {
+  public Constants.Roller.ErrorType getErrorType() {
     // We need the type of offset, if any:
-    // 0 means no adjustment, 1 means we need to move the robot left, and
-    // 2 means we need to move the robot right. 
+    // MIDDLE means no adjustment, LEFT means we need to move the robot left and
+    // RIGHT means we need to move the robot right. 
 
-    if (dist < Constants.Roller.acceptableLeftLimit) return 1;
-    else if (dist > Constants.Roller.acceptableRightLimit) return 2;
-    else return 0;
+    if (dist < Constants.Roller.acceptableLeftLimit) return Constants.Roller.ErrorType.LEFT;
+    else if (dist > Constants.Roller.acceptableRightLimit) return Constants.Roller.ErrorType.RIGHT;
+    else return Constants.Roller.ErrorType.MIDDLE;
   }
 
   public double getDistance() {
@@ -65,22 +65,37 @@ public class DistanceSensor extends SubsystemBase {
   }
 
   public void correctPosition() {
-    int errorType = getErrorType();
+    Constants.Roller.ErrorType errorType = getErrorType();
     Pose2d initialPose = dt.getPose();
     Pose2d finalPose;
     double distanceToMove;
-    if (errorType == 1) {
+
+    /* if (errorType == LEFT) {
       distanceToMove = (Constants.Roller.acceptableLeftLimit) - dist + 2; // added 2 to make sure that the new position is fine
       finalPose = new Pose2d(initialPose.getX() - Units.inchesToMeters(distanceToMove), initialPose.getY(), initialPose.getRotation());
       CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, dt));
     }
-    else if (errorType == 2) {
+    else if (errorType == RIGHT) {
       distanceToMove = dist - (Constants.Roller.acceptableRightLimit) + 2; // added 2 to make sure that the new position is fine
       finalPose = new Pose2d(initialPose.getX() + Units.inchesToMeters(distanceToMove), initialPose.getY(), initialPose.getRotation());
       CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, dt));
     }
-    else if (errorType == 0) {
+    else if (errorType == MIDDLE) {
       // do nothing
+    } */
+
+    switch (errorType) {
+      case LEFT:
+        distanceToMove = (Constants.Roller.acceptableLeftLimit) - dist + 2; // added 2 to make sure that the new position is fine
+        finalPose = new Pose2d(initialPose.getX() - Units.inchesToMeters(distanceToMove), initialPose.getY(), initialPose.getRotation());
+        CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, dt));
+      case RIGHT:
+        distanceToMove = dist - (Constants.Roller.acceptableRightLimit) + 2; // added 2 to make sure that the new position is fine
+        finalPose = new Pose2d(initialPose.getX() + Units.inchesToMeters(distanceToMove), initialPose.getY(), initialPose.getRotation());
+        CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, dt));
+      case MIDDLE:
+        // do nothing
+
     }
   }
 }
