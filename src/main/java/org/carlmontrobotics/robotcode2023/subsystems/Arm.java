@@ -7,6 +7,7 @@ import org.carlmontrobotics.robotcode2023.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
@@ -18,7 +19,7 @@ public class Arm extends SubsystemBase
   public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
   public RelativeEncoder motorLencoder = motor.getEncoder();
 
-  public double encoderErrorTolerance = .05;
+  public double encoderErrorTolerance = .2;
 
   private double kS = .067766; //volts | base speed
   private double kG = .0075982; //volts | gravity... something
@@ -30,18 +31,19 @@ public class Arm extends SubsystemBase
   private double Ki = 0.0;
   
   private double setpoint = 2.2;
-  private double FFvelocity = .01;
-  private double FFaccel = .01;
+  private double FFvelocity = .3;
+  private double FFaccel = .3;
   private ArmFeedforward armFeed = new ArmFeedforward(kS, kG, kV, kA);
   
+  /* 
   public void ArmWithFeedforwardPID(double VelocitySetpoint) {
     
     
     motor.setVoltage(ArmFeedforward.calculate(VelocitySetpoint)
         + pid.calculate(motorLencoder.getVelocity(),VelocitySetpoint));
-  } 
+  } */
   
-  private PIDController pid = new PIDController(Kp, Ki, Kd);
+  // private PIDController pid = new PIDController(Kp, Ki, Kd);
   
   public double goalPos;
   private double Radians = motorLencoder.getPosition();
@@ -73,11 +75,12 @@ public class Arm extends SubsystemBase
   }
 
   public Arm(){
-    motorLencoder.setPositionConversionFactor(1/60);
+    motorLencoder.setPositionConversionFactor(2*Math.PI/100);
     motorLencoder.setPosition(0.0);
     SmartDashboard.putNumber("FF: Velocity", FFvelocity);
     SmartDashboard.putNumber("FF: Acceleration", FFaccel);
     SmartDashboard.putNumber("GoalPosition", goalPos);
+    SmartDashboard.putString("Debooog", "No.");
   }
 
   @Override
@@ -86,16 +89,21 @@ public class Arm extends SubsystemBase
     FFaccel = SmartDashboard.getNumber("FF: Acceleration", FFaccel);
     goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
     SmartDashboard.putNumber("ArmLencoderPos", motorLencoder.getPosition());
-    pid.setTolerance(2.5,10);
-    pid.atSetpoint();
+    // pid.setTolerance(2.5,10);
+    // pid.atSetpoint();
 
     
-    motor.set(pid.calculate( motorLencoder.getPosition(), setpoint));
-    double difference = goalPos - motorLencoder.getPosition();
+    // motor.set(pid.calculate( motorLencoder.getPosition(), setpoint));
+    double difference = Math.abs(goalPos - motorLencoder.getPosition());//RADIANS
     if (difference > encoderErrorTolerance){//even PID needs an acceptable error sometimes
       //assuming calculate() is some sort of PID-esque thing
-      motor.set(armFeed.calculate(difference, FFvelocity, FFaccel));
+      motor.set(armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel));
+    } else {
+      motor.set(0);
     }
+    SmartDashboard.putNumber("WTF DOES THIS RETURN", armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel));
+    
+    
   }
 
   //Snaps raw encoder pos to one of our cycle positions
@@ -129,12 +137,15 @@ public class Arm extends SubsystemBase
 
   public void cycleUp(){ 
     // because most people won't remember/want to do this long function chain
+    SmartDashboard.putString("Debooog", "CycleUp");
     SmartDashboard.putNumber("GoalPosition", 
-    closeSnappedArmPos() != null ? closeSnappedArmPos().next().value : snappedArmPos().next().value);
+    closeSnappedArmPos() != null ? closeSnappedArmPos().next().value : snappedArmPos().next().value
+    );
     // if closeSnappedArmPos is working, swap based on it - otherwise use less accurate snapping
   }
   
   public void cycleDown(){
+    SmartDashboard.putString("Debooog", "CycleDown");
     SmartDashboard.putNumber("GoalPosition", 
     closeSnappedArmPos() != null ? closeSnappedArmPos().prev().value : snappedArmPos().prev().value
     );

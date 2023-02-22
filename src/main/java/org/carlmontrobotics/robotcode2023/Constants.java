@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 public final class Constants {
 
     public static final class Arm{
-        public static final int port = 6;
+        public static final int port = 2;
     }
 
     public static final class OI {
@@ -30,9 +30,8 @@ public final class Constants {
             public static final int cube = Button.kLeftBumper.value;
             public static final int intake = Button.kA.value;
             
-            public static final int cycleUp = Button.kX.value;
-            public static final int cycleDown = Button.kB.value;
-            public static final int swapItemType = Button.kY.value;
+            public static final int cycleUp = 1;//FIXME NOT WORKING ON DRIVERSTATION
+            public static final int cycleDown = 2;
         }
     }
 
