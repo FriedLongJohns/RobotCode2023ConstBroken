@@ -30,7 +30,7 @@ public final class Constants {
             public static final int cube = Button.kLeftBumper.value;
             public static final int intake = Button.kA.value;
             
-            public static final int cycleUp = 1;//FIXME NOT WORKING ON DRIVERSTATION
+            public static final int cycleUp = 1;//FIXME use correct buttons
             public static final int cycleDown = 2;
         }
     }

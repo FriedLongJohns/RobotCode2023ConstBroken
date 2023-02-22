@@ -19,7 +19,7 @@ public class Arm extends SubsystemBase
   public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
   public RelativeEncoder motorLencoder = motor.getEncoder();
 
-  public double encoderErrorTolerance = .2;
+  public double encoderErrorTolerance = .1;
 
   private double kS = .067766; //volts | base speed
   private double kG = .0075982; //volts | gravity... something
@@ -31,8 +31,8 @@ public class Arm extends SubsystemBase
   private double Ki = 0.0;
   
   private double setpoint = 2.2;
-  private double FFvelocity = .3;
-  private double FFaccel = .3;
+  private double FFvelocity = 6;
+  private double FFaccel = 6;
   private ArmFeedforward armFeed = new ArmFeedforward(kS, kG, kV, kA);
   
   /* 
@@ -46,14 +46,21 @@ public class Arm extends SubsystemBase
   // private PIDController pid = new PIDController(Kp, Ki, Kd);
   
   public double goalPos;
-  private double Radians = motorLencoder.getPosition();
 
   public enum ArmPreset {
-    INTAKE(0.31), MID(-1.74), HIGH(-1.83);
+    INTAKE(0), MID(1), HIGH(2);
     
     public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
     ArmPreset(double value) {
       this.value = value;
+    }
+    public String toString() {
+      switch (this) {
+        case INTAKE: return "INTAKE";
+        case MID: return "MID";
+        case HIGH: return "HIGH";
+      }
+      return "null";
     }
     public ArmPreset next() {
       switch (this) {
@@ -81,6 +88,9 @@ public class Arm extends SubsystemBase
     SmartDashboard.putNumber("FF: Acceleration", FFaccel);
     SmartDashboard.putNumber("GoalPosition", goalPos);
     SmartDashboard.putString("Debooog", "No.");
+    SmartDashboard.putString("ArmENUM", 
+    snappedArmPos().toString()
+    );
   }
 
   @Override
@@ -89,18 +99,22 @@ public class Arm extends SubsystemBase
     FFaccel = SmartDashboard.getNumber("FF: Acceleration", FFaccel);
     goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
     SmartDashboard.putNumber("ArmLencoderPos", motorLencoder.getPosition());
+    SmartDashboard.putString("ArmENUM", 
+    (closeSnappedArmPos() != null) ? closeSnappedArmPos().toString() : snappedArmPos().toString()
+    );
     // pid.setTolerance(2.5,10);
     // pid.atSetpoint();
 
     
     // motor.set(pid.calculate( motorLencoder.getPosition(), setpoint));
-    double difference = Math.abs(goalPos - motorLencoder.getPosition());//RADIANS
-    if (difference > encoderErrorTolerance){//even PID needs an acceptable error sometimes
+    double difference = goalPos - motorLencoder.getPosition();//RADIANS
+    double dir = Math.abs(difference)/difference;
+    // if (Math.abs(difference) > encoderErrorTolerance){//even PID needs an acceptable error sometimes
       //assuming calculate() is some sort of PID-esque thing
-      motor.set(armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel));
-    } else {
-      motor.set(0);
-    }
+      motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel));
+    // } else {
+      // motor.set(0);
+    // }
     SmartDashboard.putNumber("WTF DOES THIS RETURN", armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel));
     
     
@@ -109,25 +123,23 @@ public class Arm extends SubsystemBase
   //Snaps raw encoder pos to one of our cycle positions
   public ArmPreset snappedArmPos(){
     double encoderPos = motorLencoder.getPosition();
-    
+    double bestD = Double.MAX_VALUE;
+    ArmPreset bestE = closeSnappedArmPos();
     for(ArmPreset check : ArmPreset.values()){
-      double lowdist = (check.value - check.prev().value) / 2;
-      double hidist = (check.next().value - check.value) / 2; // get the halfway points between each position and it's neighbors
-      if (check.value - lowdist < encoderPos && encoderPos < check.value + hidist){
-        //seperate high and low instead of ABS because maybe difference isn't constant between each position of arm
-          //and yes it still works for lowest and highest value
-          return check;
+      double dist = Math.abs(check.value - encoderPos);
+      if (dist < bestD){
+        bestD = dist;
+        bestE = check;
       }
     }
-    //help something went wrong
-    return null;
+    return bestE;
   }
 
   public ArmPreset closeSnappedArmPos() {//more precise snapping
     double encoderPos = motorLencoder.getPosition();
     
     for(ArmPreset check : ArmPreset.values()){
-        if (Math.abs(check.value - encoderPos) > encoderErrorTolerance) {//maybe will break if cone/cube values are close, but if they are close then lower error or only use one enum
+        if (Math.abs(check.value - encoderPos) < encoderErrorTolerance) {
             return check;
         }
     }
