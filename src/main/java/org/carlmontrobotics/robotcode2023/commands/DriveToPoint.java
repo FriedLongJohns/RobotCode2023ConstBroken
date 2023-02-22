@@ -14,12 +14,13 @@ import com.pathplanner.lib.PathPoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 // Extend ProxyCommand so path is regenerated at runtime
-public class DriveToPoint extends ProxyCommand {
+public class DriveToPoint extends SequentialCommandGroup {
 
     public DriveToPoint(Pose2d targetPose, Drivetrain drivetrain) {
-        super(() ->
+        super(
             new PPRobotPath(
                 PathPlanner.generatePath(
                     new PathConstraints(maxSpeed, autoMaxAccelMps2),
@@ -34,7 +35,9 @@ public class DriveToPoint extends ProxyCommand {
                 ),
                 drivetrain,
                 new HashMap<>()
-            ).getPathCommand(true, true)
+            ).getPathCommand(true, true),
+            new CorrectToPoint(drivetrain, targetPose)
+
         );
         addRequirements(drivetrain);
     }
