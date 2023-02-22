@@ -38,26 +38,7 @@ public class CorrectPosition extends CommandBase {
   @Override
   public void execute() {
     // THIS MIGHT NOT BELONG IN EXECUTE(). Please tell me if this is the case :)
-
-    //could you swtich-case but whatever
-    double dist = sensor.getDistance();
-    errorType = sensor.getErrorType();
-    Pose2d initialPose = dt.getPose();
-    Pose2d finalPose;
-    double distanceToMove;
-    if (errorType == 1) {
-      distanceToMove = (Constants.Roller.acceptableLeftLimit) - dist + 2; // added 2 to make sure that the new position is fine
-      finalPose = new Pose2d(initialPose.getX() - Units.inchesToMeters(distanceToMove), initialPose.getY(), initialPose.getRotation());
-      CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, dt));
-    }
-    else if (errorType == 2) {
-      distanceToMove = dist - (Constants.Roller.acceptableRightLimit) + 2; // added 2 to make sure that the new position is fine
-      finalPose = new Pose2d(initialPose.getX() + Units.inchesToMeters(distanceToMove), initialPose.getY(), initialPose.getRotation());
-      CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, dt));
-    }
-    else if (errorType == 0) {
-      // do nothing
-    }
+    sensor.correctPosition();
   }
 
   // Called once the command ends or is interrupted.
