@@ -26,24 +26,15 @@ public class Arm extends SubsystemBase
   private double kV = .019762; //volts*secs/rad | extra velocity
   private double kA = .00039212; //volts*secs^2/rad | vacceleration
   /// these are all units ^ , actual arm speed is determined by values in .calculate
-  private double Kp = 8.0781;
-  private double Kd = 3.0113;
+  private double Kp = 3.596;
+  private double Kd = 0;
   private double Ki = 0.0;
   
   private double setpoint = 2.2;
   private double FFvelocity = 6;
   private double FFaccel = 6;
   private ArmFeedforward armFeed = new ArmFeedforward(kS, kG, kV, kA);
-  
-  /* 
-  public void ArmWithFeedforwardPID(double VelocitySetpoint) {
-    
-    
-    motor.setVoltage(ArmFeedforward.calculate(VelocitySetpoint)
-        + pid.calculate(motorLencoder.getVelocity(),VelocitySetpoint));
-  } */
-  
-  // private PIDController pid = new PIDController(Kp, Ki, Kd);
+  private PIDController pid = new PIDController(Kp, Ki, Kd);
   
   public double goalPos;
 
@@ -91,6 +82,10 @@ public class Arm extends SubsystemBase
     SmartDashboard.putString("ArmENUM", 
     snappedArmPos().toString()
     );
+    SmartDashboard.putNumber("KP", Kp);
+    SmartDashboard.putNumber("KI", Ki);
+    SmartDashboard.putNumber("KD", Kd);
+    pid.setTolerance(2.5,10);
   }
 
   @Override
@@ -102,22 +97,30 @@ public class Arm extends SubsystemBase
     SmartDashboard.putString("ArmENUM", 
     (closeSnappedArmPos() != null) ? closeSnappedArmPos().toString() : snappedArmPos().toString()
     );
-    // pid.setTolerance(2.5,10);
-    // pid.atSetpoint();
+    Kp = SmartDashboard.getNumber("KP", Kp);
+    Ki = SmartDashboard.getNumber("KI", Ki);
+    Kd = SmartDashboard.getNumber("KD", Kd);
+    pid.setP(Kp);
+    pid.setI(Ki);
+    pid.setD(Kd);
+    //pid.atSetpoint();
 
     
     // motor.set(pid.calculate( motorLencoder.getPosition(), setpoint));
     double difference = goalPos - motorLencoder.getPosition();//RADIANS
     double dir = Math.abs(difference)/difference;
-    // if (Math.abs(difference) > encoderErrorTolerance){//even PID needs an acceptable error sometimes
+    if (Math.abs(difference) > encoderErrorTolerance){//even PID needs an acceptable error sometimes
       //assuming calculate() is some sort of PID-esque thing
-      motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel));
-    // } else {
-      // motor.set(0);
-    // }
-    SmartDashboard.putNumber("WTF DOES THIS RETURN", armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel));
-    
-    
+      motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel)
+         + pid.calculate(motorLencoder.getPosition(), goalPos));
+      //motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel));
+    } else {
+      //motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, 0, 0));
+      motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, 0, 0)
+         + pid.calculate(motorLencoder.getPosition(), goalPos));
+    }
+    //moveArmWithFeedforwardPID(goalPos);
+    // 
   }
 
   //Snaps raw encoder pos to one of our cycle positions
