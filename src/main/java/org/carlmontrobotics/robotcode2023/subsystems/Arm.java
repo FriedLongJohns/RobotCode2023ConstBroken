@@ -21,13 +21,13 @@ public class Arm extends SubsystemBase
 
   public double encoderErrorTolerance = .1;
 
-  private double kS = .067766; //volts | base speed
-  private double kG = .0075982; //volts | gravity... something
-  private double kV = .019762; //volts*secs/rad | extra velocity
-  private double kA = .00039212; //volts*secs^2/rad | vacceleration
-  /// these are all units ^ , actual arm speed is determined by values in .calculate
-  private double Kp = 3.596;
-  private double Kd = 0;
+  private double kS = .17764; //volts | base speed
+  private double kG = 4.1181; //volts | gravity... something
+  private double kV = 1.7912; //volts*secs/rad | extra velocity
+  private double kA = .15225; //volts*secs^2/rad | vacceleration
+  /// these are all units ^ , actual arm0.15225 speed is determined by values in .calculate
+  private double Kp = 7.2985;
+  private double Kd = 2.2943;
   private double Ki = 0.0;
   
   private double setpoint = 2.2;
