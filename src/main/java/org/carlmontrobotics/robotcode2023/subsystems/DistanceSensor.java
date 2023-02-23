@@ -11,6 +11,9 @@ import org.carlmontrobotics.robotcode2023.Constants;
 import org.carlmontrobotics.robotcode2023.commands.DriveToPoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -87,15 +90,28 @@ public class DistanceSensor extends SubsystemBase {
     switch (errorType) {
       case LEFT:
         distanceToMove = (Constants.Roller.acceptableLeftLimit) - dist + 2; // added 2 to make sure that the new position is fine
-        finalPose = new Pose2d(initialPose.getX() - Units.inchesToMeters(distanceToMove), initialPose.getY(), initialPose.getRotation());
+        /* finalPose = new Pose2d(initialPose.getX() + Units.inchesToMeters(distanceToMove), initialPose.getY(), initialPose.getRotation());
+        CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, dt));
+        */
+
+        Translation2d translation = new Translation2d(distanceToMove, initialPose.getRotation().plus(new Rotation2d(Math.PI/2)));
+        Transform2d transform = new Transform2d(translation, new Rotation2d(0));
+        finalPose = initialPose.plus(transform);
         CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, dt));
       case RIGHT:
         distanceToMove = dist - (Constants.Roller.acceptableRightLimit) + 2; // added 2 to make sure that the new position is fine
-        finalPose = new Pose2d(initialPose.getX() + Units.inchesToMeters(distanceToMove), initialPose.getY(), initialPose.getRotation());
+        /*finalPose = new Pose2d(initialPose.getX() - Units.inchesToMeters(distanceToMove), initialPose.getY(), initialPose.getRotation());
+        CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, dt));*/
+
+        Translation2d translation2 = new Translation2d(distanceToMove, initialPose.getRotation().plus(new Rotation2d(-Math.PI/2)));
+        Transform2d transform2 = new Transform2d(translation2, new Rotation2d(0));
+        finalPose = initialPose.plus(transform2);
         CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, dt));
       case MIDDLE:
         // do nothing
 
     }
+
+    // these are only temporary because the movements should be relavitve to the robot's orientation, not any particular axis.
   }
 }
