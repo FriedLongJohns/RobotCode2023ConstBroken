@@ -4,10 +4,12 @@
 
 package org.carlmontrobotics.robotcode2023;
 
+import com.pathplanner.lib.server.PathPlannerServer;
+
+import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.MotorErrors;
 import org.carlmontrobotics.lib199.sim.MockedSparkEncoder;
-
-import com.pathplanner.lib.server.PathPlannerServer;
+import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -17,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
 
   private RobotContainer robotContainer;
+  private Limelight lime;
+  private Drivetrain dt = new Drivetrain(lime);
 
   @Override
   public void robotInit() {
@@ -24,6 +28,7 @@ public class Robot extends TimedRobot {
     DriverStation.startDataLog(DataLogManager.getLog());
     if(!DriverStation.isFMSAttached()) PathPlannerServer.startServer(5811);
     robotContainer = new RobotContainer();
+    dt.driveForward();
   }
 
   @Override

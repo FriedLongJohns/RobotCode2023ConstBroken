@@ -1,21 +1,44 @@
 package org.carlmontrobotics.robotcode2023.subsystems;
 
-import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.*;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.autoMaxAccelMps2;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.autoMaxSpeedMps;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.canCoderPortBL;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.canCoderPortBR;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.canCoderPortFL;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.canCoderPortFR;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.driveBackLeftPort;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.driveBackRightPort;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.driveFrontLeftPort;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.driveFrontRightPort;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.isGyroReversed;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.maxSpeed;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.swerveConfig;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.thetaPIDController;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.trackWidth;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.turnBackLeftPort;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.turnBackRightPort;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.turnFrontLeftPort;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.turnFrontRightPort;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.wheelBase;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.xPIDController;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.yPIDController;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
+
+import com.kauailabs.navx.frc.AHRS;
 
 import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.lib199.path.SwerveDriveInterface;
 import org.carlmontrobotics.lib199.swerve.SwerveModule;
-
-import com.kauailabs.navx.frc.AHRS;
+import org.carlmontrobotics.robotcode2023.commands.DriveToPoint;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -27,6 +50,7 @@ import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
@@ -332,6 +356,14 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
             yPIDController,
             thetaPIDController
         };
+    }
+
+    public void driveForward() {
+        Pose2d position = getPose();
+        Translation2d translation = new Translation2d(1, position.getRotation());
+        Transform2d transform = new Transform2d(translation, new Rotation2d(0));
+        Pose2d finalPose = position.plus(transform);
+        CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, this));
     }
 
     //#endregion
