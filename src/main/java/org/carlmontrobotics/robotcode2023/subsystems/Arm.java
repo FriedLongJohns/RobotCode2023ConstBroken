@@ -22,12 +22,12 @@ public class Arm extends SubsystemBase
   public double encoderErrorTolerance = .1;
 
   private double kS = .17764; //volts | base speed
-  private double kG = 4.1181; //volts | gravity... something
+  private double kG = 7.1181; //volts | gravity... something
   private double kV = 1.7912; //volts*secs/rad | extra velocity
   private double kA = .15225; //volts*secs^2/rad | vacceleration
   /// these are all units ^ , actual arm0.15225 speed is determined by values in .calculate
-  private double Kp = 7.2985;
-  private double Kd = 2.2943;
+  private double Kp = 2.2985;
+  private double Kd = 1.2943;
   private double Ki = 0.0;
   
   private double setpoint = 2.2;
@@ -78,6 +78,7 @@ public class Arm extends SubsystemBase
     SmartDashboard.putNumber("FF: Velocity", FFvelocity);
     SmartDashboard.putNumber("FF: Acceleration", FFaccel);
     SmartDashboard.putNumber("GoalPosition", goalPos);
+    SmartDashboard.putNumber("KG", kG);
     SmartDashboard.putString("Debooog", "No.");
     SmartDashboard.putString("ArmENUM", 
     snappedArmPos().toString()
@@ -91,6 +92,7 @@ public class Arm extends SubsystemBase
   @Override
   public void periodic() {
     FFvelocity = SmartDashboard.getNumber("FF: Velocity", FFvelocity);
+    SmartDashboard.getNumber("KG", kG);
     FFaccel = SmartDashboard.getNumber("FF: Acceleration", FFaccel);
     goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
     SmartDashboard.putNumber("ArmLencoderPos", motorLencoder.getPosition());
