@@ -4,14 +4,13 @@ import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.robotcode2023.Constants;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public class Arm extends SubsystemBase
@@ -22,8 +21,8 @@ public class Arm extends SubsystemBase
   public double encoderErrorTolerance = .1;
 
   private double kS = .17764; //volts | base speed
-  private double kG = 4.1181; //volts | gravity... something
-  private double kV = 1.7912; //volts*secs/rad | extra velocity
+  private double kG = 1.8; //volts | gravity... something
+  private double kV = 2; //volts*secs/rad | extra velocity
   private double kA = .15225; //volts*secs^2/rad | vacceleration
   /// these are all units ^ , actual arm0.15225 speed is determined by values in .calculate
   private double Kp = 7.2985;
@@ -82,6 +81,10 @@ public class Arm extends SubsystemBase
     SmartDashboard.putString("ArmENUM", 
     snappedArmPos().toString()
     );
+    SmartDashboard.putNumber("kS", kS);
+    SmartDashboard.putNumber("kG", kG);
+    SmartDashboard.putNumber("kV", kV);
+    SmartDashboard.putNumber("kA", kA);
     SmartDashboard.putNumber("KP", Kp);
     SmartDashboard.putNumber("KI", Ki);
     SmartDashboard.putNumber("KD", Kd);
@@ -97,6 +100,13 @@ public class Arm extends SubsystemBase
     SmartDashboard.putString("ArmENUM", 
     (closeSnappedArmPos() != null) ? closeSnappedArmPos().toString() : snappedArmPos().toString()
     );
+    kS = SmartDashboard.getNumber("kS", kS);
+    kG = SmartDashboard.getNumber("kG", kG);
+    kV = SmartDashboard.getNumber("kV", kV);
+    kA = SmartDashboard.getNumber("kA", kA);
+    if(kS != armFeed.ks || kG != armFeed.kg || kV != armFeed.kv || kA != armFeed.ka){
+      armFeed = new ArmFeedforward(kS, kG, kV, kA);
+    }
     Kp = SmartDashboard.getNumber("KP", Kp);
     Ki = SmartDashboard.getNumber("KI", Ki);
     Kd = SmartDashboard.getNumber("KD", Kd);
@@ -105,18 +115,19 @@ public class Arm extends SubsystemBase
     pid.setD(Kd);
     //pid.atSetpoint();
 
-    
+    SmartDashboard.putNumber("ArmVoltage", motor.getAppliedOutput() * motor.getBusVoltage());
+    SmartDashboard.putNumber("ArmCurrent", motor.getOutputCurrent());
     // motor.set(pid.calculate( motorLencoder.getPosition(), setpoint));
     double difference = goalPos - motorLencoder.getPosition();//RADIANS
     double dir = Math.abs(difference)/difference;
-    if (Math.abs(difference) > encoderErrorTolerance){//even PID needs an acceptable error sometimes
+    if (Math.abs(difference) < encoderErrorTolerance){//even PID needs an acceptable error sometimes
       //assuming calculate() is some sort of PID-esque thing
-      motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel)
+      motor.set(dir * armFeed.calculate(goalPos - Math.PI/2, FFvelocity, FFaccel)
          + pid.calculate(motorLencoder.getPosition(), goalPos));
       //motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel));
     } else {
       //motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, 0, 0));
-      motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, 0, 0)
+      motor.set(dir * armFeed.calculate(goalPos - Math.PI/2, 0, 0)
          + pid.calculate(motorLencoder.getPosition(), goalPos));
     }
     //moveArmWithFeedforwardPID(goalPos);
@@ -170,4 +181,3 @@ public class Arm extends SubsystemBase
     SmartDashboard.putNumber("GoalPosition", preset.value);
   }
 }
-
