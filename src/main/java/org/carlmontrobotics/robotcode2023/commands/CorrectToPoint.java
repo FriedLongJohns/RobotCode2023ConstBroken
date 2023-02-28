@@ -8,6 +8,7 @@ import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.tolerance;
 
@@ -18,7 +19,7 @@ public class CorrectToPoint extends CommandBase {
   private PIDController pidX;
   private PIDController pidY;
   private PIDController pidTheta;
-  public CorrectToPoint(Drivetrain dt, Pose2d setpoint) {
+  public CorrectToPoint(Pose2d setpoint, Drivetrain dt) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(this.dt = dt);
     this.setpoint = setpoint;
@@ -36,9 +37,12 @@ public class CorrectToPoint extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SmartDashboard.putNumber("Target X", setpoint.getX());
+    SmartDashboard.putNumber("Target Y", setpoint.getY());
+    SmartDashboard.putNumber("Target Theta", setpoint.getRotation().getDegrees());
     dt.drive(pidX.calculate(dt.getPose().getX(), setpoint.getX()), 
              pidY.calculate(dt.getPose().getY(), setpoint.getY()),
-             pidTheta.calculate(dt.getPose().getRotation().getDegrees(), setpoint.getRotation().getDegrees()));
+             pidTheta.calculate(dt.getHeadingDeg(), setpoint.getRotation().getDegrees())); // TODO: make it turn -90 deg when told to turn 270 deg
   }
 
   // Called once the command ends or is interrupted.
@@ -52,7 +56,7 @@ public class CorrectToPoint extends CommandBase {
   public boolean isFinished() {
     double diffX = Math.abs(dt.getPose().getX() - setpoint.getX());
     double diffY = Math.abs(dt.getPose().getY() - setpoint.getY());
-    double diffTheta = Math.abs(dt.getPose().getRotation().getDegrees() - setpoint.getRotation().getDegrees());
+    double diffTheta = Math.abs(dt.getHeadingDeg() - setpoint.getRotation().getDegrees());
     return diffX < tolerance[0] && diffY < tolerance[1] && diffTheta < tolerance[2];
   }
 }

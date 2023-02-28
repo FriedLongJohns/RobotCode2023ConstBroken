@@ -68,7 +68,7 @@ public class RobotContainer {
     new POVButton(driverController, 0).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(0), drivetrain));
     new POVButton(driverController, 90).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(90), drivetrain));
     new POVButton(driverController, 180).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(180), drivetrain));
-    new POVButton(driverController, 270).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(270), drivetrain));
+    new POVButton(driverController, -90).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(270), drivetrain));
   }
   private void configureButtonBindingsManipulator() {}
 

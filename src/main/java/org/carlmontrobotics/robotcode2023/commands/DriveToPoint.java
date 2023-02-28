@@ -13,6 +13,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
@@ -31,14 +32,14 @@ public class DriveToPoint extends SequentialCommandGroup {
                         ),
                         PathPoint.fromCurrentHolonomicState(
                             targetPose,
-                            null
+                            new ChassisSpeeds(0, 0, 0)
                         )
                     ),
                     drivetrain,
                     new HashMap<>()
                 ).getPathCommand(true, true)
             ),
-            new CorrectToPoint(drivetrain, targetPose)
+            new CorrectToPoint(targetPose, drivetrain)
 
         );
         addRequirements(drivetrain);
