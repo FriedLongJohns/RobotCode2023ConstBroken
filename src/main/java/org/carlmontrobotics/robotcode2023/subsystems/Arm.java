@@ -74,7 +74,7 @@ public class Arm extends SubsystemBase
 
   public Arm(){
     motorLencoder.setPositionConversionFactor(2*Math.PI/100);
-    motorLencoder.setPosition(0.0);
+    motorLencoder.setPosition(-Math.PI / 2);
     SmartDashboard.putNumber("FF: Velocity", FFvelocity);
     SmartDashboard.putNumber("FF: Acceleration", FFaccel);
     SmartDashboard.putNumber("GoalPosition", goalPos);
@@ -107,22 +107,18 @@ public class Arm extends SubsystemBase
     pid.setD(Kd);
     //pid.atSetpoint();
 
-    
     // motor.set(pid.calculate( motorLencoder.getPosition(), setpoint));
     double difference = goalPos - motorLencoder.getPosition();//RADIANS
-    double dir = Math.abs(difference)/difference;
     if (Math.abs(difference) > encoderErrorTolerance){//even PID needs an acceptable error sometimes
       //assuming calculate() is some sort of PID-esque thing
-      motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel)
+      motor.setVoltage(armFeed.calculate(goalPos, FFvelocity, FFaccel)
          + pid.calculate(motorLencoder.getPosition(), goalPos));
       //motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel));
     } else {
       //motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, 0, 0));
-      motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, 0, 0)
+      motor.setVoltage(armFeed.calculate(goalPos, 0, 0)
          + pid.calculate(motorLencoder.getPosition(), goalPos));
     }
-    //moveArmWithFeedforwardPID(goalPos);
-    // 
   }
 
   //Snaps raw encoder pos to one of our cycle positions
