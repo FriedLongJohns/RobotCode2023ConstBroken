@@ -2,6 +2,7 @@ package org.carlmontrobotics.robotcode2023.commands;
 
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,7 +13,8 @@ import org.carlmontrobotics.robotcode2023.RobotContainer;
 
 public class RotateToFieldRelativeAngle extends CommandBase {
 
-    public static final int THRESHOLD = 2;
+    public static final double THRESHOLD = 2;
+
 
     public final Rotation2d angle;
     public final TeleopDrive teleopDrive;
@@ -46,7 +48,17 @@ public class RotateToFieldRelativeAngle extends CommandBase {
     
     @Override
     public boolean isFinished() {
-        return Math.abs(angle.getDegrees() - drivetrain.getHeading()) < THRESHOLD;
+        double targetDeg = MathUtil.inputModulus(angle.getDegrees(), -180, 180);
+        double heading = drivetrain.getHeading();
+        if (Math.signum(heading) == Math.signum(targetDeg)) {
+            return Math.abs(targetDeg - heading) < THRESHOLD;
+        }
+        if (targetDeg == 0) {
+            return Math.abs(heading) < THRESHOLD;
+        }
+        double targetAngle = Math.signum(targetDeg) * 180 - targetDeg;
+        double headingAngle = Math.signum(heading) * 180 - heading;
+        return Math.abs(targetAngle - headingAngle) < THRESHOLD;
     }
 
     @Override
