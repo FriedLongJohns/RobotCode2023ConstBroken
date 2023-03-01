@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController.Axis;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -49,9 +50,6 @@ public class RobotContainer {
     autoSelectors = new DigitalInput[Math.min(autoPaths.length, 26)];
     for(int i = 0; i < autoSelectors.length; i++) autoSelectors[i] = new DigitalInput(i);
 
-    configureButtonBindingsDriver();
-    configureButtonBindingsManipulator();
-
     drivetrain.setDefaultCommand(new TeleopDrive(
       drivetrain,
       () -> inputProcessing(getStickValue(driverController, Axis.kLeftY)),
@@ -59,6 +57,9 @@ public class RobotContainer {
       () -> inputProcessing(getStickValue(driverController, Axis.kRightX)),
       () -> driverController.getRawButton(Driver.slowDriveButton)
     ));
+    
+    configureButtonBindingsDriver();
+    configureButtonBindingsManipulator();    
   }
 
   private void configureButtonBindingsDriver() {
@@ -68,7 +69,7 @@ public class RobotContainer {
     new POVButton(driverController, 0).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(0), drivetrain));
     new POVButton(driverController, 90).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(90), drivetrain));
     new POVButton(driverController, 180).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(180), drivetrain));
-    new POVButton(driverController, 270).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(270), drivetrain));
+    new POVButton(driverController, -90).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(-90), drivetrain));
   }
   private void configureButtonBindingsManipulator() {}
 
