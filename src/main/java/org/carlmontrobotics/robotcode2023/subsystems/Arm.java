@@ -22,12 +22,12 @@ public class Arm extends SubsystemBase
   public double encoderErrorTolerance = .1;
 
   private double kS = .17764; //volts | base speed
-  private double kG = 7.1181; //volts | gravity... something
+  private double kG = 4.1181; //volts | gravity... something
   private double kV = 1.7912; //volts*secs/rad | extra velocity
   private double kA = .15225; //volts*secs^2/rad | vacceleration
   /// these are all units ^ , actual arm0.15225 speed is determined by values in .calculate
-  private double Kp = 2.2985;
-  private double Kd = 1.2943;
+  private double Kp = 7.2985;
+  private double Kd = 2.2943;
   private double Ki = 0.0;
   
   private double setpoint = 2.2;
@@ -39,7 +39,7 @@ public class Arm extends SubsystemBase
   public double goalPos;
 
   public enum ArmPreset {
-    INTAKE(0), MID(1), HIGH(2);
+    INTAKE(0), MID(1.5), HIGH(2);
     
     public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
     ArmPreset(double value) {
@@ -105,20 +105,16 @@ public class Arm extends SubsystemBase
     pid.setP(Kp);
     pid.setI(Ki);
     pid.setD(Kd);
+    double currentPos = motorLencoder.getPosition();
     //pid.atSetpoint();
 
     // motor.set(pid.calculate( motorLencoder.getPosition(), setpoint));
-    double difference = goalPos - motorLencoder.getPosition();//RADIANS
-    if (Math.abs(difference) > encoderErrorTolerance){//even PID needs an acceptable error sometimes
-      //assuming calculate() is some sort of PID-esque thing
-      motor.setVoltage(armFeed.calculate(goalPos, FFvelocity, FFaccel)
-         + pid.calculate(motorLencoder.getPosition(), goalPos));
-      //motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, FFvelocity, FFaccel));
-    } else {
-      //motor.set(dir * armFeed.calculate(goalPos + Math.PI/2, 0, 0));
-      motor.setVoltage(armFeed.calculate(goalPos, 0, 0)
-         + pid.calculate(motorLencoder.getPosition(), goalPos));
-    }
+    
+      motor.setVoltage(armFeed.calculate(currentPos, 0, 0)
+         + pid.calculate(currentPos, goalPos));
+     
+    
+    
   }
 
   //Snaps raw encoder pos to one of our cycle positions
