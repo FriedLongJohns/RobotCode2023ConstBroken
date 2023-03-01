@@ -13,30 +13,33 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-// Extend ProxyCommand so path is regenerated at runtime
 public class DriveToPoint extends SequentialCommandGroup {
 
     public DriveToPoint(Pose2d targetPose, Drivetrain drivetrain) {
         super(
-            new PPRobotPath(
-                PathPlanner.generatePath(
-                    new PathConstraints(maxSpeed, autoMaxAccelMps2),
-                    PathPoint.fromCurrentHolonomicState(
-                        drivetrain.getPose(),
-                        drivetrain.getSpeeds()
+            // Use ProxyCommand so path is regenerated at runtime
+            new ProxyCommand(() ->
+                new PPRobotPath(
+                    PathPlanner.generatePath(
+                        new PathConstraints(maxSpeed, autoMaxAccelMps2),
+                        PathPoint.fromCurrentHolonomicState(
+                            drivetrain.getPose(),
+                            drivetrain.getSpeeds()
+                        ),
+                        PathPoint.fromCurrentHolonomicState(
+                            targetPose,
+                            new ChassisSpeeds(0, 0, 0)
+                        )
                     ),
-                    PathPoint.fromCurrentHolonomicState(
-                        targetPose,
-                        null
-                    )
-                ),
-                drivetrain,
-                new HashMap<>()
-            ).getPathCommand(true, true),
-            new CorrectToPoint(drivetrain, targetPose)
+                    drivetrain,
+                    new HashMap<>()
+                ).getPathCommand(true, true)
+            ),
+            new CorrectToPoint(targetPose, drivetrain)
 
         );
         addRequirements(drivetrain);
