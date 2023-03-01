@@ -5,6 +5,7 @@ import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.robotcode2023.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
@@ -109,9 +110,13 @@ public class Arm extends SubsystemBase
     //pid.atSetpoint();
 
     // motor.set(pid.calculate( motorLencoder.getPosition(), setpoint));
+    //FIXME CLAMP LIMIT FOR PROTOTYPE ONLY
+    goalPos = MathUtil.clamp(goalPos, -Math.PI*1.4, -Math.PI*.5);
+    //                           -4.39,  -1.57
     
       motor.setVoltage(armFeed.calculate(currentPos, 0, 0)
          + pid.calculate(currentPos, goalPos));
+         
      
     
     
