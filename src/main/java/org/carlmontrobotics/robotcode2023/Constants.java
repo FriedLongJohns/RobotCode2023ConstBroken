@@ -18,6 +18,15 @@ public final class Constants {
 
     public static final class Arm{
         public static final int port = 2;
+
+        // all positions are in radians and are approximate
+        public static final double pickupCubePos = 0.31;
+        public static final double pickupConePos = 0.31;
+        public static final double midCubePos = -1.74;
+        public static final double midConePos = -1.74;
+        public static final double highCubePos = -1.83;
+        public static final double highConePos = -1.83;
+
     }
 
     public static final class OI {
