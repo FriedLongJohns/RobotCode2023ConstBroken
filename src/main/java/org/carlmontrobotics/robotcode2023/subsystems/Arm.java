@@ -9,6 +9,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
@@ -27,15 +28,14 @@ public class Arm extends SubsystemBase
   private double kV = 1.7912; //volts*secs/rad | extra velocity
   private double kA = .15225; //volts*secs^2/rad | vacceleration
   /// these are all units ^ , actual arm0.15225 speed is determined by values in .calculate
-  private double Kp = 7.2985;
-  private double Kd = 2.2943;
-  private double Ki = 0.0;
+  private double kP = 7.2985;
+  private double kD = 2.2943;
+  private double kI = 0.0;
   
-  private double setpoint = 2.2;
   private double FFvelocity = 6;
   private double FFaccel = 6;
   private ArmFeedforward armFeed = new ArmFeedforward(kS, kG, kV, kA);
-  private PIDController pid = new PIDController(Kp, Ki, Kd);
+  private PIDController pid = new PIDController(kP, kI, kD);
   
   public double goalPos;
 
@@ -84,28 +84,28 @@ public class Arm extends SubsystemBase
     SmartDashboard.putString("ArmENUM", 
     snappedArmPos().toString()
     );
-    SmartDashboard.putNumber("KP", Kp);
-    SmartDashboard.putNumber("KI", Ki);
-    SmartDashboard.putNumber("KD", Kd);
+    SmartDashboard.putNumber("kP", kP);
+    SmartDashboard.putNumber("kI", kI);
+    SmartDashboard.putNumber("kD", kD);
     pid.setTolerance(2.5,10);
   }
 
   @Override
   public void periodic() {
     FFvelocity = SmartDashboard.getNumber("FF: Velocity", FFvelocity);
-    SmartDashboard.getNumber("KG", kG);
     FFaccel = SmartDashboard.getNumber("FF: Acceleration", FFaccel);
     goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
     SmartDashboard.putNumber("ArmLencoderPos", motorLencoder.getPosition());
     SmartDashboard.putString("ArmENUM", 
     (closeSnappedArmPos() != null) ? closeSnappedArmPos().toString() : snappedArmPos().toString()
     );
-    Kp = SmartDashboard.getNumber("KP", Kp);
-    Ki = SmartDashboard.getNumber("KI", Ki);
-    Kd = SmartDashboard.getNumber("KD", Kd);
-    pid.setP(Kp);
-    pid.setI(Ki);
-    pid.setD(Kd);
+    kP = SmartDashboard.getNumber("kP", kP);
+    kI = SmartDashboard.getNumber("kI", kI);
+    kD = SmartDashboard.getNumber("kD", kD);
+    kG = SmartDashboard.getNumber("KG", kG);
+    pid.setP(kP);
+    pid.setI(kI);
+    pid.setD(kD);
     double currentPos = motorLencoder.getPosition();
     //pid.atSetpoint();
 
@@ -121,7 +121,21 @@ public class Arm extends SubsystemBase
     
     
   }
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
 
+    //builder.addBooleanProperty("Magnetic Field Disturbance", gyro::isMagneticDisturbance, null);
+    //builder.addDoubleProperty("Odometry X", () -> getPose().getX(), null);
+    builder.addDoubleProperty("FF: Velocity", () -> FFvelocity, x -> this.FFvelocity = x);
+    builder.addDoubleProperty("FF: Accel",    () -> FFaccel,    x -> this.FFaccel = x);
+
+    builder.addDoubleProperty("goalPos",      () -> goalPos,    x -> this.goalPos = x);
+
+    builder.addDoubleProperty("kP",           () -> kP,         x -> this.kP = x);
+    builder.addDoubleProperty("kI",           () -> kI,         x -> this.kI = x);
+    builder.addDoubleProperty("kD",           () -> kD,         x -> this.kD = x);
+}
   //Snaps raw encoder pos to one of our cycle positions
   public ArmPreset snappedArmPos(){
     double encoderPos = motorLencoder.getPosition();
@@ -155,7 +169,7 @@ public class Arm extends SubsystemBase
     SmartDashboard.putNumber("GoalPosition", 
     closeSnappedArmPos() != null ? closeSnappedArmPos().next().value : snappedArmPos().next().value
     );
-    // if closeSnappedArmPos is working, swap based on it - otherwise use less accurate snapping
+    // if closeSnappedArmPos is workIng, swap based on it - otherwise use less accurate snapping
   }
   
   public void cycleDown(){
