@@ -135,6 +135,11 @@ public class Arm extends SubsystemBase
     builder.addDoubleProperty("kP",           () -> kP,         x -> this.kP = x);
     builder.addDoubleProperty("kI",           () -> kI,         x -> this.kI = x);
     builder.addDoubleProperty("kD",           () -> kD,         x -> this.kD = x);
+    builder.addDoubleProperty("kV",           () -> kV,         x -> this.kV = x);
+    builder.addDoubleProperty("kG",           () -> kG,         x -> this.kG = x);
+    builder.addDoubleProperty("kS",           () -> kS,         x -> this.kS = x);
+    builder.addDoubleProperty("kA",           () -> kA,         x -> this.kA = x);
+
 }
   //Snaps raw encoder pos to one of our cycle positions
   public ArmPreset snappedArmPos(){
