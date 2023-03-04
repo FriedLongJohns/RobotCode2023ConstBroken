@@ -31,10 +31,10 @@ public final class Constants {
 
     public static final class OI {
         public static final class Driver {
-            public static final int port = 1;
+            public static final int port = 0;
         }
         public static final class Manipulator {
-            public static final int port = 0;
+            public static final int port = 1;
             public static final int cone = Button.kRightBumper.value;
             public static final int cube = Button.kLeftBumper.value;
             public static final int intake = Button.kA.value;

@@ -5,11 +5,14 @@ import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.robotcode2023.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -17,10 +20,7 @@ import com.revrobotics.RelativeEncoder;
 public class Arm extends SubsystemBase {
   
   public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
-  public static CANSparkMax motorL = MotorControllerFactory.createSparkMax(Constants.Arm.portL, TemperatureLimit.NEO);
-  public CANSparkMax motorR = MotorControllerFactory.createSparkMax(Constants.Arm.portR, TemperatureLimit.NEO);
-  private final RelativeEncoder motorLencoder = motorL.getEncoder();
-  private final RelativeEncoder motorRencoder = motorR.getEncoder();
+  public AbsoluteEncoder encoder;
 
   public double encoderErrorTolerance = .05;
 
@@ -29,10 +29,14 @@ public class Arm extends SubsystemBase {
   private double kV = .019762; //volts*secs/rad | extra velocity
   private double kA = .00039212; //volts*secs^2/rad | vacceleration
   /// these are all units ^ , actual arm speed is determined by values in .calculate
+  private double kP = 1.1;
+  private double kI = 1.1;
+  private double kD = 1.1;
+
   private double FFvelocity = .01;
   private double FFaccel = .01;
   private ArmFeedforward armFeed = new ArmFeedforward(kS, kG, kV, kA);
-  private PIDController pid = new PIDController(Kp, Ki, Kd);
+  private PIDController pid = new PIDController(kA, kI, kD);
   
   public double goalPos;
 
@@ -52,22 +56,32 @@ public class Arm extends SubsystemBase {
       }
       return null;
     }
-  }
+    public ArmPreset prev() {
+      switch (this) {
+        case MID: return INTAKE;
+
+        case HIGH: return MID;
+        case INTAKE: return HIGH;
+      }
+      return null;
+      }  
+    }
+  
 
   public Arm() {
-    motorLencoder.setPositionConversionFactor(1/60);
-    motorLencoder.setPosition(0.0);
-    SmartDashboard.putNumber("FF: Velocity", FFvelocity);
-    SmartDashboard.putNumber("FF: Acceleration", FFaccel);
-    SmartDashboard.putNumber("GoalPosition", goalPos);
-    SmartDashboard.putNumber("KG", kG);
-    SmartDashboard.putString("Debooog", "No.");
-    SmartDashboard.putString("ArmENUM", 
-    snappedArmPos().toString()
+    encoder.setPositionConversionFactor(1/60);
+    encoder.getZeroOffset();
+      SmartDashboard.putNumber("FF: Velocity", FFvelocity);
+      SmartDashboard.putNumber("FF: Acceleration", FFaccel);
+      SmartDashboard.putNumber("GoalPosition", goalPos);
+      SmartDashboard.putNumber("KG", kG);
+      SmartDashboard.putString("Debooog", "No.");
+      SmartDashboard.putString("ArmENUM", 
+      snappedArmPos().toString()
     );
-    SmartDashboard.putNumber("KP", Kp);
-    SmartDashboard.putNumber("KI", Ki);
-    SmartDashboard.putNumber("KD", Kd);
+    SmartDashboard.putNumber("kP", kP);
+    SmartDashboard.putNumber("kI", kI);
+    SmartDashboard.putNumber("kD", kD);
     pid.setTolerance(2.5,10);
   }
 
@@ -76,20 +90,20 @@ public class Arm extends SubsystemBase {
     FFvelocity = SmartDashboard.getNumber("FF: Velocity", FFvelocity);
     FFaccel = SmartDashboard.getNumber("FF: Acceleration", FFaccel);
     goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
-    SmartDashboard.putNumber("ArmLencoderPos", motorLencoder.getPosition());
+    SmartDashboard.putNumber("ArmLencoderPos", encoder.	getZeroOffset());
     SmartDashboard.putString("ArmENUM", 
-    (closeSnappedArmPos() != null) ? closeSnappedArmPos().toString() : snappedArmPos().toString()
+      (closeSnappedArmPos() != null) ? closeSnappedArmPos().toString() : snappedArmPos().toString()
     );
-    Kp = SmartDashboard.getNumber("KP", Kp);
-    Ki = SmartDashboard.getNumber("KI", Ki);
-    Kd = SmartDashboard.getNumber("KD", Kd);
-    pid.setP(Kp);
-    pid.setI(Ki);
-    pid.setD(Kd);
-    double currentPos = motorLencoder.getPosition();
+    kP = SmartDashboard.getNumber("kP", kP);
+    kI = SmartDashboard.getNumber("kI", kI);
+    kD = SmartDashboard.getNumber("kD", kD);
+    pid.setP(kP);
+    pid.setI(kI);
+    pid.setD(kD);
+    double currentPos = encoder.getZeroOffset();
     //pid.atSetpoint();
 
-    // motor.set(pid.calculate( motorLencoder.getPosition(), setpoint));
+    // motor.set(pid.calculate( motorLencoder.	getZeroOffset(), setpoint));
     //FIXME CLAMP LIMIT FOR PROTOTYPE ONLY
     goalPos = MathUtil.clamp(goalPos, -Math.PI*1.4, -Math.PI*.5);
     //                           -4.39,  -1.57
@@ -123,7 +137,7 @@ public class Arm extends SubsystemBase {
 }
   //Snaps raw encoder pos to one of our cycle positions
   public ArmPreset snappedArmPos() {
-    double encoderPos = motorLencoder.getPosition();
+    double encoderPos = encoder.getZeroOffset();
     
     for(ArmPreset check : ArmPreset.values()) {
       double lowdist = (check.value - check.prev().value) / 2;
@@ -139,7 +153,7 @@ public class Arm extends SubsystemBase {
   }
 
   public ArmPreset closeSnappedArmPos() {//more precise snapping
-    double encoderPos = motorLencoder.getPosition();
+    double encoderPos = encoder.getZeroOffset();
     
     for(ArmPreset check : ArmPreset.values()) {
         if (Math.abs(check.value - encoderPos) > encoderErrorTolerance) {//maybe will break if cone/cube values are close, but if they are close then lower error or only use one enum
@@ -155,13 +169,12 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("GoalPosition", 
     closeSnappedArmPos() != null ? closeSnappedArmPos().next().value : snappedArmPos().next().value
     );
-    // if closeSnappedArmPos is working, swap based on it - otherwise use less accurate snapping
+    // if closeSnappedArmPos is workIng, swap based on it - otherwise use less accurate snapping
   }
   
   public void cycleDown() {
     SmartDashboard.putNumber("GoalPosition", 
-    closeSnappedArmPos() != null ? closeSnappedArmPos().prev().value : snappedArmPos().prev().value
-    );
+    closeSnappedArmPos() != null ? closeSnappedArmPos().prev().value : snappedArmPos().prev().value);
   }
   
   public void setPreset(ArmPreset preset) {
