@@ -17,12 +17,11 @@ import edu.wpi.first.wpilibj2.command.ProxyCommand;
 
 // Extend ProxyCommand so path is regenerated at runtime
 public class DriveToPoint extends ProxyCommand {
-
     public DriveToPoint(Pose2d targetPose, Drivetrain drivetrain) {
         super(() ->
             new PPRobotPath(
                 PathPlanner.generatePath(
-                    new PathConstraints(maxSpeed, autoMaxAccelMps2),
+                    new PathConstraints(.5, autoMaxAccelMps2),
                     PathPoint.fromCurrentHolonomicState(
                         drivetrain.getPose(),
                         drivetrain.getSpeeds()
@@ -40,3 +39,5 @@ public class DriveToPoint extends ProxyCommand {
     }
 
 }
+
+

@@ -63,6 +63,9 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     private boolean fieldOriented = true;
     private double fieldOffset = 0;
 
+    private double testDistX = 0;
+    private double testDistY = 0;
+
     public final float initPitch;
     public final float initRoll;
 
@@ -168,6 +171,8 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // SmartDashboard.putNumber("Compass Offset", compassOffset);
         // SmartDashboard.putBoolean("Current Magnetic Field Disturbance",
         // gyro.isMagneticDisturbance());
+        testDistX = SmartDashboard.getNumber("Dest X", 0);
+        testDistY = SmartDashboard.getNumber("Dest Y", 0);
     }
 
     @Override
@@ -364,6 +369,23 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         Transform2d transform = new Transform2d(translation, new Rotation2d(0));
         Pose2d finalPose = position.plus(transform);
         CommandScheduler.getInstance().schedule(new DriveToPoint(finalPose, this));
+    }
+
+    public void testDriveToPoint(){
+        //using smartDashboard determined values, robot first drives X poseX determined meters, then drives Y poseY determined meters
+        Pose2d position = getPose();
+        //goes DistY 0 degrees from original angle
+        Translation2d xTrans = new Translation2d(testDistX, position.getRotation());
+        Transform2d transformX = new Transform2d(xTrans, new Rotation2d(0));
+        Pose2d poseX = position.plus(transformX);
+        CommandScheduler.getInstance().schedule(new DriveToPoint(poseX, this));
+
+        Pose2d position2 = getPose();
+        //goes DistY 90 degrees from original angle
+        Translation2d yTrans = new Translation2d(testDistY, position.getRotation());
+        Transform2d transformY = new Transform2d(xTrans, new Rotation2d(Math.PI/2));
+        Pose2d poseY = position.plus(transformY);
+        CommandScheduler.getInstance().schedule(new DriveToPoint(poseY, this));
     }
 
     //#endregion

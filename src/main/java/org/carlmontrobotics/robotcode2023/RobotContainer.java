@@ -62,6 +62,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsDriver() {
+    new JoystickButton(driverController, Driver.testButton).onTrue(new InstantCommand(drivetrain::testDriveToPoint));
     new JoystickButton(driverController, Driver.chargeStationAlignButton).onTrue(new AlignChargingStation(drivetrain));
     new JoystickButton(driverController, Driver.resetFieldOrientationButton).onTrue(new InstantCommand(drivetrain::resetFieldOrientation));
     new JoystickButton(driverController, Driver.toggleFieldOrientedButton).onTrue(new InstantCommand(() -> drivetrain.setFieldOriented(!drivetrain.getFieldOriented())));

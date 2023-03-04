@@ -147,6 +147,8 @@ public final class Constants {
         public static final class Driver {
             public static final int port = 0;
 
+            public static final int testButton = Button.kY.value;
+
             public static final int slowDriveButton = Button.kLeftBumper.value;
             public static final int chargeStationAlignButton = Button.kA.value;
             public static final int resetFieldOrientationButton = Button.kB.value;
