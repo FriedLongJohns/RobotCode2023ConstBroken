@@ -29,9 +29,6 @@ public class RobotContainer {
 
   private void configureButtonBindingsDriver() {}
   private void configureButtonBindingsManipulator() {
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cycleUp).onTrue(new InstantCommand(()->arm.cycleUp()));
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.cycleDown).onTrue(new InstantCommand(()->arm.cycleDown()));
-    
   }
 
   public Command getAutonomousCommand() {
