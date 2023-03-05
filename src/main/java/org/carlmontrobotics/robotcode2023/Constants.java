@@ -97,7 +97,9 @@ public final class Constants {
         // PID values are listed in the order kP, kI, and kD
         public static final double[] xPIDController = {4, 0.0, 0.0};
         public static final double[] yPIDController = {4, 0.0, 0.0};
-        public static final double[] thetaPIDController = {4, 0.0, 0.0};
+        public static final double[] thetaPIDController = {0.08, 0.0, 0.0};
+        public static final double[] tolerance = {1, 1, 5};
+
 
         public static final SwerveConfig swerveConfig = new SwerveConfig(wheelDiameterMeters, driveGearing, mu, autoCentripetalAccel, kForwardVolts, kForwardVels, kForwardAccels, kBackwardVolts, kBackwardVels, kBackwardAccels, drivekP, drivekI, drivekD, turnkP, turnkI, turnkD, turnkS, turnkV, turnkA, turnZero, driveInversion, reversed, driveModifier, turnInversion);
 
