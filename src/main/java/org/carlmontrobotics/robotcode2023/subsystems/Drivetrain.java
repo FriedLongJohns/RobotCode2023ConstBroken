@@ -71,7 +71,8 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
     public Drivetrain(Limelight lime) {
         this.lime = lime;
-
+        SmartDashboard.putNumber("Dist X", 0);
+        SmartDashboard.putNumber("Dist X", 0);
         // Calibrate Gyro
         {
             gyro.calibrate();
@@ -171,8 +172,9 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // SmartDashboard.putNumber("Compass Offset", compassOffset);
         // SmartDashboard.putBoolean("Current Magnetic Field Disturbance",
         // gyro.isMagneticDisturbance());
-        testDistX = SmartDashboard.getNumber("Dest X", 0);
-        testDistY = SmartDashboard.getNumber("Dest Y", 0);
+        
+        testDistX = SmartDashboard.getNumber("Dist X", 0);
+        testDistY = SmartDashboard.getNumber("Dist Y", 0);
     }
 
     @Override
