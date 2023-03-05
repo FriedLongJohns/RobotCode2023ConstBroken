@@ -11,15 +11,14 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
+
 
 
 public class Arm extends SubsystemBase {
   
   public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
-  public AbsoluteEncoder encoder;
+  public SparkMaxAbsoluteEncoder encoder;
 
   public double encoderErrorTolerance = .05;
 
@@ -79,7 +78,7 @@ public class Arm extends SubsystemBase {
     builder.addDoubleProperty("kG",           () -> kG,         x -> this.kG = x);
     builder.addDoubleProperty("kS",           () -> kS,         x -> this.kS = x);
     builder.addDoubleProperty("kA",           () -> kA,         x -> this.kA = x);
-  }
+}
   
   public void setPreset(ArmPreset preset) {
     SmartDashboard.putNumber("GoalPosition", preset.value);
