@@ -10,16 +10,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 
 
 public class Arm extends SubsystemBase
 {
   public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
-  public static CANSparkMax motorL = MotorControllerFactory.createSparkMax(Constants.Arm.portL, TemperatureLimit.NEO);
-  public CANSparkMax motorR = MotorControllerFactory.createSparkMax(Constants.Arm.portR, TemperatureLimit.NEO);
-  public RelativeEncoder motorLencoder = motorL.getEncoder();
-  public RelativeEncoder motorRencoder = motorR.getEncoder();
-
+  public SparkMaxAbsoluteEncoder encoder;
+  
   public double encoderErrorTolerance = .05;
 
   private double kS = .067766; //volts | base speed
@@ -59,8 +57,8 @@ public class Arm extends SubsystemBase
   }
 
   public Arm(){
-    motorLencoder.setPositionConversionFactor(1/60);
-    motorLencoder.setPosition(0.0);
+    encoder.setPositionConversionFactor(1/60);
+    encoder.getZeroOffset();
     SmartDashboard.putNumber("FF: Velocity", FFvelocity);
     SmartDashboard.putNumber("FF: Acceleration", FFaccel);
     SmartDashboard.putNumber("GoalPosition", goalPos);
@@ -71,9 +69,9 @@ public class Arm extends SubsystemBase
     FFvelocity = SmartDashboard.getNumber("FF: Velocity", FFvelocity);
     FFaccel = SmartDashboard.getNumber("FF: Acceleration", FFaccel);
     goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
-    SmartDashboard.putNumber("ArmLencoderPos", motorLencoder.getPosition());
+    SmartDashboard.putNumber("ArmLencoderPos", encoder.getPosition());
 
-    double difference = goalPos - motorLencoder.getPosition();
+    double difference = goalPos - encoder.getPosition();
     if (difference > encoderErrorTolerance){//even PID needs an acceptable error sometimes
       //assuming calculate() is some sort of PID-esque thing
       motor.set(armFeed.calculate(difference, FFvelocity, FFaccel));
@@ -82,7 +80,7 @@ public class Arm extends SubsystemBase
 
   //Snaps raw encoder pos to one of our cycle positions
   public ArmPreset snappedArmPos(){
-    double encoderPos = motorLencoder.getPosition();
+    double encoderPos = encoder.getPosition();
     
     for(ArmPreset check : ArmPreset.values()){
       double lowdist = (check.value - check.prev().value) / 2;
@@ -98,7 +96,7 @@ public class Arm extends SubsystemBase
   }
 
   public ArmPreset closeSnappedArmPos() {//more precise snapping
-    double encoderPos = motorLencoder.getPosition();
+    double encoderPos = encoder.getPosition();
     
     for(ArmPreset check : ArmPreset.values()){
         if (Math.abs(check.value - encoderPos) > encoderErrorTolerance) {//maybe will break if cone/cube values are close, but if they are close then lower error or only use one enum

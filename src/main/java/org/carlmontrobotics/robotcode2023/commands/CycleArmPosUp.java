@@ -35,7 +35,7 @@ public class CycleArmPosUp extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     if (interrupted){
-      arm.goalPos = arm.motorLencoder.getPosition();
+      arm.goalPos = arm.encoder.getZeroOffset();
     }
   }
 
