@@ -96,9 +96,9 @@ public class Arm extends SubsystemBase
   }
 
   public ArmPreset closeSnappedArmPos() {//more precise snapping
-    double encoderPos = encoder.getPosition();
+    double encoderPos = encoder.getZeroOffset();
     
-    for(ArmPreset check : ArmPreset.values()){
+    for(ArmPreset check : ArmPreset.values()) {
         if (Math.abs(check.value - encoderPos) > encoderErrorTolerance) {//maybe will break if cone/cube values are close, but if they are close then lower error or only use one enum
             return check;
         }
@@ -107,20 +107,20 @@ public class Arm extends SubsystemBase
     return null;
   }
 
-  public void cycleUp(){ 
+  public void cycleUp() { 
     // because most people won't remember/want to do this long function chain
-    SmartDashboard.putNumber("GoalPosition", 
-    closeSnappedArmPos() != null ? closeSnappedArmPos().next().value : snappedArmPos().next().value);
-    // if closeSnappedArmPos is working, swap based on it - otherwise use less accurate snapping
-  }
-  
-  public void cycleDown(){
-    SmartDashboard.putNumber("GoalPosition", 
-    closeSnappedArmPos() != null ? closeSnappedArmPos().prev().value : snappedArmPos().prev().value
+     SmartDashboard.putNumber("GoalPosition", 
+     closeSnappedArmPos() != null ? closeSnappedArmPos().next().value : snappedArmPos().next().value
     );
+    // if closeSnappedArmPos is workIng, swap based on it - otherwise use less accurate snapping
   }
   
-  public void setPreset(ArmPreset preset){
+  public void cycleDown() {
+    SmartDashboard.putNumber("GoalPosition", 
+    closeSnappedArmPos() != null ? closeSnappedArmPos().prev().value : snappedArmPos().prev().value);
+  }
+  
+  public void setPreset(ArmPreset preset) {
     SmartDashboard.putNumber("GoalPosition", preset.value);
   }
 }

@@ -4,12 +4,8 @@
 
 package org.carlmontrobotics.robotcode2023.commands;
 
-import org.carlmontrobotics.robotcode2023.Constants;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 
-import com.revrobotics.SparkMaxAbsoluteEncoder;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class CycleArmPosDown extends CommandBase {
