@@ -12,15 +12,14 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
+
 
 
 public class Arm extends SubsystemBase {
   
   public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
-  public AbsoluteEncoder encoder;
+  public SparkMaxAbsoluteEncoder encoder;
 
   public double encoderErrorTolerance = .05;
 
@@ -166,8 +165,8 @@ public class Arm extends SubsystemBase {
 
   public void cycleUp() { 
     // because most people won't remember/want to do this long function chain
-    SmartDashboard.putNumber("GoalPosition", 
-    closeSnappedArmPos() != null ? closeSnappedArmPos().next().value : snappedArmPos().next().value
+     SmartDashboard.putNumber("GoalPosition", 
+     closeSnappedArmPos() != null ? closeSnappedArmPos().next().value : snappedArmPos().next().value
     );
     // if closeSnappedArmPos is workIng, swap based on it - otherwise use less accurate snapping
   }
