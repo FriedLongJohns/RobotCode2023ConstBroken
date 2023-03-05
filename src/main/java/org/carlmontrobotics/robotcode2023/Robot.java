@@ -19,8 +19,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
 
   private RobotContainer robotContainer;
-  private Limelight lime;
-  private Drivetrain dt = new Drivetrain(lime);
 
   @Override
   public void robotInit() {
@@ -28,7 +26,6 @@ public class Robot extends TimedRobot {
     DriverStation.startDataLog(DataLogManager.getLog());
     if(!DriverStation.isFMSAttached()) PathPlannerServer.startServer(5811);
     robotContainer = new RobotContainer();
-    dt.driveForward();
   }
 
   @Override

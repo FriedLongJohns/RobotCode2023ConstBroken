@@ -8,6 +8,7 @@ import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.tolerance;
@@ -57,6 +58,6 @@ public class CorrectToPoint extends CommandBase {
     double diffX = Math.abs(dt.getPose().getX() - setpoint.getX());
     double diffY = Math.abs(dt.getPose().getY() - setpoint.getY());
     double diffTheta = Math.abs(dt.getHeadingDeg() - setpoint.getRotation().getDegrees());
-    return diffX < tolerance[0] && diffY < tolerance[1] && diffTheta < tolerance[2];
+    return diffX < tolerance[0] && diffY < tolerance[1] && diffTheta < tolerance[2] && dt.getSpeeds().vxMetersPerSecond < tolerance[0] && dt.getSpeeds().vyMetersPerSecond < tolerance[1] && Units.radiansToDegrees(dt.getSpeeds().omegaRadiansPerSecond) < tolerance[2];
   }
 }
