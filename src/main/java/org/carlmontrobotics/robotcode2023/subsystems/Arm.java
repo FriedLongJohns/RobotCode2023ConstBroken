@@ -18,14 +18,14 @@ import com.revrobotics.CANSparkMax;
 
 public class Arm extends SubsystemBase {
 
-  private CANSparkMax motor = MotorControllerFactory.createSparkMax(17, TemperatureLimit.NEO);
-  private SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+  //actual arm
+//  private CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
+//  private SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
   private double gearRatio = 225;
   
-  /*
-  public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
-  public SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
-  public double encoderErrorTolerance = .05;
+//  public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
+//  public SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+//  public double encoderErrorTolerance = .05;
 
   private double kS = .067766; //volts | base speed
   private double kG = .0075982; //volts | gravity... something
@@ -42,10 +42,12 @@ public class Arm extends SubsystemBase {
   private PIDController pid = new PIDController(kP, kI, kD);
   
   private double goalPos;
+  public final DoubleConsumer setGoalPos = (pos) -> {goalPos = MathUtil.clamp(pos, loClamp, hiClamp);};
+  public final DoubleSupplier getGoalPos = () -> {return goalPos;};
   private double EncoderPos = encoder.getZeroOffset();
     
-  public double hiClamp = -Math.PI*.5; //TODO GET NUMBERS
-  public double loClamp = -Math.PI*1.4;
+  private double hiClamp = -Math.PI*.5; //TODO GET NUMBERS
+  private double loClamp = -Math.PI*1.4;
 
   public enum ArmPreset {
     INTAKE(0.31), MID(-1.74), HIGH(-1.83);
@@ -55,11 +57,10 @@ public class Arm extends SubsystemBase {
       this.value = value;
     }
   }
-  */
 
   public Arm() {
     /*
-    encoder.setPositionConversionFactor(1/60);
+    encoder.setPositionConversionFactor(1/gearRatio);
     encoder.getZeroOffset();
     pid.setTolerance(2.5,10);
     */

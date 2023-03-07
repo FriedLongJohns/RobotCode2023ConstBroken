@@ -5,7 +5,7 @@
 package org.carlmontrobotics.robotcode2023;
 
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
-//import org.carlmontrobotics.robotcode2023.subsystems.Arm.ArmPreset;
+import org.carlmontrobotics.robotcode2023.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -21,6 +21,7 @@ public class RobotContainer {
   public final Joystick manipulatorController = new Joystick(1);
   public final PowerDistribution pd = new PowerDistribution();
   public final Arm arm = new Arm();
+  public final Wrist wrist = new Wrist();
 
   public RobotContainer() {
     configureButtonBindingsDriver();
@@ -29,6 +30,18 @@ public class RobotContainer {
 
   private void configureButtonBindingsDriver() {}
   private void configureButtonBindingsManipulator() {
+      new JoystickButton(manipulatorController, Constants.OI.Controller.Y).whenPressed(() -> { new InstantCommand(() -> {
+        arm.goalPos = Arm.ArmPreset.HIGH.value;
+        wrist.goalPos = Wrist.WristPreset.HIGH.value;
+      });});
+      new JoystickButton(manipulatorController, Constants.OI.Controller.B).whenPressed(() -> { new InstantCommand(() -> {
+        arm.goalPos = Arm.ArmPreset.MID.value;
+        wrist.goalPos = Wrist.WristPreset.MID.value;
+      });});
+      new JoystickButton(manipulatorController, Constants.OI.Controller.A).whenPressed(() -> { new InstantCommand(() -> {
+        arm.goalPos = Arm.ArmPreset.INTAKE.value;
+        wrist.goalPos = Wrist.WristPreset.INTAKE.value;
+      });});
   }
 
   public Command getAutonomousCommand() {

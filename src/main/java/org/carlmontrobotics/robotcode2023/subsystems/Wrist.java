@@ -36,8 +36,9 @@ public class Wrist extends SubsystemBase {
   private ArmFeedforward wristFeed = new ArmFeedforward(kS, kG, kV, kA);
   private PIDController pid = new PIDController(kP, kI, kD);
   
-  private double goalPos = 0; // initial position
-    //FIXME GET ACTUAL OFFSET (if needed)
+  public double goalPos = 0; // initial position
+  //FIXME GET ACTUAL OFFSET (if needed)
+  //TODO offset by arm encoderPos but also allow local clamping
     
   private double hiClamp = Math.PI*.5; //FIXME GET NUMBERS
   private double loClamp = -Math.PI*.5;

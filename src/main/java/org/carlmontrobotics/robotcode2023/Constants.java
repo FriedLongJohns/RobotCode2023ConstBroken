@@ -5,6 +5,7 @@
 package org.carlmontrobotics.robotcode2023;
 
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.Joystick;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -24,14 +25,7 @@ public final class Constants {
     public static final double grabber_closed_position = -6.9;
     public static final class Arm{
         public static final int port = 2;
-
-        // all positions are in radians and are approximate
-        public static final double pickupCubePos = 0.31;
-        public static final double pickupConePos = 0.31;
-        public static final double midCubePos = -1.74;
-        public static final double midConePos = -1.74;
-        public static final double highCubePos = -1.83;
-        public static final double highConePos = -1.83;
+      //17 for real robot
     }
     public static final class Wrist {
         public static final int port = 5;
@@ -50,6 +44,49 @@ public final class Constants {
             public static final int cycleUp = 1;//FIXME use correct buttons
             public static final int cycleDown = 2;
         }
-    }
+        public static final class Controller {
+          public static final int port = 2;
 
+          public static Joystick controller = new Joystick(port);
+
+          public static int X;
+          public static int A;
+          public static int B;
+          public static int Y;
+          public static int LB;
+          public static int RB;
+          public static int LT;
+          public static int RT;
+          public static int BACK;
+          public static int START;
+
+          //TODO: mode button setting to teletop init
+          static {
+              if (controller.getName().equals("Logitech Dual Action")) {
+                  // Buttons and triggers
+                  X = 1;
+                  A = 2;
+                  B = 3;
+                  Y = 4;
+                  LB = 5;
+                  RB = 6;
+                  LT = 7;
+                  RT = 8;
+                  BACK = 9;
+                  START = 10;
+              } else {
+                  // Buttons and triggers for xbox controller
+                  X = 3;
+                  A = 1;
+                  B = 2;
+                  Y = 4;
+                  LB = 5;
+                  RB = 6;
+                  BACK = 7;
+                  START = 8;
+                  //todo get arrow buttons
+              }
+           }
+        }
+    }
 }
