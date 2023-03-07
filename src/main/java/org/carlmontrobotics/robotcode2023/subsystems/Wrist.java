@@ -26,27 +26,29 @@ public class Wrist extends SubsystemBase {
   private double kV = .019762; //volts*secs/rad | extra velocity
   private double kA = .00039212; //volts*secs^2/rad | vacceleration
   /// these are all units ^ , actual arm speed is determined by values in .calculate
+  //FIXME DO WRIST sysid
   private double kP = 0;
-  private double kI = 0; //will add real values
+  private double kI = 0; //FIXME add real values
   private double kD = 0;
 
   private double FFvelocity = .01;
   private double FFaccel = .01;
-  private ArmFeedforward armFeed = new ArmFeedforward(kS, kG, kV, kA);
+  private ArmFeedforward wristFeed = new ArmFeedforward(kS, kG, kV, kA);
   private PIDController pid = new PIDController(kP, kI, kD);
   
-  private double goalPos = -Math.PI / 2; // initial position
+  private double goalPos = 0; // initial position
+    //FIXME GET ACTUAL OFFSET (if needed)
     
-  private double hiClamp = -Math.PI*.5; //TODO GET NUMBERS
-  private double loClamp = -Math.PI*1.4;
+  private double hiClamp = Math.PI*.5; //FIXME GET NUMBERS
+  private double loClamp = -Math.PI*.5;
 
-  private double gearRatio = 1/200;
+  private double gearRatio = 1;//FIX ME GET GEAR RATIO
 
-  public enum ArmPreset {
+  public enum WristPreset {
     INTAKE(0.31), MID(-1.74), HIGH(-1.83);
     
     public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
-    ArmPreset(double value) {
+    WristPreset(double value) {
       this.value = value;
     }
   }
@@ -67,8 +69,8 @@ public class Wrist extends SubsystemBase {
     //goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);    
     goalPos = MathUtil.clamp(goalPos, loClamp, hiClamp);
       
-    motor.setVoltage(armFeed.calculate(currentPos, 0, 0)
-         + pid.calculate(currentPos, goalPos));                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+    motor.setVoltage(wristFeed.calculate(currentPos, 0, 0)
+         + pid.calculate(currentPos, goalPos));
   }
 
   @Override
@@ -86,7 +88,7 @@ public class Wrist extends SubsystemBase {
     builder.addDoubleProperty("kA",           () -> kA,         x -> this.kA = x);
   }
   
-  public void setPreset(ArmPreset preset) {
+  public void setPreset(WristPreset preset) {
     goalPos = preset.value;
   }
 }
