@@ -14,6 +14,9 @@ import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax;
 
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleSupplier;
+
 
 
 public class Arm extends SubsystemBase {
@@ -23,9 +26,9 @@ public class Arm extends SubsystemBase {
 //  private SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
   private double gearRatio = 225;
   
-//  public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
-//  public SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
-//  public double encoderErrorTolerance = .05;
+  public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
+  public SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+  public double encoderErrorTolerance = .05;
 
   private double kS = .067766; //volts | base speed
   private double kG = .0075982; //volts | gravity... something
@@ -42,12 +45,13 @@ public class Arm extends SubsystemBase {
   private PIDController pid = new PIDController(kP, kI, kD);
   
   private double goalPos;
+  
+  private double hiClamp = -Math.PI*.5; //TODO GET NUMBERS
+  private double loClamp = -Math.PI*1.4;
+  
   public final DoubleConsumer setGoalPos = (pos) -> {goalPos = MathUtil.clamp(pos, loClamp, hiClamp);};
   public final DoubleSupplier getGoalPos = () -> {return goalPos;};
   private double EncoderPos = encoder.getZeroOffset();
-    
-  private double hiClamp = -Math.PI*.5; //TODO GET NUMBERS
-  private double loClamp = -Math.PI*1.4;
 
   public enum ArmPreset {
     INTAKE(0.31), MID(-1.74), HIGH(-1.83);
