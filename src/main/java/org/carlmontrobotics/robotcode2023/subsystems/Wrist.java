@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package org.carlmontrobotics.robotcode2023.subsystems;
 
 import org.carlmontrobotics.lib199.MotorControllerFactory;
@@ -11,132 +7,86 @@ import org.carlmontrobotics.robotcode2023.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 
 public class Wrist extends SubsystemBase {
-  private CANSparkMax motorL = MotorControllerFactory.createSparkMax(Constants.wrist_motorL_port, TemperatureLimit.NEO);
-  private CANSparkMax motorR = MotorControllerFactory.createSparkMax(Constants.wrist_motorR_port, TemperatureLimit.NEO);
-  public RelativeEncoder motorLEncoder = motorL.getEncoder();
-  public RelativeEncoder motorREncoder = motorR.getEncoder();
+  
+  private CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Wrist.port, TemperatureLimit.NEO_550);
+  private SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(Type.kDutyCycle);
+  private double posTolerance = .05;
+  private double velTolerance = 1;
+
+  private double kS = .067766; //volts | base speed
+  private double kG = .0075982; //volts | gravity... something
+  private double kV = .019762; //volts*secs/rad | extra velocity
+  private double kA = .00039212; //volts*secs^2/rad | vacceleration
+  /// these are all units ^ , actual arm speed is determined by values in .calculate
+  private double kP = 0;
+  private double kI = 0; //will add real values
+  private double kD = 0;
+
+  private double FFvelocity = .01;
+  private double FFaccel = .01;
+  private ArmFeedforward armFeed = new ArmFeedforward(kS, kG, kV, kA);
+  private PIDController pid = new PIDController(kP, kI, kD);
+  
+  private double goalPos = -Math.PI / 2; // initial position
     
-  public double encoderErrorTolerance = .05;
-  public static double goalPos;
-    
-  public final double loClamp = .0;//TODO GET REAL VALUE
-  public final double ecactb = .3;//TODO NICER VAR NAME
-    //enable clamping when arm gets close to it's limits by this amount
-    
-  private static double kS = .2; //volts | base speed
-  private static double kG = .1; //volts | gravity... something
-  private static double kV = .2; //volts*secs/rad | extra velocity
-  private static double kA = .3; //volts*secs^2/rad | vacceleration
-  /// these are all units ^ , actual wrist speed is determined by values in .calculate
-    
-  private static double FFvelocity = 2;
-  private static double FFaccel = 1;
-  private ArmFeedforward wristFeed = new ArmFeedforward(kS,kG,kV,kA);
-    
-  private Arm arm;
-    
-  public enum WristPreset {
+  private double hiClamp = -Math.PI*.5; //TODO GET NUMBERS
+  private double loClamp = -Math.PI*1.4;
+
+  private double gearRatio = 1/200;
+
+  public enum ArmPreset {
     INTAKE(0.31), MID(-1.74), HIGH(-1.83);
     
     public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
-    WristPreset(double value) {
+    ArmPreset(double value) {
       this.value = value;
     }
-    public WristPreset next() {
-      switch (this) {
-        case INTAKE: return MID;
-        case MID: return HIGH;
-        case HIGH: return INTAKE;
-      }
-      return null;
-    }
-    public WristPreset prev(){
-      switch (this) {
-        case INTAKE: return HIGH;
-        case MID: return INTAKE;
-        case HIGH: return MID;
-      }
-      return null;
-    }
   }
-  /** Creates a new Wrist. */
-  public Wrist(Arm arm) {
-    motorR.follow(motorL, true);
-    motorLEncoder.setPositionConversionFactor(1/60);
-    motorLEncoder.setPosition(0.0);
-    SmartDashboard.putNumber("FF: Velocity", FFvelocity);
-    SmartDashboard.putNumber("FF: Acceleration", FFaccel);
-    SmartDashboard.putNumber("GoalPosition", goalPos);
-    arm=arm;
+
+  public Wrist() {
+    encoder.setPositionConversionFactor(gearRatio * 2 * Math.PI);
+    encoder.setZeroOffset(goalPos);
+    pid.setTolerance(posTolerance, velTolerance);
+    //SmartDashboard.putNumber("GoalPosition", goalPos);
   }
 
   @Override
   public void periodic() {
-    FFvelocity = SmartDashboard.getNumber("FF: Velocity", FFvelocity);
-    FFaccel = SmartDashboard.getNumber("FF: Acceleration", FFaccel);
-    goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
-    if (Math.abs(arm.encoder.getPosition() - arm.loClamp) < ecactb) {
-        goalPos = MathUtil.clamp(goalPos, loClamp, 99999);//TODO USE ACTUAL VALUES
-    }
-    SmartDashboard.putNumber("ArmLEncoderPos", motorLEncoder.getPosition());
-
-    double difference = goalPos - motorLEncoder.getPosition();
-    if (difference > encoderErrorTolerance){//even PID needs an acceptable error sometimes
-      //assuming calculate() is some sort of PID-esque thing
-      motorL.set(wristFeed.calculate(difference, FFvelocity, FFaccel));
-    }
-  }
-  public WristPreset snappedArmPos(){
-    double encoderPos = motorLEncoder.getPosition();
-    
-    for(WristPreset check : WristPreset.values()){
-      double lowdist = (check.value - check.prev().value) / 2;
-      double hidist = (check.next().value - check.value) / 2; // get the halfway points between each position and it's neighbors
-      if (check.value - lowdist < encoderPos && encoderPos < check.value + hidist){
-        //seperate high and low instead of ABS because maybe difference isn't constant between each position of arm
-          //and yes it still works for lowest and highest value
-          return check;
-      }
-    }
-    //help something went wrong
-    return null;
+    pid.setP(kP);
+    pid.setI(kI);
+    pid.setD(kD);
+    double currentPos = encoder.getPosition();
+    //goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);    
+    goalPos = MathUtil.clamp(goalPos, loClamp, hiClamp);
+      
+    motor.setVoltage(armFeed.calculate(currentPos, 0, 0)
+         + pid.calculate(currentPos, goalPos));                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
   }
 
-  public WristPreset closeSnappedArmPos() {//more precise snapping
-    double encoderPos = motorLEncoder.getPosition();
-    
-    for(WristPreset check : WristPreset.values()){
-        if (Math.abs(check.value - encoderPos) > encoderErrorTolerance) {//maybe will break if cone/cube values are close, but if they are close then lower error or only use one enum
-            return check;
-        }
-    }
-    //help something went wrong
-    return null;
-  }
-
-  public void cycleUp(){ 
-    // because most people won't remember/want to do this long function chain
-    SmartDashboard.putNumber("GoalPosition", 
-    closeSnappedArmPos() != null ? closeSnappedArmPos().next().value : snappedArmPos().next().value);
-    // if closeSnappedArmPos is working, swap based on it - otherwise use less accurate snapping
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
+    builder.addDoubleProperty("FF: Velocity", () -> FFvelocity, x -> this.FFvelocity = x);
+    builder.addDoubleProperty("FF: Accel",    () -> FFaccel,    x -> this.FFaccel = x);
+    builder.addDoubleProperty("goalPos",      () -> goalPos,    x -> this.goalPos = x);
+    builder.addDoubleProperty("kP",           () -> kP,         x -> this.kP = x);
+    builder.addDoubleProperty("kI",           () -> kI,         x -> this.kI = x);
+    builder.addDoubleProperty("kD",           () -> kD,         x -> this.kD = x);
+    builder.addDoubleProperty("kV",           () -> kV,         x -> this.kV = x);
+    builder.addDoubleProperty("kG",           () -> kG,         x -> this.kG = x);
+    builder.addDoubleProperty("kS",           () -> kS,         x -> this.kS = x);
+    builder.addDoubleProperty("kA",           () -> kA,         x -> this.kA = x);
   }
   
-  public void cycleDown(){
-    SmartDashboard.putNumber("GoalPosition", 
-    closeSnappedArmPos() != null ? closeSnappedArmPos().prev().value : snappedArmPos().prev().value
-    );
+  public void setPreset(ArmPreset preset) {
+    goalPos = preset.value;
   }
-  
-  public void setPreset(WristPreset preset){
-    SmartDashboard.putNumber("GoalPosition", preset.value);
-  }
-  }
-  //testing something. Disregard this comment
-
-
+}

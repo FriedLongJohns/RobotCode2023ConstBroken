@@ -33,6 +33,9 @@ public final class Constants {
         public static final double highCubePos = -1.83;
         public static final double highConePos = -1.83;
     }
+    public static final class Wrist {
+        public static final int port = 5;
+    }
 
     public static final class OI {
         public static final class Driver {
