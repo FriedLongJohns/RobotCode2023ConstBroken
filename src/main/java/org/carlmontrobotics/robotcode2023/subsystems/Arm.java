@@ -36,7 +36,8 @@ public class Arm extends SubsystemBase {
   private ArmFeedforward armFeed = new ArmFeedforward(kS, kG, kV, kA);
   private PIDController pid = new PIDController(kP, kI, kD);
   
-  public double goalPos;
+  private double goalPos;
+  private double EncoderPos = encoder.getZeroOffset();
 
   public enum ArmPreset {
     INTAKE(0.31), MID(-1.74), HIGH(-1.83);
@@ -60,7 +61,7 @@ public class Arm extends SubsystemBase {
     pid.setP(kP);
     pid.setI(kI);
     pid.setD(kD);
-    double currentPos = encoder.getZeroOffset();
+     double currentPos = encoder.getZeroOffset();
     //FIXME CLAMP LIMIT FOR PROTOTYPE ONLY
     goalPos = MathUtil.clamp(goalPos, -Math.PI*1.4, -Math.PI*.5);
     //                           -4.39,  -1.57
@@ -68,6 +69,7 @@ public class Arm extends SubsystemBase {
          + pid.calculate(currentPos, goalPos));
          
          goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
+         SmartDashboard.getNumber("EncoderPos", currentPos);
   }
   @Override
   public void initSendable(SendableBuilder builder) {
@@ -75,6 +77,7 @@ public class Arm extends SubsystemBase {
     builder.addDoubleProperty("FF: Velocity", () -> FFvelocity, x -> this.FFvelocity = x);
     builder.addDoubleProperty("FF: Accel",    () -> FFaccel,    x -> this.FFaccel = x);
     builder.addDoubleProperty("goalPos",      () -> goalPos,    x -> this.goalPos = x);
+    builder.addDoubleProperty("EncoderPos",   () -> EncoderPos, x -> this.EncoderPos = x);
     builder.addDoubleProperty("kP",           () -> kP,         x -> this.kP = x);
     builder.addDoubleProperty("kI",           () -> kI,         x -> this.kI = x);
     builder.addDoubleProperty("kD",           () -> kD,         x -> this.kD = x);
