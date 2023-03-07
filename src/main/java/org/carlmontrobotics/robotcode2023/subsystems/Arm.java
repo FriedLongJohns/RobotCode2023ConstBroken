@@ -38,6 +38,9 @@ public class Arm extends SubsystemBase {
   
   private double goalPos;
   private double EncoderPos = encoder.getZeroOffset();
+    
+  public double hiClamp = -Math.PI*.5; //TODO GET NUMBERS
+  public double loClamp = -Math.PI*1.4;
 
   public enum ArmPreset {
     INTAKE(0.31), MID(-1.74), HIGH(-1.83);
@@ -62,9 +65,9 @@ public class Arm extends SubsystemBase {
     pid.setI(kI);
     pid.setD(kD);
      double currentPos = encoder.getZeroOffset();
-    //FIXME CLAMP LIMIT FOR PROTOTYPE ONLY
-    goalPos = MathUtil.clamp(goalPos, -Math.PI*1.4, -Math.PI*.5);
-    //                           -4.39,  -1.57
+    
+    goalPos = MathUtil.clamp(goalPos, loClamp, hiClamp);
+      
       motor.setVoltage(armFeed.calculate(currentPos, 0, 0)
          + pid.calculate(currentPos, goalPos));
          
