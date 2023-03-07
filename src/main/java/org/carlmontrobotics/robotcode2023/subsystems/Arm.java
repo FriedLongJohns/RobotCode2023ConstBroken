@@ -28,13 +28,13 @@ public class Arm extends SubsystemBase {
   private double kA = .00039212; //volts*secs^2/rad | vacceleration
   /// these are all units ^ , actual arm speed is determined by values in .calculate
   private double kP = 1.1;
-  private double kI = 1.1;
+  private double kI = 1.1; //will add real values
   private double kD = 1.1;
 
   private double FFvelocity = .01;
   private double FFaccel = .01;
   private ArmFeedforward armFeed = new ArmFeedforward(kS, kG, kV, kA);
-  private PIDController pid = new PIDController(kA, kI, kD);
+  private PIDController pid = new PIDController(kP, kI, kD);
   
   public double goalPos;
 
@@ -51,6 +51,8 @@ public class Arm extends SubsystemBase {
     encoder.setPositionConversionFactor(1/60);
     encoder.getZeroOffset();
     pid.setTolerance(2.5,10);
+    
+    SmartDashboard.putNumber("GoalPosition", goalPos);
   }
 
   @Override
@@ -64,6 +66,8 @@ public class Arm extends SubsystemBase {
     //                           -4.39,  -1.57
       motor.setVoltage(armFeed.calculate(currentPos, 0, 0)
          + pid.calculate(currentPos, goalPos));
+         
+         goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
   }
   @Override
   public void initSendable(SendableBuilder builder) {
@@ -81,6 +85,6 @@ public class Arm extends SubsystemBase {
 }
   
   public void setPreset(ArmPreset preset) {
-    SmartDashboard.putNumber("GoalPosition", preset.value);
+   // SmartDashboard.putNumber("GoalPosition", preset.value);
   }
 }
