@@ -23,24 +23,29 @@ public final class Constants {
     public static final double grabber_open_position = 2.8;
     public static final double grabber_closed_position = -6.9;
     public static final class Arm{
-        public static final int port = 6;
-        public static int portR;
-        public static int portL;
+        public static final int port = 2;
+
+        // all positions are in radians and are approximate
+        public static final double pickupCubePos = 0.31;
+        public static final double pickupConePos = 0.31;
+        public static final double midCubePos = -1.74;
+        public static final double midConePos = -1.74;
+        public static final double highCubePos = -1.83;
+        public static final double highConePos = -1.83;
     }
 
     public static final class OI {
         public static final class Driver {
-            public static final int port = 1;
+            public static final int port = 0;
         }
         public static final class Manipulator {
-            public static final int port = 0;
+            public static final int port = 1;
             public static final int cone = Button.kRightBumper.value;
             public static final int cube = Button.kLeftBumper.value;
             public static final int intake = Button.kA.value;
             
-            public static final int cycleUp = Button.kX.value;
-            public static final int cycleDown = Button.kB.value;
-            public static final int swapItemType = Button.kY.value;
+            public static final int cycleUp = 1;//FIXME use correct buttons
+            public static final int cycleDown = 2;
         }
     }
 
