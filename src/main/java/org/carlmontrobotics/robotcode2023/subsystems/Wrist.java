@@ -1,5 +1,8 @@
 package org.carlmontrobotics.robotcode2023.subsystems;
 
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleSupplier;
+
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.robotcode2023.Constants;
@@ -37,11 +40,14 @@ public class Wrist extends SubsystemBase {
   private PIDController pid = new PIDController(kP, kI, kD);
   
   public double goalPos = 0; // initial position
+  
   //FIXME GET ACTUAL OFFSET (if needed)
   //TODO offset by arm encoderPos but also allow local clamping
     
   private double hiClamp = Math.PI*.5; //FIXME GET NUMBERS
   private double loClamp = -Math.PI*.5;
+  public final DoubleConsumer setGoalPos = (pos) -> {goalPos = MathUtil.clamp(pos, loClamp, hiClamp);};
+  public final DoubleSupplier getGoalPos = () -> {return goalPos;};
 
   private double gearRatio = 1/15;//FIX ME GET GEAR RATIO
 
