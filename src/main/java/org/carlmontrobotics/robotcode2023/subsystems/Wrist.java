@@ -43,7 +43,7 @@ public class Wrist extends SubsystemBase {
   private double hiClamp = Math.PI*.5; //FIXME GET NUMBERS
   private double loClamp = -Math.PI*.5;
 
-  private double gearRatio = 1;//FIX ME GET GEAR RATIO
+  private double gearRatio = 1/15;//FIX ME GET GEAR RATIO
 
   public enum WristPreset {
     INTAKE(0.31), MID(-1.74), HIGH(-1.83);
