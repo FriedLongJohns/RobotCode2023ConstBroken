@@ -56,9 +56,9 @@ public class Arm extends SubsystemBase {
   }
 
   public Arm() {
-    encoder.setPositionConversionFactor(1/60);
+    encoder.setPositionConversionFactor(1/15);
     //encoder.setZeroOffset(-Math.PI / 2);
-    encoder.getPosition();
+    encoder.setPosition(-Math.PI / 2);
     pid.setTolerance(2.5,10);
     
     SmartDashboard.putNumber("GoalPosition", goalPos);
