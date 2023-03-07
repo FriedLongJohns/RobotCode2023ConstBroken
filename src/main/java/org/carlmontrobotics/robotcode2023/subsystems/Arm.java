@@ -11,14 +11,17 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 
 
 
 public class Arm extends SubsystemBase {
   
   public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
-  public SparkMaxAbsoluteEncoder encoder;
+  //public SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(Type.kDutyCycle);
+  public RelativeEncoder encoder = motor.getEncoder();
 
   public double encoderErrorTolerance = .05;
 
@@ -37,7 +40,8 @@ public class Arm extends SubsystemBase {
   private PIDController pid = new PIDController(kP, kI, kD);
   
   private double goalPos;
-  private double EncoderPos = encoder.getZeroOffset();
+  //private double EncoderPos = encoder.getZeroOffset();
+  private double EncoderPos = encoder.getPosition();
     
   public double hiClamp = -Math.PI*.5; //TODO GET NUMBERS
   public double loClamp = -Math.PI*1.4;
@@ -53,7 +57,8 @@ public class Arm extends SubsystemBase {
 
   public Arm() {
     encoder.setPositionConversionFactor(1/60);
-    encoder.setZeroOffset(-Math.PI / 2);
+    //encoder.setZeroOffset(-Math.PI / 2);
+    encoder.getPosition();
     pid.setTolerance(2.5,10);
     
     SmartDashboard.putNumber("GoalPosition", goalPos);
@@ -64,7 +69,8 @@ public class Arm extends SubsystemBase {
     pid.setP(kP);
     pid.setI(kI);
     pid.setD(kD);
-     double currentPos = encoder.getZeroOffset();
+     //double currentPos = encoder.getZeroOffset();
+     double currentPos = encoder.getPosition();
     
     goalPos = MathUtil.clamp(goalPos, loClamp, hiClamp);
       
