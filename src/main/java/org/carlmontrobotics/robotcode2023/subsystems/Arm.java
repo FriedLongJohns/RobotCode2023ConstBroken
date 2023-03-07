@@ -18,7 +18,7 @@ import com.revrobotics.CANSparkMax;
 public class Arm extends SubsystemBase {
   
   public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
-  public SparkMaxAbsoluteEncoder encoder;
+  public SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
   public double encoderErrorTolerance = .05;
 
   private double kS = .067766; //volts | base speed

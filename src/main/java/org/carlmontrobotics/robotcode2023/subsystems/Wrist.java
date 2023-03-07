@@ -3,13 +3,16 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package org.carlmontrobotics.robotcode2023.subsystems;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.robotcode2023.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -18,16 +21,26 @@ public class Wrist extends SubsystemBase {
   private CANSparkMax motorR = MotorControllerFactory.createSparkMax(Constants.wrist_motorR_port, TemperatureLimit.NEO);
   public RelativeEncoder motorLEncoder = motorL.getEncoder();
   public RelativeEncoder motorREncoder = motorR.getEncoder();
+    
   public double encoderErrorTolerance = .05;
   public static double goalPos;
+    
+  public final double loClamp = .0;//TODO GET REAL VALUE
+  public final double ecactb = .3;//TODO NICER VAR NAME
+    //enable clamping when arm gets close to it's limits by this amount
+    
   private static double kS = .2; //volts | base speed
   private static double kG = .1; //volts | gravity... something
   private static double kV = .2; //volts*secs/rad | extra velocity
   private static double kA = .3; //volts*secs^2/rad | vacceleration
   /// these are all units ^ , actual wrist speed is determined by values in .calculate
+    
   private static double FFvelocity = 2;
   private static double FFaccel = 1;
   private ArmFeedforward wristFeed = new ArmFeedforward(kS,kG,kV,kA);
+    
+  private Arm arm;
+    
   public enum WristPreset {
     INTAKE(0.31), MID(-1.74), HIGH(-1.83);
     
@@ -53,13 +66,14 @@ public class Wrist extends SubsystemBase {
     }
   }
   /** Creates a new Wrist. */
-  public Wrist() {
+  public Wrist(Arm arm) {
     motorR.follow(motorL, true);
     motorLEncoder.setPositionConversionFactor(1/60);
     motorLEncoder.setPosition(0.0);
     SmartDashboard.putNumber("FF: Velocity", FFvelocity);
     SmartDashboard.putNumber("FF: Acceleration", FFaccel);
     SmartDashboard.putNumber("GoalPosition", goalPos);
+    arm=arm;
   }
 
   @Override
@@ -67,6 +81,9 @@ public class Wrist extends SubsystemBase {
     FFvelocity = SmartDashboard.getNumber("FF: Velocity", FFvelocity);
     FFaccel = SmartDashboard.getNumber("FF: Acceleration", FFaccel);
     goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
+    if (Math.abs(arm.encoder.getPosition() - arm.loClamp) < ecactb) {
+        goalPos = MathUtil.clamp(goalPos, loClamp, 99999);//TODO USE ACTUAL VALUES
+    }
     SmartDashboard.putNumber("ArmLEncoderPos", motorLEncoder.getPosition());
 
     double difference = goalPos - motorLEncoder.getPosition();
