@@ -80,7 +80,6 @@ public class Arm extends SubsystemBase {
     builder.addDoubleProperty("FF: Velocity", () -> FFvelocity, x -> this.FFvelocity = x);
     builder.addDoubleProperty("FF: Accel",    () -> FFaccel,    x -> this.FFaccel = x);
     builder.addDoubleProperty("goalPos",      () -> goalPos,    x -> this.goalPos = x);
-    builder.addDoubleProperty("EncoderPos",   () -> EncoderPos, x -> this.EncoderPos = x);
     builder.addDoubleProperty("kP",           () -> kP,         x -> this.kP = x);
     builder.addDoubleProperty("kI",           () -> kI,         x -> this.kI = x);
     builder.addDoubleProperty("kD",           () -> kD,         x -> this.kD = x);
