@@ -11,12 +11,18 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax;
 
 
 
 public class Arm extends SubsystemBase {
+
+  private CANSparkMax motor = MotorControllerFactory.createSparkMax(17, TemperatureLimit.NEO);
+  private SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+  private double gearRatio = 225;
   
+  /*
   public CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
   public SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
   public double encoderErrorTolerance = .05;
@@ -49,17 +55,28 @@ public class Arm extends SubsystemBase {
       this.value = value;
     }
   }
+  */
 
   public Arm() {
+    /*
     encoder.setPositionConversionFactor(1/60);
     encoder.getZeroOffset();
     pid.setTolerance(2.5,10);
+    */
     
-    SmartDashboard.putNumber("GoalPosition", goalPos);
+    //SmartDashboard.putNumber("GoalPosition", goalPos);
+
+    SmartDashboard.putNumber("Motor Voltage", 0);
+    encoder.setPositionConversionFactor(1 / gearRatio * 2 * Math.PI);
+    motor.setIdleMode(IdleMode.kBrake);
   }
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Encoder Pos", encoder.getPosition());
+    double speed = SmartDashboard.getNumber("Motor Voltage", 0);
+    motor.set(speed);
+    /*
     pid.setP(kP);
     pid.setI(kI);
     pid.setD(kD);
@@ -72,7 +89,9 @@ public class Arm extends SubsystemBase {
          
          goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
          SmartDashboard.getNumber("EncoderPos", currentPos);
+         */
   }
+  /*
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
@@ -87,9 +106,10 @@ public class Arm extends SubsystemBase {
     builder.addDoubleProperty("kG",           () -> kG,         x -> this.kG = x);
     builder.addDoubleProperty("kS",           () -> kS,         x -> this.kS = x);
     builder.addDoubleProperty("kA",           () -> kA,         x -> this.kA = x);
-}
+  }
   
   public void setPreset(ArmPreset preset) {
    // SmartDashboard.putNumber("GoalPosition", preset.value);
   }
+  */
 }
