@@ -54,12 +54,46 @@ public class Arm extends SubsystemBase {
   private double EncoderPos = encoder.getZeroOffset();
 
   public enum ArmPreset {
-    INTAKE(0.31), MID(-1.74), HIGH(-1.83);
-    
-    public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
-    ArmPreset(double value) {
+    //radians
+    //approximate values
+    CUBEGROUNDPICKUP(1.71254781475), CONEGROUNDPICKUP(2.29021388861), MOVEGAMEPIECE(0), 
+    CUBEOUTPUTLOW(1.02603845343), CUBEOUTPUTMID(0.837535040237), CUBEOUTPUTHIGH(0.768312472123), CONEOUTPUTLOW(4.100940749846), CONEOUTPUTMID(1.13715693466), CONEOUTPUTHIGH(1.46030263853);
+    public double value;
+    ArmPreset(double value){
       this.value = value;
     }
+    public ArmPreset swapType(){
+      switch (this){
+        case CUBEGROUNDPICKUP:
+          return CONEGROUNDPICKUP;
+        case CONEGROUNDPICKUP:
+          return CUBEGROUNDPICKUP;
+        case CUBEOUTPUTLOW:
+          return CONEOUTPUTLOW;
+        case CUBEOUTPUTMID:
+          return CONEOUTPUTMID;
+        case CUBEOUTPUTHIGH:
+          return CONEOUTPUTHIGH;
+        case CONEOUTPUTLOW:
+          return CUBEOUTPUTLOW;
+        case CONEOUTPUTMID:
+          return CUBEOUTPUTMID;
+        case CONEOUTPUTHIGH:
+          return CUBEOUTPUTHIGH;
+        default:
+          return this;
+        
+        
+      }
+
+      }
+    }
+     
+   /* public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
+    ArmPreset(double value) {
+      this.value = value;
+    } 
+    */
   }
 
   public Arm() {
@@ -112,9 +146,9 @@ public class Arm extends SubsystemBase {
     builder.addDoubleProperty("kS",           () -> kS,         x -> this.kS = x);
     builder.addDoubleProperty("kA",           () -> kA,         x -> this.kA = x);
   }
-  
-  public void setPreset(ArmPreset preset) {
-   // SmartDashboard.putNumber("GoalPosition", preset.value);
-  }
   */
+  public void setPreset(ArmPreset preset) {
+    SmartDashboard.putNumber("GoalPosition", preset.value);
+  }
+  
 }
