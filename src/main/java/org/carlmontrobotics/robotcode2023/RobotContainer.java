@@ -30,18 +30,18 @@ public class RobotContainer {
 
   private void configureButtonBindingsDriver() {}
   private void configureButtonBindingsManipulator() {
-      new JoystickButton(manipulatorController, Constants.OI.Controller.Y).whenPressed(() -> { new InstantCommand(() -> {
-        arm.goalPos = Arm.ArmPreset.HIGH.value;
-        wrist.goalPos = Wrist.WristPreset.HIGH.value;
-      });});
-      new JoystickButton(manipulatorController, Constants.OI.Controller.B).whenPressed(() -> { new InstantCommand(() -> {
-        arm.goalPos = Arm.ArmPreset.MID.value;
-        wrist.goalPos = Wrist.WristPreset.MID.value;
-      });});
-      new JoystickButton(manipulatorController, Constants.OI.Controller.A).whenPressed(() -> { new InstantCommand(() -> {
-        arm.goalPos = Arm.ArmPreset.INTAKE.value;
-        wrist.goalPos = Wrist.WristPreset.INTAKE.value;
-      });});
+      new JoystickButton(manipulatorController, Constants.OI.Controller.Y).onTrue(new InstantCommand(() -> {
+        arm.setGoalPos.accept(Arm.ArmPreset.HIGH.value);
+        wrist.setGoalPos.accept(Wrist.WristPreset.HIGH.value);
+      }));
+      new JoystickButton(manipulatorController, Constants.OI.Controller.B).onTrue(new InstantCommand(() -> {
+        arm.setGoalPos.accept(Arm.ArmPreset.MID.value);
+        wrist.setGoalPos.accept(Wrist.WristPreset.MID.value);
+      }));
+      new JoystickButton(manipulatorController, Constants.OI.Controller.A).onTrue(new InstantCommand(() -> {
+        arm.setGoalPos.accept(Arm.ArmPreset.INTAKE.value);
+        wrist.setGoalPos.accept(Wrist.WristPreset.INTAKE.value);
+      }));
   }
 
   public Command getAutonomousCommand() {
