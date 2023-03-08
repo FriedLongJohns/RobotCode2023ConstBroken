@@ -52,13 +52,41 @@ public class Wrist extends SubsystemBase {
   private double gearRatio = 1/15;//FIX ME GET GEAR RATIO
 
   public enum WristPreset {
-    INTAKE(0.31), MID(-1.74), HIGH(-1.83);
+    //radians
+    //aproximate values
+    CUBEGROUNDPICKUP(0.408511765), CONEGROUNDPICKUP(0.408513963836), MOVEGAMEPIECE(0), CUBEOUTPUTLOW(-0.922567341767),
+    CUBEOUTPUTMID(-1.5006099006),CUBEOUTPUTHIGH(-1.886179015595),CONEOUTPUTLOW(-0.189970118087),CONEOUTPUTMID(-1.864984784356),CONEOUTPUTHIGH(-2.113082674302) ;
     
     public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
     WristPreset(double value) {
       this.value = value;
     }
+    public WristPreset swapType(){
+      switch (this) {
+        case CUBEGROUNDPICKUP:
+          return CONEGROUNDPICKUP;
+        case CONEGROUNDPICKUP:
+          return CUBEGROUNDPICKUP;
+        case CUBEOUTPUTLOW:
+          return CONEOUTPUTLOW;
+        case CUBEOUTPUTMID:
+          return CONEOUTPUTMID;
+        case CUBEOUTPUTHIGH:
+          return CONEOUTPUTHIGH;
+        case CONEOUTPUTLOW:
+          return CUBEOUTPUTLOW;
+        case CONEOUTPUTMID:
+          return CUBEOUTPUTMID;
+        case CONEOUTPUTHIGH:
+          return CUBEOUTPUTHIGH;
+        default:
+          return this;
+    
+      }
+    }
   }
+  
+
 
   public Wrist() {
     encoder.setPositionConversionFactor(gearRatio * 2 * Math.PI);
