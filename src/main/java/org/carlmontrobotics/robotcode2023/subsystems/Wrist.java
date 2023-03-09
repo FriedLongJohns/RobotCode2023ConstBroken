@@ -40,16 +40,19 @@ public class Wrist extends SubsystemBase {
   private PIDController pid = new PIDController(kP, kI, kD);
   
   public double goalPos = 0; // initial position
+  private double gearRatio = 1/15;//FIX ME GET GEAR RATIO
   
   //FIXME GET ACTUAL OFFSET (if needed)
   //TODO offset by arm encoderPos but also allow local clamping
     
   private double hiClamp = Math.PI*.5; //FIXME GET NUMBERS
   private double loClamp = -Math.PI*.5;
+  
+  public boolean fold = false;//for when arm moves through bellypan
+  private double foldPos = 2.5307274154;
+    
   public final DoubleConsumer setGoalPos = (pos) -> {goalPos = MathUtil.clamp(pos, loClamp, hiClamp);};
   public final DoubleSupplier getGoalPos = () -> {return goalPos;};
-
-  private double gearRatio = 1/15;//FIX ME GET GEAR RATIO
 
   public enum WristPreset {
     //radians
@@ -97,11 +100,16 @@ public class Wrist extends SubsystemBase {
     pid.setI(kI);
     pid.setD(kD);
     double currentPos = encoder.getPosition();
-    //goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);    
+    //goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
     goalPos = MathUtil.clamp(goalPos, loClamp, hiClamp);
-      
-    motor.setVoltage(wristFeed.calculate(currentPos, 0, 0)
+    
+    if (fold==false){
+      motor.setVoltage(wristFeed.calculate(currentPos, 0, 0)
          + pid.calculate(currentPos, goalPos));
+    } else {
+      motor.setVoltage(wristFeed.calculate(currentPos, 0, 0)
+         + pid.calculate(currentPos, foldPos));
+    }
   }
 
   @Override
@@ -110,6 +118,7 @@ public class Wrist extends SubsystemBase {
     builder.addDoubleProperty("FF: Velocity", () -> FFvelocity, x -> this.FFvelocity = x);
     builder.addDoubleProperty("FF: Accel",    () -> FFaccel,    x -> this.FFaccel = x);
     builder.addDoubleProperty("goalPos",      () -> goalPos,    x -> this.goalPos = x);
+    builder.addBooleanProperty("fold?",       () -> fold,       x -> this.fold = x);
     builder.addDoubleProperty("kP",           () -> kP,         x -> this.kP = x);
     builder.addDoubleProperty("kI",           () -> kI,         x -> this.kI = x);
     builder.addDoubleProperty("kD",           () -> kD,         x -> this.kD = x);

@@ -20,8 +20,8 @@ public class RobotContainer {
   public final Joystick driverController = new Joystick(0);
   public final Joystick manipulatorController = new Joystick(1);
   public final PowerDistribution pd = new PowerDistribution();
-  public final Arm arm = new Arm();
   public final Wrist wrist = new Wrist();
+  public final Arm arm = new Arm(wrist);
 
   public RobotContainer() {
     configureButtonBindingsDriver();

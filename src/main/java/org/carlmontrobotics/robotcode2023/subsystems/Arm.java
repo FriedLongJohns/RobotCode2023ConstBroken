@@ -3,6 +3,7 @@ package org.carlmontrobotics.robotcode2023.subsystems;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.robotcode2023.Constants;
+import org.carlmontrobotics.robotcode2023.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
@@ -49,7 +50,12 @@ public class Arm extends SubsystemBase {
   private double hiClamp = -Math.PI*.5; //TODO GET NUMBERS
   private double loClamp = -Math.PI*1.4;
   
-  public final DoubleConsumer setGoalPos = (pos) -> {goalPos = MathUtil.clamp(pos, loClamp, hiClamp);};
+  private Wrist wrist;
+  private double initalOffset = -Math.PI / 2;
+  
+  public final DoubleConsumer setGoalPos = (pos) -> {
+    goalPos = MathUtil.clamp(pos, loClamp, hiClamp);
+  };
   public final DoubleSupplier getGoalPos = () -> {return goalPos;};
   private double EncoderPos = encoder.getZeroOffset();
 
@@ -90,10 +96,10 @@ public class Arm extends SubsystemBase {
     } 
     */
 
-  public Arm() {
+  public Arm(Wrist wristo) {
     /*
     encoder.setPositionConversionFactor(1/gearRatio);
-    encoder.getZeroOffset();
+    encoder.setPosition(initialOffset);
     pid.setTolerance(2.5,10);
     */
     
@@ -102,6 +108,8 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Motor Voltage", 0);
     encoder.setPositionConversionFactor(1 / gearRatio * 2 * Math.PI);
     motor.setIdleMode(IdleMode.kBrake);
+    
+    wrist = wristo;
   }
 
   @Override
@@ -116,6 +124,14 @@ public class Arm extends SubsystemBase {
      double currentPos = encoder.getZeroOffset();
     
     goalPos = MathUtil.clamp(goalPos, loClamp, hiClamp);
+    
+    if (Math.Abs(goalPos) > Math.PI/6.0) || (Double.doubleToRawLongBits(pos) < 0 != Double.doubleToRawLongBits(goalEnum) < 0){
+    //if their signs are different, they pass through 0 (bellypan)
+    //but also if within 30deg of bellypan fold anyways
+      wrist.fold=true;
+    } else{
+      wrist.fold=false;
+    }
       
       motor.setVoltage(armFeed.calculate(currentPos, 0, 0)
          + pid.calculate(currentPos, goalPos));
