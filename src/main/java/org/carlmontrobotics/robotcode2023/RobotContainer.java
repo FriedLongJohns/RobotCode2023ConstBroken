@@ -26,21 +26,36 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindingsDriver();
     configureButtonBindingsManipulator();
+    wrist.arm = arm;//required to get worlf-relative angles
   }
   //need to update the buttons
   private void configureButtonBindingsDriver() {}
   private void configureButtonBindingsManipulator() {
-      new JoystickButton(manipulatorController, Constants.OI.Controller.Y).onTrue(new InstantCommand(() -> {
-        arm.setGoalPos.accept(Arm.ArmPreset.HIGH.value);
-        wrist.setGoalPos.accept(Wrist.WristPreset.HIGH.value);
+      new JoystickButton(manipulatorController, Constants.OI.Controller.Y).onTrue(new InstantCommand(() -> {//hi
+        arm.setGoalEnum.accept(Arm.ArmPreset.HIGH);
+        wrist.setGoalEnum.accept(Wrist.WristPreset.HIGH);
       }));
-      new JoystickButton(manipulatorController, Constants.OI.Controller.B).onTrue(new InstantCommand(() -> {
-        arm.setGoalPos.accept(Arm.ArmPreset.MID.value);
-        wrist.setGoalPos.accept(Wrist.WristPreset.MID.value);
+      new JoystickButton(manipulatorController, Constants.OI.Controller.B).onTrue(new InstantCommand(() -> {//mid
+        arm.setGoalEnum.accept(Arm.ArmPreset.MID);
+        wrist.setGoalEnum.accept(Wrist.WristPreset.MID);
       }));
-      new JoystickButton(manipulatorController, Constants.OI.Controller.A).onTrue(new InstantCommand(() -> {
-        arm.setGoalPos.accept(Arm.ArmPreset.INTAKE.value);
-        wrist.setGoalPos.accept(Wrist.WristPreset.INTAKE.value);
+      new JoystickButton(manipulatorController, Constants.OI.Controller.X).onTrue(new InstantCommand(() -> {//lo
+        arm.setGoalEnum.accept(Arm.ArmPreset.LOW);
+        wrist.setGoalEnum.accept(Wrist.WristPreset.LOW);
+      }));
+      new JoystickButton(manipulatorController, Constants.OI.Controller.A).onTrue(new InstantCommand(() -> {//intake
+        arm.setGoalEnum.accept(Arm.ArmPreset.GROUND);
+        wrist.setGoalEnum.accept(Wrist.WristPreset.GROUND);
+      }));
+        
+      new JoystickButton(manipulatorController, Constants.OI.Controller.RT).onTrue(new InstantCommand(() -> {//swapitem
+        arm.swapItemType();
+        wrist.swapItemType();
+      }));
+      
+      new JoystickButton(manipulatorController, Constants.OI.Controller.LT).onTrue(new InstantCommand(() -> {//holdpos
+        arm.setGoalEnum.accept(Arm.ArmPreset.HOLD);
+        wrist.setGoalEnum.accept(Wrist.WristPreset.HOLD);
       }));
   }
 

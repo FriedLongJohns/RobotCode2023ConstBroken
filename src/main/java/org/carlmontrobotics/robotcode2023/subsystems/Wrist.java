@@ -2,10 +2,12 @@ package org.carlmontrobotics.robotcode2023.subsystems;
 
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Consumer;
 
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.robotcode2023.Constants;
+import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
@@ -39,7 +41,7 @@ public class Wrist extends SubsystemBase {
   private ArmFeedforward wristFeed = new ArmFeedforward(kS, kG, kV, kA);
   private PIDController pid = new PIDController(kP, kI, kD);
   
-  public double goalPos = 0; // initial position
+  public WristPreset goalEnum;
   private double gearRatio = 1/15;//FIX ME GET GEAR RATIO
   
   //FIXME GET ACTUAL OFFSET (if needed)
@@ -51,37 +53,32 @@ public class Wrist extends SubsystemBase {
   public boolean fold = false;//for when arm moves through bellypan
   private double foldPos = 2.5307274154;
     
-  public final DoubleConsumer setGoalPos = (pos) -> {goalPos = MathUtil.clamp(pos, loClamp, hiClamp);};
-  public final DoubleSupplier getGoalPos = () -> {return goalPos;};
-
+  public final Consumer<WristPreset> setGoalEnum = (nenum) -> {goalEnum.reset(); goalEnum = nenum;};
+  public final DoubleConsumer setGoalPos =        (pos) -> {goalEnum.value = MathUtil.clamp(pos, loClamp, hiClamp);};
+  public final DoubleSupplier getGoalPos =          () -> {return goalEnum.value;};
+  
+  public Arm arm;
+  
+  private static int itemType=0;//for use with enum but needs persistence
   public enum WristPreset {
     //radians
     //aproximate values
-    MOVEGAMEPIECE(0),
+    //                   cube            cone
+    GROUND(new double[] {0.40851176500, 0.408513963836}),
+    LOW(new double[]    {-0.9225673417, -0.18997011808}),
+    MID(new double[]    {-1.5006099006, -2.11308267430}),
+    HIGH(new double[]   {-1.8861790155, -1.86498478435}),
+    HOLD(new double[] {0.f,0.f});
     
-    CUBEGROUNDPICKUP(0.408511765),   CONEGROUNDPICKUP(0.408513963836), 
-    CUBEOUTPUTLOW(-0.922567341767),  CONEOUTPUTLOW(-0.189970118087),
-    CUBEOUTPUTMID(-1.5006099006),    CONEOUTPUTHIGH(-2.113082674302),
-    CUBEOUTPUTHIGH(-1.886179015595), CONEOUTPUTMID(-1.864984784356);
+    public double value;
+    private double[] origin;
     
-    public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
-    WristPreset(double value) {
-      this.value = value;
+    WristPreset(double values[]) {
+      this.value = values[itemType];
+      this.origin = values;
     }
-    public WristPreset swapType(){
-      switch (this) {
-        case CUBEGROUNDPICKUP: return CONEGROUNDPICKUP;
-        case CONEGROUNDPICKUP: return CUBEGROUNDPICKUP;
-        case CUBEOUTPUTLOW:    return CONEOUTPUTLOW;
-        case CUBEOUTPUTMID:    return CONEOUTPUTMID;
-        case CUBEOUTPUTHIGH:   return CONEOUTPUTHIGH;
-        case CONEOUTPUTLOW:    return CUBEOUTPUTLOW;
-        case CONEOUTPUTMID:    return CUBEOUTPUTMID;
-        case CONEOUTPUTHIGH:   return CUBEOUTPUTHIGH;
-        default://includes MOVEGAMEPIECE
-          return this;
-    
-      }
+    private void reset(){
+      this.value = this.origin[itemType];//for when we manually set the goalEnum pos, when we cycle this will fix itself
     }
   }
   
@@ -89,7 +86,6 @@ public class Wrist extends SubsystemBase {
 
   public Wrist() {
     encoder.setPositionConversionFactor(gearRatio * 2 * Math.PI);
-    encoder.setZeroOffset(goalPos);
     pid.setTolerance(posTolerance, velTolerance);
     //SmartDashboard.putNumber("GoalPosition", goalPos);
   }
@@ -99,9 +95,9 @@ public class Wrist extends SubsystemBase {
     pid.setP(kP);
     pid.setI(kI);
     pid.setD(kD);
+    
     double currentPos = encoder.getPosition();
-    //goalPos = SmartDashboard.getNumber("GoalPosition", goalPos);
-    goalPos = MathUtil.clamp(goalPos, loClamp, hiClamp);
+    double goalPos = MathUtil.clamp(goalEnum.value, loClamp, hiClamp);
     
     if (fold==false){
       motor.setVoltage(wristFeed.calculate(currentPos, 0, 0)
@@ -115,20 +111,24 @@ public class Wrist extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
-    builder.addDoubleProperty("FF: Velocity", () -> FFvelocity, x -> this.FFvelocity = x);
-    builder.addDoubleProperty("FF: Accel",    () -> FFaccel,    x -> this.FFaccel = x);
-    builder.addDoubleProperty("goalPos",      () -> goalPos,    x -> this.goalPos = x);
-    builder.addBooleanProperty("fold?",       () -> fold,       x -> this.fold = x);
-    builder.addDoubleProperty("kP",           () -> kP,         x -> this.kP = x);
-    builder.addDoubleProperty("kI",           () -> kI,         x -> this.kI = x);
-    builder.addDoubleProperty("kD",           () -> kD,         x -> this.kD = x);
-    builder.addDoubleProperty("kV",           () -> kV,         x -> this.kV = x);
-    builder.addDoubleProperty("kG",           () -> kG,         x -> this.kG = x);
-    builder.addDoubleProperty("kS",           () -> kS,         x -> this.kS = x);
-    builder.addDoubleProperty("kA",           () -> kA,         x -> this.kA = x);
+    builder.addDoubleProperty("FF: Velocity", () -> FFvelocity,      x -> this.FFvelocity = x);
+    builder.addDoubleProperty("FF: Accel",    () -> FFaccel,         x -> this.FFaccel = x);
+    builder.addDoubleProperty("goalPos",      () -> goalEnum.value,  x -> this.goalEnum.value = x);
+    builder.addBooleanProperty("fold?",       () -> fold,            x -> this.fold = x);
+    builder.addDoubleProperty("kP",           () -> kP,              x -> this.kP = x);
+    builder.addDoubleProperty("kI",           () -> kI,              x -> this.kI = x);
+    builder.addDoubleProperty("kD",           () -> kD,              x -> this.kD = x);
+    builder.addDoubleProperty("kV",           () -> kV,              x -> this.kV = x);
+    builder.addDoubleProperty("kG",           () -> kG,              x -> this.kG = x);
+    builder.addDoubleProperty("kS",           () -> kS,              x -> this.kS = x);
+    builder.addDoubleProperty("kA",           () -> kA,              x -> this.kA = x);
   }
   
-  public void setPreset(WristPreset preset) {
-    goalPos = preset.value;
+  public double getWorldAngle(){
+    return arm.encoder.getPosition() + encoder.getPosition();
+  }
+  
+  public void swapItemType(){
+    itemType = (itemType==0) ? 1 : 0;
   }
 }
