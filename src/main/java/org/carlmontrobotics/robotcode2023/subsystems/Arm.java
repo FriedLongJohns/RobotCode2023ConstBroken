@@ -47,11 +47,36 @@ public class Arm extends SubsystemBase {
   public double loClamp = -Math.PI*1.4;
 
   public enum ArmPreset {
-    INTAKE(0.31), MID(-1.74), HIGH(-1.83);
+    //radians
+    //aproximate values
+    CUBEGROUNDPICKUP(1.71254781475), CONEGROUNDPICKUP(2.29021388861), MOVEGAMEPIECE(0), 
+    CUBEOUTPUTLOW(1.02603845343), CUBEOUTPUTMID(0.837535040237), CUBEOUTPUTHIGH(0.768312472123), CONEOUTPUTLOW(4.100940749846), CONEOUTPUTMID(1.13715693466), CONEOUTPUTHIGH(1.46030263853);
     
     public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
     ArmPreset(double value) {
       this.value = value;
+    }
+    public ArmPreset swapType(){
+      switch (this){
+        case CUBEGROUNDPICKUP:
+          return CONEGROUNDPICKUP;
+        case CONEGROUNDPICKUP:
+          return CUBEGROUNDPICKUP;
+        case CUBEOUTPUTLOW:
+          return CONEOUTPUTLOW;
+        case CUBEOUTPUTMID:
+          return CONEOUTPUTMID;
+        case CUBEOUTPUTHIGH:
+          return CONEOUTPUTHIGH;
+        case CONEOUTPUTLOW:
+          return CONEOUTPUTLOW;
+        case CONEOUTPUTMID:
+          return CUBEOUTPUTLOW;
+        case CONEOUTPUTHIGH:
+          return CUBEOUTPUTHIGH;
+        default:
+          return this;
+      }
     }
   }
 
