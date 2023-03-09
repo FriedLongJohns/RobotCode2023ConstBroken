@@ -56,45 +56,39 @@ public class Arm extends SubsystemBase {
   public enum ArmPreset {
     //radians
     //approximate values
-    CUBEGROUNDPICKUP(1.71254781475), CONEGROUNDPICKUP(2.29021388861), MOVEGAMEPIECE(0), 
-    CUBEOUTPUTLOW(1.02603845343), CUBEOUTPUTMID(0.837535040237), CUBEOUTPUTHIGH(0.768312472123), CONEOUTPUTLOW(4.100940749846), CONEOUTPUTMID(1.13715693466), CONEOUTPUTHIGH(1.46030263853);
+    MOVEGAMEPIECE(0), 
+    
+    CUBEGROUNDPICKUP(1.71254781475), CONEGROUNDPICKUP(2.29021388861), 
+    CUBEOUTPUTLOW(1.02603845343),    CONEOUTPUTLOW(4.100940749846), 
+    CUBEOUTPUTMID(0.837535040237),   CONEOUTPUTMID(1.13715693466), 
+    CUBEOUTPUTHIGH(0.768312472123),  CONEOUTPUTHIGH(1.46030263853);
+    
     public double value;
     ArmPreset(double value){
       this.value = value;
     }
     public ArmPreset swapType(){
       switch (this){
-        case CUBEGROUNDPICKUP:
-          return CONEGROUNDPICKUP;
-        case CONEGROUNDPICKUP:
-          return CUBEGROUNDPICKUP;
-        case CUBEOUTPUTLOW:
-          return CONEOUTPUTLOW;
-        case CUBEOUTPUTMID:
-          return CONEOUTPUTMID;
-        case CUBEOUTPUTHIGH:
-          return CONEOUTPUTHIGH;
-        case CONEOUTPUTLOW:
-          return CUBEOUTPUTLOW;
-        case CONEOUTPUTMID:
-          return CUBEOUTPUTMID;
-        case CONEOUTPUTHIGH:
-          return CUBEOUTPUTHIGH;
-        default:
+        case CUBEGROUNDPICKUP: return CONEGROUNDPICKUP;
+        case CONEGROUNDPICKUP: return CUBEGROUNDPICKUP;
+        case CUBEOUTPUTLOW:    return CONEOUTPUTLOW;
+        case CUBEOUTPUTMID:    return CONEOUTPUTMID;
+        case CUBEOUTPUTHIGH:   return CONEOUTPUTHIGH;
+        case CONEOUTPUTLOW:    return CUBEOUTPUTLOW;
+        case CONEOUTPUTMID:    return CUBEOUTPUTMID;
+        case CONEOUTPUTHIGH:   return CUBEOUTPUTHIGH;
+        default://includes MOVEGAMEPIECE
           return this;
-        
-        
       }
 
-      }
     }
+  }
      
    /* public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
     ArmPreset(double value) {
       this.value = value;
     } 
     */
-  }
 
   public Arm() {
     /*

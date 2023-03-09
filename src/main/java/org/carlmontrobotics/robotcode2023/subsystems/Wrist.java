@@ -54,8 +54,12 @@ public class Wrist extends SubsystemBase {
   public enum WristPreset {
     //radians
     //aproximate values
-    CUBEGROUNDPICKUP(0.408511765), CONEGROUNDPICKUP(0.408513963836), MOVEGAMEPIECE(0), CUBEOUTPUTLOW(-0.922567341767),
-    CUBEOUTPUTMID(-1.5006099006),CUBEOUTPUTHIGH(-1.886179015595),CONEOUTPUTLOW(-0.189970118087),CONEOUTPUTMID(-1.864984784356),CONEOUTPUTHIGH(-2.113082674302) ;
+    MOVEGAMEPIECE(0),
+    
+    CUBEGROUNDPICKUP(0.408511765),   CONEGROUNDPICKUP(0.408513963836), 
+    CUBEOUTPUTLOW(-0.922567341767),  CONEOUTPUTLOW(-0.189970118087),
+    CUBEOUTPUTMID(-1.5006099006),    CONEOUTPUTHIGH(-2.113082674302),
+    CUBEOUTPUTHIGH(-1.886179015595), CONEOUTPUTMID(-1.864984784356);
     
     public double value; //not static so SmartDashboard can touch [IMPORTANT TO KNOW!]
     WristPreset(double value) {
@@ -63,23 +67,15 @@ public class Wrist extends SubsystemBase {
     }
     public WristPreset swapType(){
       switch (this) {
-        case CUBEGROUNDPICKUP:
-          return CONEGROUNDPICKUP;
-        case CONEGROUNDPICKUP:
-          return CUBEGROUNDPICKUP;
-        case CUBEOUTPUTLOW:
-          return CONEOUTPUTLOW;
-        case CUBEOUTPUTMID:
-          return CONEOUTPUTMID;
-        case CUBEOUTPUTHIGH:
-          return CONEOUTPUTHIGH;
-        case CONEOUTPUTLOW:
-          return CUBEOUTPUTLOW;
-        case CONEOUTPUTMID:
-          return CUBEOUTPUTMID;
-        case CONEOUTPUTHIGH:
-          return CUBEOUTPUTHIGH;
-        default:
+        case CUBEGROUNDPICKUP: return CONEGROUNDPICKUP;
+        case CONEGROUNDPICKUP: return CUBEGROUNDPICKUP;
+        case CUBEOUTPUTLOW:    return CONEOUTPUTLOW;
+        case CUBEOUTPUTMID:    return CONEOUTPUTMID;
+        case CUBEOUTPUTHIGH:   return CONEOUTPUTHIGH;
+        case CONEOUTPUTLOW:    return CUBEOUTPUTLOW;
+        case CONEOUTPUTMID:    return CUBEOUTPUTMID;
+        case CONEOUTPUTHIGH:   return CUBEOUTPUTHIGH;
+        default://includes MOVEGAMEPIECE
           return this;
     
       }
