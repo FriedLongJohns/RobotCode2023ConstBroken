@@ -31,23 +31,7 @@ public class RobotContainer {
       new JoystickButton(manipulatorController, Constants.OI.Controller.Y).onTrue(new InstantCommand(() -> {//hi
         arm.setGoalEnum.accept(Arm.ArmPreset.HIGH);
       }));
-      new JoystickButton(manipulatorController, Constants.OI.Controller.B).onTrue(new InstantCommand(() -> {//mid
-        arm.setGoalEnum.accept(Arm.ArmPreset.MID);
-      }));
-      new JoystickButton(manipulatorController, Constants.OI.Controller.X).onTrue(new InstantCommand(() -> {//lo
-        arm.setGoalEnum.accept(Arm.ArmPreset.LOW);
-      }));
-      new JoystickButton(manipulatorController, Constants.OI.Controller.A).onTrue(new InstantCommand(() -> {//intake
-        arm.setGoalEnum.accept(Arm.ArmPreset.GROUND);
-      }));
-        
-      new JoystickButton(manipulatorController, Constants.OI.Controller.RT).onTrue(new InstantCommand(() -> {//swapitem
-        arm.swapItemType();
-      }));
-      
-      new JoystickButton(manipulatorController, Constants.OI.Controller.LT).onTrue(new InstantCommand(() -> {//holdpos
-        arm.setGoalEnum.accept(Arm.ArmPreset.HOLD);
-      }));
+      //sofie, go fix it
   }
 
   public Command getAutonomousCommand() {
