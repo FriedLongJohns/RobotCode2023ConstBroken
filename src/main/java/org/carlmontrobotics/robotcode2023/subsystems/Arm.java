@@ -1,7 +1,7 @@
 package org.carlmontrobotics.robotcode2023.subsystems;
 
+import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
-import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.robotcode2023.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,15 +24,17 @@ import java.util.function.DoubleSupplier;
 public class Arm extends SubsystemBase {
 
   //actual arm
-  private CANSparkMax armMotor = MotorControllerFactory.createSparkMax(Constants.Arm.port, TemperatureLimit.NEO);
-  private CANSparkMax wristMotor = MotorControllerFactory.createSparkMax(Constants.Wrist.port, TemperatureLimit.NEO_550);
+  private CANSparkMax armMotor = MotorControllerFactory.createSparkMax(Constants.Arm.port, MotorConfig.NEO);
+  private CANSparkMax wristMotor = MotorControllerFactory.createSparkMax(Constants.Wrist.port, MotorConfig.NEO_550);
   
   private SparkMaxAbsoluteEncoder armEncoder = armMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
   private SparkMaxAbsoluteEncoder wristEncoder = wristMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
   
   private double armGearRatio = 1/47.25;
   private double wristGearRatio = 1/15;
-  //[arm,wrist]
+  //READ ME: Values are stored in the style of [arm,wrist]
+  //0 is arm
+  //1 is wrist
   
   //TODO GET NUMBERS
   private static double[] hiClamp = {-Math.PI*.5,   -Math.PI*.5}; 
