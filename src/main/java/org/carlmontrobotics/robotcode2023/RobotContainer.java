@@ -31,6 +31,18 @@ public class RobotContainer {
       new JoystickButton(manipulatorController, Constants.OI.Controller.Y).onTrue(new InstantCommand(() -> {//hi
         arm.setGoalEnum.accept(Arm.ArmPreset.HIGH);
       }));
+      new JoystickButton(manipulatorController,Constants.OI.Controller.X).onTrue(new InstantCommand (() -> {
+        arm.setGoalEnum.accept(Arm.ArmPreset.MID);  
+      }));
+      new JoystickButton(manipulatorController,Constants.OI.Controller.B).onTrue(new InstantCommand (() -> {
+        arm.setGoalEnum.accept(Arm.ArmPreset.LOW);  
+      }));
+      new JoystickButton(manipulatorController,Constants.OI.Controller.A).onTrue(new InstantCommand (() -> {
+        arm.setGoalEnum.accept(Arm.ArmPreset.GROUND);  
+      }));
+      new JoystickButton(manipulatorController,Constants.OI.Controller.LT).onTrue(new InstantCommand (() -> {
+        arm.swapItemType();  
+      }));
       //sofie, go fix it
   }
 
@@ -38,9 +50,10 @@ public class RobotContainer {
     return Commands.print("No autonomous command configured");
   }
 
-  private double getStickValue(Joystick stick, XboxController.Axis axis) {
+  /*private double getStickValue(Joystick stick, XboxController.Axis axis) {
     return stick.getRawAxis(axis.value) * (axis == XboxController.Axis.kLeftY || axis == XboxController.Axis.kRightY ? -1 : 1);
   }
+  */
 
   /**
    * Processes an input from the joystick into a value between -1 and 1
@@ -48,7 +61,7 @@ public class RobotContainer {
    * @param value The value to be processed.
    * @return The processed value.
    */
-  private double inputProcessing(double value) {
+  /*private double inputProcessing(double value) {
     double processedInput;
     // processedInput =
     // (((1-Math.cos(value*Math.PI))/2)*((1-Math.cos(value*Math.PI))/2))*(value/Math.abs(value));
@@ -56,5 +69,6 @@ public class RobotContainer {
         value);
     return processedInput;
   }
+  */
 
 }
