@@ -30,7 +30,7 @@ public class Arm extends SubsystemBase {
   private SparkMaxAbsoluteEncoder armEncoder = armMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
   private SparkMaxAbsoluteEncoder wristEncoder = wristMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
   
-  private double armGearRatio = 1/225;
+  private double armGearRatio = 1/47.25;
   private double wristGearRatio = 1/15;
   //[arm,wrist]
   
