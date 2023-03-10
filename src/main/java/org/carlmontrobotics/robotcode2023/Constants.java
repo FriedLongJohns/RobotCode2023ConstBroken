@@ -24,8 +24,8 @@ public final class Constants {
     public static final double grabber_open_position = 2.8;
     public static final double grabber_closed_position = -6.9;
     public static final class Arm{
-        public static final int port = 2;
-      //17 for real robot
+        public static final int port = 17;
+        //2 for prototype
     }
     public static final class Wrist {
         public static final int port = 5;
