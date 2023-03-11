@@ -28,22 +28,6 @@ public class RobotContainer {
   //need to update the buttons
   private void configureButtonBindingsDriver() {}
   private void configureButtonBindingsManipulator() {
-      new JoystickButton(manipulatorController, Constants.OI.Controller.Y).onTrue(new InstantCommand(() -> {//hi
-        arm.setGoalEnum.accept(Arm.ArmPreset.HIGH);
-      }));
-      new JoystickButton(manipulatorController,Constants.OI.Controller.X).onTrue(new InstantCommand (() -> {
-        arm.setGoalEnum.accept(Arm.ArmPreset.MID);  
-      }));
-      new JoystickButton(manipulatorController,Constants.OI.Controller.B).onTrue(new InstantCommand (() -> {
-        arm.setGoalEnum.accept(Arm.ArmPreset.LOW);  
-      }));
-      new JoystickButton(manipulatorController,Constants.OI.Controller.A).onTrue(new InstantCommand (() -> {
-        arm.setGoalEnum.accept(Arm.ArmPreset.GROUND);  
-      }));
-      new JoystickButton(manipulatorController,Constants.OI.Controller.LT).onTrue(new InstantCommand (() -> {
-        arm.swapItemType();  
-      }));
-      //sofie, go fix it
   }
 
   public Command getAutonomousCommand() {
