@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
@@ -41,6 +42,9 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
     public final float initPitch;
     public final float initRoll;
+
+    private double prevAngle = 0;
+    private double prevTime = 0;
 
     public Drivetrain(Limelight lime) {
         this.lime = lime;
@@ -115,8 +119,9 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
                     pitchSupplier, rollSupplier);
             modules = new SwerveModule[] { moduleFL, moduleFR, moduleBL, moduleBR };
         }
-
+        SmartDashboard.putNumber("kpTheta", thetaPIDController[0]);
         odometry = new SwerveDrivePoseEstimator(kinematics, Rotation2d.fromDegrees(getHeading()), getModulePositions(), new Pose2d());
+        prevTime = Timer.getFPGATimestamp();
     }
 
     @Override
@@ -138,12 +143,22 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         //SmartDashboard.putNumber("Pitch", gyro.getPitch());
         //SmartDashboard.putNumber("Roll", gyro.getRoll());
        // SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
-        //SmartDashboard.putNumber("Robot Heading", getHeading());
+        SmartDashboard.putNumber("Robot Heading", getHeading());
         fieldOriented = SmartDashboard.getBoolean("Field Oriented", true);
         // SmartDashboard.putNumber("Gyro Compass Heading", gyro.getCompassHeading());
         // SmartDashboard.putNumber("Compass Offset", compassOffset);
         // SmartDashboard.putBoolean("Current Magnetic Field Disturbance",
         // gyro.isMagneticDisturbance());
+
+        // drive to point testing
+
+        // PID testing for rotations
+        thetaPIDController[0] = SmartDashboard.getNumber("kpTheta", thetaPIDController[0]);
+        double temp = gyro.getAngle();
+        double tempTime = Timer.getFPGATimestamp();
+        SmartDashboard.putNumber("Angular Vel", Units.degreesToRadians(temp - prevAngle) / (tempTime - prevTime));
+        prevAngle = temp;
+        prevTime = tempTime;
     }
 
     @Override
