@@ -56,9 +56,9 @@ public class RobotContainer {
       () -> inputProcessing(getStickValue(driverController, Axis.kRightX)),
       () -> driverController.getRawButton(Driver.slowDriveButton)
     ));
-    
+
     configureButtonBindingsDriver();
-    configureButtonBindingsManipulator();    
+    configureButtonBindingsManipulator();
   }
 
   private void configureButtonBindingsDriver() {
