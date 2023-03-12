@@ -6,6 +6,9 @@ package org.carlmontrobotics.robotcode2023;
 
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.Joystick;
+import java.awt.Color;
+
+import edu.wpi.first.wpilibj.XboxController.Button;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -17,12 +20,6 @@ import edu.wpi.first.wpilibj.Joystick;
  */
 public final class Constants {
 
-    public static final int grabber_motor_port = 0;
-    public static final int wrist_motorL_port = 100;
-    public static final int wrist_motorR_port = 101;
-
-    public static final double grabber_open_position = 2.8;
-    public static final double grabber_closed_position = -6.9;
     public static final class Arm{
         public static final int port = 17;
         //2 for prototype
@@ -30,10 +27,46 @@ public final class Constants {
     public static final class Wrist {
         public static final int port = 19;
     }
+    public static final class Roller {
+        //#region Subsystem Constants
+
+        public static final double coneIntakeConeOuttakeSpeed = -.3;
+        public static final double coneOuttakeConeIntakeSpeed = .7;
+
+        public static final int ledLength = 85;
+        public static final double ledDefaultColorRestoreTime = 3; // The time in seconds after picking up a game piece to restore the LED color to defaultColor
+        public static final Color defaultColor = new Color(0, 0, 200);
+        public static final Color pickupSuccessColor = new Color(0, 200, 0);
+        public static final Color conePickupColor = new Color(150, 150, 0);
+        public static final Color cubePickupColor = new Color(50, 0, 200);
+
+        //#endregion
+
+
+        //#region Ports
+
+        public static final int rollerPort = 18;
+        public static final int beambreakPort = 9;
+        public static final int ledPort = 0;
+
+        //#endregion
+
+
+
+        //#region Command Constants
+
+        //#endregion
+    }
 
     public static final class OI {
         public static final class Driver {
             public static final int port = 0;
+
+            public static final int rollerIntakeConePort = Button.kA.value;
+            public static final int rollerOuttakeConePort = Button.kB.value;
+            public static final int rollerIntakeCubePort = Button.kX.value;
+            public static final int rollerOuttakeCubePort = Button.kY.value;
+            public static final int rollerStopPort = Button.kRightBumper.value;
         }
         public static final class Manipulator {
             public static final int port = 1;
@@ -41,8 +74,6 @@ public final class Constants {
             public static final int cube = Button.kLeftBumper.value;
             public static final int intake = Button.kA.value;
             
-            public static final int cycleUp = 1;//FIXME use correct buttons
-            public static final int cycleDown = 2;
         }
         public static final class Controller {
           public static final int port = 2;

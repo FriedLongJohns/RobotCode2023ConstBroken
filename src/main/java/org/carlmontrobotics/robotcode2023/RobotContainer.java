@@ -6,6 +6,13 @@ package org.carlmontrobotics.robotcode2023;
 
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 
+import java.util.function.DoubleSupplier;
+
+import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
+import org.carlmontrobotics.robotcode2023.commands.OuttakeRoller;
+import org.carlmontrobotics.robotcode2023.commands.SetRoller;
+import org.carlmontrobotics.robotcode2023.subsystems.Roller;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
@@ -21,14 +28,25 @@ public class RobotContainer {
   public final PowerDistribution pd = new PowerDistribution();
   public final Arm arm = new Arm();
 
+  public final Roller roller = new Roller();
+
   public RobotContainer() {
     configureButtonBindingsDriver();
     configureButtonBindingsManipulator();
   }
-  //need to update the buttons
-  private void configureButtonBindingsDriver() {}
-  private void configureButtonBindingsManipulator() {
+
+  private void configureButtonBindingsDriver() {
+    new JoystickButton(driverController, Driver.rollerIntakeConePort)
+      .onTrue(new SetRoller(roller, () -> {return roller.intakeConeSpeed;}, Constants.Roller.conePickupColor));
+    new JoystickButton(driverController, Driver.rollerIntakeCubePort)
+      .onTrue(new SetRoller(roller, () -> {return roller.intakeCubeSpeed;}, Constants.Roller.cubePickupColor));
+    new JoystickButton(driverController, Driver.rollerOuttakeConePort)
+      .onFalse(new OuttakeRoller(roller, () -> {return roller.outtakeConeSpeed;}, Constants.Roller.conePickupColor));
+    new JoystickButton(driverController, Driver.rollerOuttakeCubePort)
+      .onFalse(new OuttakeRoller(roller, () -> {return roller.outtakeCubeSpeed;}, Constants.Roller.cubePickupColor));
+    new JoystickButton(driverController, Driver.rollerStopPort).onTrue(new InstantCommand(() -> roller.setSpeed(0)));
   }
+  private void configureButtonBindingsManipulator() {}
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
