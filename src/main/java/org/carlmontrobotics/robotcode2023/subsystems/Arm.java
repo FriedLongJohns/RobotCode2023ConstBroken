@@ -91,10 +91,10 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     armKG = calculateKG();
-    SmartDashboard.putNumber("Motor Voltage", wristFeed.calculate(getRobotWristAngle(), 0, 0)
-    + wristpid.calculate(getRobotWristAngle(), goalPos[1]));
-    wristMotor.setVoltage(wristFeed.calculate(getRobotWristAngle(), 0, 0)
-        + wristpid.calculate(getRobotWristAngle(), goalPos[1]));
+    // SmartDashboard.putNumber("Motor Voltage", wristFeed.calculate(getRobotWristAngle(), 0, 0)
+    // + wristpid.calculate(getRobotWristAngle(), goalPos[1]));
+    // wristMotor.setVoltage(wristFeed.calculate(getRobotWristAngle(), 0, 0)
+    //     + wristpid.calculate(getRobotWristAngle(), goalPos[1]));
     //Rotation2d currentAngle = getCoM().getAngle();
     //armMotor.setVoltage(armFeed.calculate(currentAngle.getRadians(), 0, 0)
     //+ armpid.calculate(currentPos[0], goalPos[0]) + armKG * currentAngle.getCos());

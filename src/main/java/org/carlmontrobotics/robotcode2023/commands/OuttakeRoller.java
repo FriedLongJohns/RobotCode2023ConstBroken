@@ -9,14 +9,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class SetRoller extends CommandBase {
+public class OuttakeRoller extends CommandBase {
 
     private final Roller roller;
     private DoubleSupplier speed;
     private final Color ledColor;
     private final Timer timer = new Timer();
 
-    public SetRoller(Roller roller, DoubleSupplier speed, Color ledColor) {
+    public OuttakeRoller(Roller roller, DoubleSupplier speed, Color ledColor) {
         addRequirements(this.roller = roller);
         this.speed = speed;
         this.ledColor = ledColor;
@@ -34,24 +34,19 @@ public class SetRoller extends CommandBase {
     }
 
     @Override
-    public void end(boolean interrupted) { 
+    public void end(boolean interrupted) {
         roller.setSpeed(0);
 
     }
 
     @Override
     public boolean isFinished() {
-        double time = 0;
+        double time = timer.get();
+        //SmartDashboard.putNumber("Time Elapsed", time);
+        //SmartDashboard.putNumber("Time Target", roller.getTime());
 
-        if (roller.hasGamePiece()) {
+        if (!roller.hasGamePiece())
             timer.start();
-            time = timer.get();
-        }
-        SmartDashboard.putNumber("Time Target", roller.getTime());
-
-        SmartDashboard.putNumber("SetRoller Time Elapsed (s)", time);
-
-
-        return roller.hasGamePiece() && time > roller.getTime();
+        return !roller.hasGamePiece() && time > roller.getTime();
     }
 }

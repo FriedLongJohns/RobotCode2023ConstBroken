@@ -6,12 +6,14 @@ package org.carlmontrobotics.robotcode2023.subsystems;
 
 import java.awt.Color;
 
+import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
-import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import static org.carlmontrobotics.robotcode2023.Constants.Roller.*;
 
+import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -24,16 +26,21 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Roller extends SubsystemBase {
 
-    private final CANSparkMax motor = MotorControllerFactory.createSparkMax(rollerPort, TemperatureLimit.NEO_550);
-    private final DigitalInput beambreak = new DigitalInput(beambreakPort);
+    private final CANSparkMax motor = MotorControllerFactory.createSparkMax(rollerPort, MotorConfig.NEO_550);
+    private TimeOfFlight distSensor = new TimeOfFlight(10);
     private final AddressableLED led = new AddressableLED(ledPort);
     private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(ledLength);
+    public double intakeConeSpeed = -0.5;
+    public double outtakeConeSpeed = 0.5;
+    public double intakeCubeSpeed = 0.3;
+    public double outtakeCubeSpeed = -0.5;
+    public double time = 1.5;
 
     private boolean hadGamePiece = false;
 
     private Command resetColorCommand = new SequentialCommandGroup(
         new WaitCommand(ledDefaultColorRestoreTime),
-        new InstantCommand(() -> setLedColor(defaultColor), this))
+        new InstantCommand(() -> setLedColor(defaultColor)))
     {
         public boolean runsWhenDisabled() {
             return true;
@@ -43,14 +50,27 @@ public class Roller extends SubsystemBase {
     public Roller() {
         led.setLength(ledBuffer.getLength());
         setLedColor(defaultColor);
+
+        SmartDashboard.putNumber("Roller Voltage", 0);
+        SmartDashboard.putNumber("Intake Cone Speed", intakeConeSpeed);
+        SmartDashboard.putNumber("Outtake Cone Speed", outtakeConeSpeed);
+        SmartDashboard.putNumber("Intake Cube Speed", intakeCubeSpeed);
+        SmartDashboard.putNumber("Outtake Cube Speed", outtakeCubeSpeed);
+        SmartDashboard.putNumber("Time", 0);
         led.start();
     }
 
     @Override
     public void periodic() {
+        
         SmartDashboard.putBoolean("Has Game Piece", hasGamePiece());
-
+        //setSpeed(SmartDashboard.getNumber("Roller Voltage", 0));
         // LED Update
+        intakeConeSpeed = SmartDashboard.getNumber("Intake Cone Speed", intakeConeSpeed);
+        outtakeConeSpeed = SmartDashboard.getNumber("Outtake Cone Speed", outtakeConeSpeed);
+        intakeCubeSpeed = SmartDashboard.getNumber("Intake Cube Speed", intakeCubeSpeed);
+        outtakeCubeSpeed = SmartDashboard.getNumber("Outtake Cube Speed", outtakeCubeSpeed);
+        time = SmartDashboard.getNumber("Time", 0);
         {
             boolean hasGamePiece = hasGamePiece();
             if (hasGamePiece && !hadGamePiece) {
@@ -72,6 +92,13 @@ public class Roller extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
-        return !beambreak.get();
+        
+        SmartDashboard.putNumber("dist", Units.metersToInches((distSensor.getRange() - 16)/1000));
+        return Units.metersToInches((distSensor.getRange() - 16)/1000) < 20;
+
+        //return !beambreak.get();
+    }
+    public double getTime() {
+        return time;
     }
 }
