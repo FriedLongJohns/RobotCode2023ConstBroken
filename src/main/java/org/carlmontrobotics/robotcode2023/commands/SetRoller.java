@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class SetRoller extends CommandBase {
 
+    // .5 for cones intake
+    // .25 for cubes intake
     private final Roller roller;
     private DoubleSupplier speed;
     private final Color ledColor;
@@ -36,20 +38,19 @@ public class SetRoller extends CommandBase {
     @Override
     public void end(boolean interrupted) { 
         roller.setSpeed(0);
+        timer.stop();
     }
 
     @Override
     public boolean isFinished() {
-        double time = 0;
+        double time = timer.get();
 
         if (roller.hasGamePiece()) {
             timer.start();
-            time = timer.get();
         }
         SmartDashboard.putNumber("Time Target", roller.getTime());
 
         SmartDashboard.putNumber("SetRoller Time Elapsed (s)", time);
-
 
         return roller.hasGamePiece() && time > roller.getTime();
     }
