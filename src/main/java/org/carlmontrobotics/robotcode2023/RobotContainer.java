@@ -4,8 +4,6 @@
 
 package org.carlmontrobotics.robotcode2023;
 
-import org.carlmontrobotics.robotcode2023.subsystems.Arm;
-
 import java.util.function.DoubleSupplier;
 
 import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
@@ -26,7 +24,6 @@ public class RobotContainer {
   public final Joystick driverController = new Joystick(0);
   public final Joystick manipulatorController = new Joystick(1);
   public final PowerDistribution pd = new PowerDistribution();
-  public final Arm arm = new Arm();
 
   public final Roller roller = new Roller();
 
@@ -72,5 +69,4 @@ public class RobotContainer {
     return processedInput;
   }
   */
-
 }

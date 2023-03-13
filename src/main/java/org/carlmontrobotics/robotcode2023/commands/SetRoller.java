@@ -36,7 +36,6 @@ public class SetRoller extends CommandBase {
     @Override
     public void end(boolean interrupted) { 
         roller.setSpeed(0);
-
     }
 
     @Override

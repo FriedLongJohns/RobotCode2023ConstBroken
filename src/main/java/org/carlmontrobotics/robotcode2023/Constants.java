@@ -20,13 +20,6 @@ import edu.wpi.first.wpilibj.XboxController.Button;
  */
 public final class Constants {
 
-    public static final class Arm{
-        public static final int port = 17;
-        //2 for prototype
-    }
-    public static final class Wrist {
-        public static final int port = 19;
-    }
     public static final class Roller {
         //#region Subsystem Constants
 
@@ -117,7 +110,7 @@ public final class Constants {
                   START = 8;
                   //todo get arrow buttons
               }
-           }
+            }
         }
     }
 }
