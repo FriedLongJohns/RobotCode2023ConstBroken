@@ -7,9 +7,10 @@ package org.carlmontrobotics.robotcode2023;
 import java.util.function.DoubleSupplier;
 
 import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
+import org.carlmontrobotics.robotcode2023.commands.IntakeRoller;
 import org.carlmontrobotics.robotcode2023.commands.OuttakeRoller;
-import org.carlmontrobotics.robotcode2023.commands.SetRoller;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller;
+import org.carlmontrobotics.robotcode2023.subsystems.Roller.RollerMode;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -33,15 +34,15 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsDriver() {
-    new JoystickButton(driverController, Driver.rollerIntakeConePort)
-      .onTrue(new SetRoller(roller, () -> {return roller.intakeConeSpeed;}, Constants.Roller.conePickupColor));
-    new JoystickButton(driverController, Driver.rollerIntakeCubePort)
-      .onTrue(new SetRoller(roller, () -> {return roller.intakeCubeSpeed;}, Constants.Roller.cubePickupColor));
-    new JoystickButton(driverController, Driver.rollerOuttakeConePort)
-      .onFalse(new OuttakeRoller(roller, () -> {return roller.outtakeConeSpeed;}, Constants.Roller.conePickupColor));
-    new JoystickButton(driverController, Driver.rollerOuttakeCubePort)
-      .onFalse(new OuttakeRoller(roller, () -> {return roller.outtakeCubeSpeed;}, Constants.Roller.cubePickupColor));
-    new JoystickButton(driverController, Driver.rollerStopPort).onTrue(new InstantCommand(() -> roller.setSpeed(0)));
+    new JoystickButton(driverController, Driver.rollerIntakeConeButton)
+      .onTrue(new IntakeRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
+    new JoystickButton(driverController, Driver.rollerIntakeCubeButton)
+      .onTrue(new IntakeRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor));
+    new JoystickButton(driverController, Driver.rollerOuttakeConeButton)
+      .onFalse(new OuttakeRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.conePickupColor));
+    new JoystickButton(driverController, Driver.rollerOuttakeCubeButton)
+      .onFalse(new OuttakeRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.cubePickupColor));
+    new JoystickButton(driverController, Driver.rollerStopButton).onTrue(new InstantCommand(() -> roller.setSpeed(0)));
   }
   private void configureButtonBindingsManipulator() {}
 

@@ -55,11 +55,11 @@ public final class Constants {
         public static final class Driver {
             public static final int port = 0;
 
-            public static final int rollerIntakeConePort = Button.kA.value;
-            public static final int rollerOuttakeConePort = Button.kB.value;
-            public static final int rollerIntakeCubePort = Button.kX.value;
-            public static final int rollerOuttakeCubePort = Button.kY.value;
-            public static final int rollerStopPort = Button.kRightBumper.value;
+            public static final int rollerIntakeConeButton = Button.kA.value;
+            public static final int rollerOuttakeConeButton = Button.kB.value;
+            public static final int rollerIntakeCubeButton = Button.kX.value;
+            public static final int rollerOuttakeCubeButton = Button.kY.value;
+            public static final int rollerStopButton = Button.kRightBumper.value;
         }
         public static final class Manipulator {
             public static final int port = 1;

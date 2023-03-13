@@ -16,7 +16,6 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -30,10 +29,6 @@ public class Roller extends SubsystemBase {
     private TimeOfFlight distSensor = new TimeOfFlight(10);
     private final AddressableLED led = new AddressableLED(ledPort);
     private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(ledLength);
-    public double intakeConeSpeed = -0.5;
-    public double outtakeConeSpeed = 0.5;
-    public double intakeCubeSpeed = 0.3;
-    public double outtakeCubeSpeed = -0.5;
     public double time = 1.5;
 
     private boolean hadGamePiece = false;
@@ -51,12 +46,14 @@ public class Roller extends SubsystemBase {
         led.setLength(ledBuffer.getLength());
         setLedColor(defaultColor);
 
-        SmartDashboard.putNumber("Roller Voltage", 0);
-        SmartDashboard.putNumber("Intake Cone Speed", intakeConeSpeed);
-        SmartDashboard.putNumber("Outtake Cone Speed", outtakeConeSpeed);
-        SmartDashboard.putNumber("Intake Cube Speed", intakeCubeSpeed);
-        SmartDashboard.putNumber("Outtake Cube Speed", outtakeCubeSpeed);
-        SmartDashboard.putNumber("Time", 0);
+        SmartDashboard.putNumber("Intake Cone Speed", RollerMode.INTAKE_CONE.speed);
+        SmartDashboard.putNumber("Outtake Cone Speed", RollerMode.OUTTAKE_CONE.speed);
+        SmartDashboard.putNumber("Intake Cube Speed", RollerMode.INTAKE_CUBE.speed);
+        SmartDashboard.putNumber("Outtake Cube Speed", RollerMode.OUTTAKE_CUBE.speed);
+        SmartDashboard.putNumber("Intake Cone Time", RollerMode.INTAKE_CONE.time);
+        SmartDashboard.putNumber("Outtake Cone Time", RollerMode.OUTTAKE_CONE.time);
+        SmartDashboard.putNumber("Intake Cube Time", RollerMode.INTAKE_CUBE.time);
+        SmartDashboard.putNumber("Outtake Cube Time", RollerMode.OUTTAKE_CUBE.time);
         led.start();
     }
 
@@ -64,13 +61,17 @@ public class Roller extends SubsystemBase {
     public void periodic() {
         
         SmartDashboard.putBoolean("Has Game Piece", hasGamePiece());
-        //setSpeed(SmartDashboard.getNumber("Roller Voltage", 0));
+        RollerMode.INTAKE_CONE.speed = SmartDashboard.getNumber("Intake Cone Speed", RollerMode.INTAKE_CONE.speed);
+        RollerMode.OUTTAKE_CONE.speed = SmartDashboard.getNumber("Outtake Cone Speed", RollerMode.OUTTAKE_CONE.speed);
+        RollerMode.INTAKE_CUBE.speed = SmartDashboard.getNumber("Intake Cube Speed", RollerMode.INTAKE_CUBE.speed);
+        RollerMode.OUTTAKE_CUBE.speed = SmartDashboard.getNumber("Outtake Cube Speed", RollerMode.OUTTAKE_CUBE.speed);
+        RollerMode.INTAKE_CONE.time = SmartDashboard.getNumber("Intake Cone Time", RollerMode.INTAKE_CONE.time);
+        RollerMode.OUTTAKE_CONE.time = SmartDashboard.getNumber("Outtake Cone Time", RollerMode.OUTTAKE_CONE.time);
+        RollerMode.INTAKE_CUBE.time = SmartDashboard.getNumber("Intake Cube Time", RollerMode.INTAKE_CUBE.time);
+        RollerMode.OUTTAKE_CUBE.time = SmartDashboard.getNumber("Outtake Cube Time", RollerMode.OUTTAKE_CUBE.time);
+
+
         // LED Update
-        intakeConeSpeed = SmartDashboard.getNumber("Intake Cone Speed", intakeConeSpeed);
-        outtakeConeSpeed = SmartDashboard.getNumber("Outtake Cone Speed", outtakeConeSpeed);
-        intakeCubeSpeed = SmartDashboard.getNumber("Intake Cube Speed", intakeCubeSpeed);
-        outtakeCubeSpeed = SmartDashboard.getNumber("Outtake Cube Speed", outtakeCubeSpeed);
-        time = SmartDashboard.getNumber("Time", 0);
         {
             boolean hasGamePiece = hasGamePiece();
             if (hasGamePiece && !hadGamePiece) {
@@ -92,13 +93,23 @@ public class Roller extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
-        
         SmartDashboard.putNumber("dist", Units.metersToInches((distSensor.getRange() - 16)/1000));
         return Units.metersToInches((distSensor.getRange() - 16)/1000) < 20;
-
-        //return !beambreak.get();
     }
-    public double getTime() {
-        return time;
+
+    public static class RollerMode {
+        public static RollerMode INTAKE_CONE = new RollerMode(-0.5, .5);
+        public static RollerMode INTAKE_CUBE = new RollerMode(0.3, .25);
+        public static RollerMode OUTTAKE_CONE = new RollerMode(0.5, .5);
+        public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5);
+        public double speed, time;
+        /**
+         * @param speed a number between -1 and 1
+         * @param time amount of time in seconds to keep the motor running after
+         * distance sensor has detected an object
+         */
+        public RollerMode(double speed, double time) {
+            this.speed = speed; this.time = time;
+        }
     }
 }
