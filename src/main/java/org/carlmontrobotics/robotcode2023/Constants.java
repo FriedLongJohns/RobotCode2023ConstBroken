@@ -64,6 +64,10 @@ public final class Constants {
 
         public static final double V_PER_NM = 0;
 
+        public static final double ARM_ANGLE_MIN = -3 * Math.PI / 2;
+        public static final double ARM_ANGLE_MAX = Math.PI / 2;
+        public static final double WRIST_ANGLE_MIN = -Math.PI;
+        public static final double WRIST_ANGLE_MAX = Math.PI;
         //#endregion
 
         //#region Ports

@@ -82,11 +82,11 @@ public class Arm extends SubsystemBase {
     }
 
     public double getArmPos() {
-        return MathUtil.inputModulus(armEncoder.getPosition(), -3 * Math.PI / 2, Math.PI / 2);
+        return MathUtil.inputModulus(armEncoder.getPosition(), ARM_ANGLE_MIN, ARM_ANGLE_MAX);
     }
 
     public double getWristPos() {
-        return MathUtil.inputModulus(wristEncoder.getPosition(), -Math.PI, Math.PI);
+        return MathUtil.inputModulus(wristEncoder.getPosition(), WRIST_ANGLE_MIN, WRIST_ANGLE_MAX);
     }
 
     // Unbounded wrist position relative to ground
@@ -95,11 +95,11 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmTarget(double target) {
-        goalPosRad[ARM] = target;
+        goalPosRad[ARM] = MathUtil.inputModulus(target, ARM_ANGLE_MIN, ARM_ANGLE_MAX);
     }
 
     public void setWristTarget(double target) {
-        goalPosRad[WRIST] = target;
+        goalPosRad[WRIST] = MathUtil.inputModulus(target, WRIST_ANGLE_MIN, WRIST_ANGLE_MAX);
     }
 
     public void setArmWristTarget(double targetArm, double targetWrist) {
