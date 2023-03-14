@@ -6,6 +6,7 @@ package org.carlmontrobotics.robotcode2023;
 
 import org.carlmontrobotics.robotcode2023.Constants.GoalPos;
 import org.carlmontrobotics.robotcode2023.Constants.OI.Controller;
+import org.carlmontrobotics.robotcode2023.commands.ArmPeriodic;
 import org.carlmontrobotics.robotcode2023.commands.SetArmWristPosition;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 
 public class RobotContainer {
 
@@ -27,6 +29,11 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindingsDriver();
     configureButtonBindingsManipulator();
+    arm.setDefaultCommand(new ArmPeriodic(
+      arm, 
+      () -> inputProcessing(getStickValue(manipulatorController, Axis.kLeftY)),
+      () -> inputProcessing(getStickValue(manipulatorController, Axis.kRightX))
+    ));
   }
   //need to update the buttons
   private void configureButtonBindingsDriver() {}
@@ -54,10 +61,9 @@ public class RobotContainer {
     return Commands.print("No autonomous command configured");
   }
 
-  /*private double getStickValue(Joystick stick, XboxController.Axis axis) {
+  private double getStickValue(Joystick stick, XboxController.Axis axis) {
     return stick.getRawAxis(axis.value) * (axis == XboxController.Axis.kLeftY || axis == XboxController.Axis.kRightY ? -1 : 1);
   }
-  */
 
   /**
    * Processes an input from the joystick into a value between -1 and 1
@@ -65,7 +71,7 @@ public class RobotContainer {
    * @param value The value to be processed.
    * @return The processed value.
    */
-  /*private double inputProcessing(double value) {
+  private double inputProcessing(double value) {
     double processedInput;
     // processedInput =
     // (((1-Math.cos(value*Math.PI))/2)*((1-Math.cos(value*Math.PI))/2))*(value/Math.abs(value));
@@ -73,6 +79,4 @@ public class RobotContainer {
         value);
     return processedInput;
   }
-  */
-
 }
