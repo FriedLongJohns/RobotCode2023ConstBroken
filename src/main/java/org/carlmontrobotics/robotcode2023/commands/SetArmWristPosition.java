@@ -2,6 +2,7 @@ package org.carlmontrobotics.robotcode2023.commands;
 
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -10,6 +11,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class SetArmWristPosition extends ConditionalCommand {
+
+    private final static double wristStowPosLeft = Units.degreesToRadians(135);
+    private final static double wristStowPosRight = Units.degreesToRadians(-135);
+    private final static double armSideTransferOffsetFromVertical = Units.degreesToRadians(45);
 
     public SetArmWristPosition(double armPos, double wristPos, boolean moveArmFirst, Arm arm) {
         super(
@@ -20,7 +25,8 @@ public class SetArmWristPosition extends ConditionalCommand {
                 new WaitUntilCommand(moveArmFirst ? arm::wristAtSetpoint : arm::armAtSetpoint)
             ),
             new SequentialCommandGroup(
-                new InstantCommand(() -> arm.setWristTarget(wristStowPos)),
+                (Math.signum(arm.getArmPos() - (-Math.PI / 2)) == -1) ? 
+                new InstantCommand(() -> arm.setWristTarget(wristStowPosLeft)) : new InstantCommand(() -> arm.setWristTarget(wristStowPosRight)),
                 new WaitUntilCommand(arm::wristAtSetpoint),
                 new InstantCommand(() -> arm.setArmTarget(-Math.PI / 2 + armSideTransferOffsetFromVertical * (armPos > -Math.PI / 2 ? 1 : -1))),
                 new WaitUntilCommand(arm::armAtSetpoint),
