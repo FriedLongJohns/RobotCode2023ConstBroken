@@ -107,6 +107,14 @@ public class Arm extends SubsystemBase {
         setWristTarget(targetWrist);
     }
 
+    public boolean armAtSetpoint() {
+        return armPID.atSetpoint();
+    }
+
+    public boolean wristAtSetpoint() {
+        return wristPID.atSetpoint();
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
