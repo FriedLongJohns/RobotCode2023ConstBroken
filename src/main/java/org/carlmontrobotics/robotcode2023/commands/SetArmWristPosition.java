@@ -29,7 +29,7 @@ public class SetArmWristPosition extends ConditionalCommand {
                 // 2) if we just use a constructor, this command would allocate itself in its own constructor, leading to infinite memory usage (now it's only allocated when it's needed)
                 new ProxyCommand(() -> new SetArmWristPosition(armPos, wristPos, moveArmFirst, arm))
             ),
-            () -> Math.signum(arm.getArmPos() - Math.PI / 2) == Math.signum(armPos - (-Math.PI / 2)) // If the arm is already on the right side of the robot
+            () -> Math.signum(arm.getArmPos() - (-Math.PI / 2)) == Math.signum(armPos - (-Math.PI / 2)) // If the arm is already on the right side of the robot
         );
         addRequirements(arm);
     }
