@@ -133,7 +133,9 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
         // Update the odometry with limelight
         if(lime != null && lime.hasTarget()) {
-            odometry.addVisionMeasurement(lime.getTransform(Limelight.Transform.BOTPOSE).toPose2d(), WPIUtilJNI.now() * 1.0e-6 /* From the odometry.update implementation */);
+            odometry.addVisionMeasurement(
+                lime.getTransform(limelightTransformForPoseEstimation).toPose2d(),
+                Timer.getFPGATimestamp() - lime.getNTEntry(limelightTransformForPoseEstimation.name().toLowerCase()).getDoubleArray(new double[7])[6] / 1000);
         }
 
         // SmartDashboard.putNumber("Odometry X",
