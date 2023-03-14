@@ -34,7 +34,13 @@ public class AlignChargingStation extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        lastTime = (fwd ? Math.abs(getPitch()) < chargeStationAlignTolerance : Math.abs(getRoll()) < chargeStationAlignTolerance) ? lastTime == -1 ? System.currentTimeMillis() : lastTime : -1;
+        lastTime = Math.abs(fwd ? getPitch() : getRoll() /* Select which axis to use based on the direction of alignment */) < chargeStationAlignTolerance ? // If the robot is aligned
+                    lastTime == -1 ? // Set the last time to the current time if it hasn't been set yet
+                        System.currentTimeMillis() :
+                        lastTime : // else NOP
+                    -1; // Reset the last time
+        // The effect is that lastTime returns the time at which the robot was first aligned, so we can use it as a timer for how long the robot has been aligned
+
         return System.currentTimeMillis() - lastTime > chargeStationAlignTime && lastTime != -1;
     }
 
