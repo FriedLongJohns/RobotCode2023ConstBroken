@@ -4,6 +4,9 @@
 
 package org.carlmontrobotics.robotcode2023;
 
+import org.carlmontrobotics.robotcode2023.Constants.GoalPos;
+import org.carlmontrobotics.robotcode2023.Constants.OI.Controller;
+import org.carlmontrobotics.robotcode2023.commands.SetArmWristPosition;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -28,6 +31,23 @@ public class RobotContainer {
   //need to update the buttons
   private void configureButtonBindingsDriver() {}
   private void configureButtonBindingsManipulator() {
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.toggleCubeCone).onTrue(new InstantCommand(() -> arm.toggleCube()));
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.toggleFrontBack).onTrue(new InstantCommand(() -> arm.toggleFront()));
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.store).onTrue(
+      new SetArmWristPosition(arm.getArmGoal(GoalPos.STORED), arm.getWristGoal(GoalPos.STORED), false, arm)
+    );
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.low).onTrue(
+      new SetArmWristPosition(arm.getArmGoal(GoalPos.LOW), arm.getWristGoal(GoalPos.LOW), true, arm)
+    );
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.mid).onTrue(
+      new SetArmWristPosition(arm.getArmGoal(GoalPos.MID), arm.getWristGoal(GoalPos.MID), true, arm)
+    );
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.high).onTrue(
+      new SetArmWristPosition(arm.getArmGoal(GoalPos.HIGH), arm.getWristGoal(GoalPos.HIGH), true, arm)
+    );
+    new JoystickButton(manipulatorController, Constants.OI.Manipulator.store).onTrue(
+      new SetArmWristPosition(arm.getArmGoal(GoalPos.STORED), arm.getWristGoal(GoalPos.STORED), true, arm)
+    );
   }
 
   public Command getAutonomousCommand() {
