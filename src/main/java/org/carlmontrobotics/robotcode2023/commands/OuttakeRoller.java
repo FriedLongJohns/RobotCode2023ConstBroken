@@ -34,7 +34,7 @@ public class OuttakeRoller extends CommandBase {
     }
 
     @Override
-    public void end(boolean interrupted) { 
+    public void end(boolean interrupted) {
         roller.setSpeed(0);
         timer.stop();
     }
