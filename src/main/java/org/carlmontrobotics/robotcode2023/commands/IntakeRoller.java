@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class IntakeRoller extends CommandBase {
 
-    // .5 for cones intake
-    // .25 for cubes intake
     private final Roller roller;
     private RollerMode mode;
     private final Color ledColor;

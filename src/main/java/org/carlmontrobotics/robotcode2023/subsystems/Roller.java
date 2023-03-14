@@ -45,7 +45,9 @@ public class Roller extends SubsystemBase {
     public Roller() {
         led.setLength(ledBuffer.getLength());
         setLedColor(defaultColor);
+        SmartDashboard.putData(this);
 
+        // TODO: Get proper values for the speeds and timings. For future pull requests, do not merge if this is not deleted
         SmartDashboard.putNumber("Intake Cone Speed", RollerMode.INTAKE_CONE.speed);
         SmartDashboard.putNumber("Outtake Cone Speed", RollerMode.OUTTAKE_CONE.speed);
         SmartDashboard.putNumber("Intake Cube Speed", RollerMode.INTAKE_CUBE.speed);

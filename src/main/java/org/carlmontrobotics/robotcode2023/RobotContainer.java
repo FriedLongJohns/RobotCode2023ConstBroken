@@ -4,8 +4,6 @@
 
 package org.carlmontrobotics.robotcode2023;
 
-import java.util.function.DoubleSupplier;
-
 import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
 import org.carlmontrobotics.robotcode2023.commands.IntakeRoller;
 import org.carlmontrobotics.robotcode2023.commands.OuttakeRoller;
@@ -14,7 +12,6 @@ import org.carlmontrobotics.robotcode2023.subsystems.Roller.RollerMode;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;

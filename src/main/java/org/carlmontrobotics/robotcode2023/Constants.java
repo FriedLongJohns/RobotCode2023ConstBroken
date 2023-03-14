@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.Joystick;
 import java.awt.Color;
 
-import edu.wpi.first.wpilibj.XboxController.Button;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -37,9 +35,7 @@ public final class Constants {
 
 
         //#region Ports
-
         public static final int rollerPort = 18;
-        public static final int beambreakPort = 9;
         public static final int ledPort = 0;
 
         //#endregion
