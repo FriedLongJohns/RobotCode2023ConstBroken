@@ -39,7 +39,7 @@ public class AlignChargingStation extends CommandBase {
                         System.currentTimeMillis() :
                         lastTime : // else NOP
                     -1; // Reset the last time
-        // The effect is that lastTime returns the time at which the robot was first aligned, so we can use it as a timer for how long the robot has been aligned
+        // The effect is that lastTime contains the time at which the robot was first aligned, so we can use it as a timer for how long the robot has been aligned
 
         return System.currentTimeMillis() - lastTime > chargeStationAlignTime && lastTime != -1;
     }
