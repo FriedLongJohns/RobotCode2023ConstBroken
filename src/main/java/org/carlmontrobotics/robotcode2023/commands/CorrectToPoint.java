@@ -26,6 +26,7 @@ public class CorrectToPoint extends CommandBase {
     pidX     = new PIDController( dt.getPIDConstants()[0][0], dt.getPIDConstants()[0][1], dt.getPIDConstants()[0][2]);
     pidY     = new PIDController( dt.getPIDConstants()[1][0], dt.getPIDConstants()[1][1], dt.getPIDConstants()[1][2]);
     pidTheta = new PIDController( dt.getPIDConstants()[2][0], dt.getPIDConstants()[2][1], dt.getPIDConstants()[2][2]);
+    pidTheta.enableContinuousInput(-180, 180);
   }
 
   // Called when the command is initially scheduled.
