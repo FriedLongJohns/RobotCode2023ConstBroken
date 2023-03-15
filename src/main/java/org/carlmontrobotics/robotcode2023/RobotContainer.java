@@ -5,8 +5,7 @@
 package org.carlmontrobotics.robotcode2023;
 
 import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
-import org.carlmontrobotics.robotcode2023.commands.IntakeRoller;
-import org.carlmontrobotics.robotcode2023.commands.OuttakeRoller;
+import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller.RollerMode;
 
@@ -35,13 +34,13 @@ public class RobotContainer {
 
   private void configureButtonBindingsManipulator() {
     new JoystickButton(manipulatorController, Manipulator.rollerIntakeConeButton)
-      .onTrue(new IntakeRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
+      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
     new JoystickButton(manipulatorController, Manipulator.rollerIntakeCubeButton)
-      .onTrue(new IntakeRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor));
+      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor));
     new JoystickButton(manipulatorController, Manipulator.rollerOuttakeConeButton)
-      .onFalse(new OuttakeRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.conePickupColor));
+      .onFalse(new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.conePickupColor));
     new JoystickButton(manipulatorController, Manipulator.rollerOuttakeCubeButton)
-      .onFalse(new OuttakeRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.cubePickupColor));
+      .onFalse(new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.cubePickupColor));
     new JoystickButton(manipulatorController, Manipulator.rollerStopButton).onTrue(new InstantCommand(() -> roller.setSpeed(0)));
   }
 

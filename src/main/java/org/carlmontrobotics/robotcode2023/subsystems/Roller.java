@@ -61,7 +61,7 @@ public class Roller extends SubsystemBase {
 
     @Override
     public void periodic() {
-        
+
         SmartDashboard.putBoolean("Has Game Piece", hasGamePiece());
         RollerMode.INTAKE_CONE.speed = SmartDashboard.getNumber("Intake Cone Speed", RollerMode.INTAKE_CONE.speed);
         RollerMode.OUTTAKE_CONE.speed = SmartDashboard.getNumber("Outtake Cone Speed", RollerMode.OUTTAKE_CONE.speed);
@@ -71,6 +71,8 @@ public class Roller extends SubsystemBase {
         RollerMode.OUTTAKE_CONE.time = SmartDashboard.getNumber("Outtake Cone Time", RollerMode.OUTTAKE_CONE.time);
         RollerMode.INTAKE_CUBE.time = SmartDashboard.getNumber("Intake Cube Time", RollerMode.INTAKE_CUBE.time);
         RollerMode.OUTTAKE_CUBE.time = SmartDashboard.getNumber("Outtake Cube Time", RollerMode.OUTTAKE_CUBE.time);
+
+        SmartDashboard.putNumber("Roller Game Piece Distance", getGamePieceDistanceIn());
 
 
         // LED Update
@@ -95,23 +97,31 @@ public class Roller extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
-        SmartDashboard.putNumber("dist", Units.metersToInches((distSensor.getRange() - 16)/1000));
-        return Units.metersToInches((distSensor.getRange() - 16)/1000) < 20;
+        return getGamePieceDistanceIn() < gamePieceDetectDistanceIn;
+    }
+
+    public double getGamePieceDistanceIn() {
+        return Units.metersToInches((distSensor.getRange() - 16)/1000); // TODO: Remove magic numbers (waiting on @ProfessorAtomicManiac to get back to me)
     }
 
     public static class RollerMode {
-        public static RollerMode INTAKE_CONE = new RollerMode(-0.5, .5);
-        public static RollerMode INTAKE_CUBE = new RollerMode(0.3, .25);
-        public static RollerMode OUTTAKE_CONE = new RollerMode(0.5, .5);
-        public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5);
+        public static RollerMode INTAKE_CONE = new RollerMode(-0.5, .5, true);
+        public static RollerMode INTAKE_CUBE = new RollerMode(0.3, .25, true);
+        public static RollerMode OUTTAKE_CONE = new RollerMode(0.5, .5, false);
+        public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5, false);
         public double speed, time;
+        public boolean intake;
+
         /**
-         * @param speed a number between -1 and 1
-         * @param time amount of time in seconds to keep the motor running after
+         * @param speed A number between -1 and 1
+         * @param time Amount of time in seconds to keep the motor running after
          * distance sensor has detected an object
+         * @param intake Whether the roller is outtaking or intaking
          */
-        public RollerMode(double speed, double time) {
-            this.speed = speed; this.time = time;
+        public RollerMode(double speed, double time, boolean intake) {
+            this.speed = speed;
+            this.time = time;
+            this.intake = intake;
         }
     }
 }
