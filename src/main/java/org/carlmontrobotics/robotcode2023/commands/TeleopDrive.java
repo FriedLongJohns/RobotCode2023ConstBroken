@@ -13,6 +13,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import org.carlmontrobotics.robotcode2023.Constants;
+import org.carlmontrobotics.robotcode2023.Robot;
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -24,8 +25,9 @@ public class TeleopDrive extends CommandBase {
   private DoubleSupplier str;
   private DoubleSupplier rcw;
   private BooleanSupplier slow;
-  double currentForward = 0;
-  double currentStrafe = 0;
+  private double currentForward = 0;
+  private double currentStrafe = 0;
+
   /**
    * Creates a new TeleopDrive.
    */
@@ -49,8 +51,9 @@ public class TeleopDrive extends CommandBase {
     drivetrain.drive(speeds[0], speeds[1], speeds[2]);
   }
 
-  public double[] getRequestedSpeeds() {double rawForward, rawStrafe, rotateClockwise, deltaT;
-    deltaT = .05;
+  public double[] getRequestedSpeeds() {
+    double rawForward, rawStrafe, rotateClockwise, deltaT;
+    deltaT = Robot.robot.getPeriod();
     // Sets all values less than or equal to a very small value (determined by the idle joystick state) to zero.
     // Used to make sure that the robot does not try to change its angle unless it is moving,
     if (Math.abs(fwd.getAsDouble()) <= Constants.OI.JOY_THRESH) rawForward = 0.0;
@@ -70,9 +73,9 @@ public class TeleopDrive extends CommandBase {
     }
     currentForward += targetAccelerationX*deltaT;
     currentStrafe += targetAccelerationY*deltaT;
-    if (Math.abs(currentForward) <= Constants.OI.JOY_THRESH)
+    if (Math.abs(currentForward) <= minVelocityMps)
       currentForward = 0;
-    if (Math.abs(currentStrafe) <= Constants.OI.JOY_THRESH)
+    if (Math.abs(currentStrafe) <= minVelocityMps)
       currentStrafe = 0;
     double driveMultiplier = slow.getAsBoolean() ? kSlowDriveSpeed : 1;
     double rotationMultiplier = slow.getAsBoolean() ? kSlowDriveRotation : 0.55;

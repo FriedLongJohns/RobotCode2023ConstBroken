@@ -6,26 +6,22 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.thetaPIDController;
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.*;
 
 public class RotateToFieldRelativeAngle extends CommandBase {
 
-    public static final double THRESHOLD = 4; // degrees
-
-    public final Rotation2d targetAngle;
     public final TeleopDrive teleopDrive;
     public final Drivetrain drivetrain;
 
     public static final PIDController rotationPID = new PIDController(thetaPIDController[0], thetaPIDController[1], thetaPIDController[2]);
 
     public RotateToFieldRelativeAngle(Rotation2d angle, Drivetrain drivetrain) {
-        this.targetAngle = angle;
         this.drivetrain = drivetrain;
         this.teleopDrive = (TeleopDrive) drivetrain.getDefaultCommand();
 
         rotationPID.enableContinuousInput(-180, 180);
         rotationPID.setSetpoint(angle.getDegrees());
-        rotationPID.setTolerance(THRESHOLD);
+        rotationPID.setTolerance(positionTolerance[2], velocityTolerance[2]);
         SendableRegistry.addChild(this, rotationPID);
 
         addRequirements(drivetrain);
@@ -33,9 +29,10 @@ public class RotateToFieldRelativeAngle extends CommandBase {
 
     @Override
     public void execute() {
-        drivetrain.drive(teleopDrive.currentForward, teleopDrive.currentStrafe, rotationPID.calculate(drivetrain.getHeading(), targetAngle.getDegrees()));
+        double[] driverRequestedSpeeds = teleopDrive.getRequestedSpeeds();
+        drivetrain.drive(driverRequestedSpeeds[0], driverRequestedSpeeds[1], rotationPID.calculate(drivetrain.getHeading()));
     }
-    
+
     @Override
     public boolean isFinished() {
         return rotationPID.atSetpoint();

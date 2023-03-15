@@ -100,7 +100,6 @@ public final class Constants {
         public static final double[] xPIDController = {4, 0.0, 0.0};
         public static final double[] yPIDController = {4, 0.0, 0.0};
         public static final double[] thetaPIDController = {0.08, 0.0, 0.0};
-        public static final double[] tolerance = {1, 1, 5};
 
         public static final SwerveConfig swerveConfig = new SwerveConfig(wheelDiameterMeters, driveGearing, mu, autoCentripetalAccel, kForwardVolts, kForwardVels, kForwardAccels, kBackwardVolts, kBackwardVels, kBackwardAccels, drivekP, drivekI, drivekD, turnkP, turnkI, turnkD, turnkS, turnkV, turnkA, turnZero, driveInversion, reversed, driveModifier, turnInversion);
 
@@ -129,17 +128,19 @@ public final class Constants {
 
         //#region Command Constants
 
-        public static final double kSlowDriveSpeed = 0.25;
-        public static final double kSlowDriveRotation = 0.30;
+        public static final double kSlowDriveSpeed = 0.25; // Percent Multiplier
+        public static final double kSlowDriveRotation = 0.30; // Percent Multiplier
         public static final double kAlignMultiplier = 1D/3D;
         public static final double kAlignForward = 0.6;
 
-        public static final double chargeStationAlignTolerance = 2.5;
+        public static final double chargeStationAlignTolerance = 2.5; // Degrees
         public static final double chargeStationAlignSpeed = 0.3 / 13;
         public static final double chargeStationAlignTime = 500;
         public static final double chargeStationAlignFF = 0.1;
 
-        public static final double minLimelightOdometryUpdateSpeed = 0.01;
+        public static final double[] positionTolerance = {Units.inchesToMeters(.5), Units.inchesToMeters(.5), Units.degreesToRadians(5)}; // Meters, Meters, Radians
+        public static final double[] velocityTolerance = {Units.inchesToMeters(1), Units.inchesToMeters(1), Units.degreesToRadians(5)}; // Meters, Meters, Radians/Second
+        public static final double minVelocityMps = 0.01;
 
         //#endregion
 

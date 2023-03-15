@@ -16,10 +16,12 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
 
+  public static Robot robot;
   private RobotContainer robotContainer;
 
   @Override
   public void robotInit() {
+    robot = this;
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
     if(!DriverStation.isFMSAttached()) PathPlannerServer.startServer(5811);
@@ -44,7 +46,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     new Thread(() -> {
       try {
-        Thread.sleep(1000);
+        Thread.sleep(5000);
       } catch (InterruptedException e) {
         e.printStackTrace();
         return;

@@ -4,28 +4,36 @@
 
 package org.carlmontrobotics.robotcode2023.commands;
 
+import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.*;
+
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.tolerance;
 
 public class CorrectToPoint extends CommandBase {
-  /** Creates a new CorrectToPoint. */
   private Drivetrain dt;
-  private Pose2d setpoint;
   private PIDController pidX;
   private PIDController pidY;
   private PIDController pidTheta;
+
+  /** Creates a new CorrectToPoint. */
   public CorrectToPoint(Pose2d setpoint, Drivetrain dt) {
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(this.dt = dt);
-    this.setpoint = setpoint;
+
     pidX     = new PIDController( dt.getPIDConstants()[0][0], dt.getPIDConstants()[0][1], dt.getPIDConstants()[0][2]);
     pidY     = new PIDController( dt.getPIDConstants()[1][0], dt.getPIDConstants()[1][1], dt.getPIDConstants()[1][2]);
     pidTheta = new PIDController( dt.getPIDConstants()[2][0], dt.getPIDConstants()[2][1], dt.getPIDConstants()[2][2]);
+
+    pidX.setTolerance(positionTolerance[0], velocityTolerance[0]);
+    pidY.setTolerance(positionTolerance[1], velocityTolerance[1]);
+    pidTheta.setTolerance(positionTolerance[2], velocityTolerance[2]);
+    pidTheta.enableContinuousInput(-180, 180);
+
+    pidX.setSetpoint(setpoint.getX());
+    pidY.setSetpoint(setpoint.getY());
+    pidTheta.setSetpoint(setpoint.getRotation().getDegrees()); // The PIDController should correct for continuous input
   }
 
   // Called when the command is initially scheduled.
@@ -37,26 +45,18 @@ public class CorrectToPoint extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("Target X", setpoint.getX());
-    SmartDashboard.putNumber("Target Y", setpoint.getY());
-    SmartDashboard.putNumber("Target Theta", setpoint.getRotation().getDegrees());
-    dt.drive(pidX.calculate(dt.getPose().getX(), setpoint.getX()), 
-             pidY.calculate(dt.getPose().getY(), setpoint.getY()),
-             pidTheta.calculate(dt.getHeadingDeg(), setpoint.getRotation().getDegrees())); // TODO: make it turn -90 deg when told to turn 270 deg
+    dt.drive(pidX.calculate(dt.getPose().getX()),
+             pidY.calculate(dt.getPose().getY()),
+             pidTheta.calculate(dt.getHeadingDeg()));
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    double diffX = Math.abs(dt.getPose().getX() - setpoint.getX());
-    double diffY = Math.abs(dt.getPose().getY() - setpoint.getY());
-    double diffTheta = Math.abs(dt.getHeadingDeg() - setpoint.getRotation().getDegrees());
-    return diffX < tolerance[0] && diffY < tolerance[1] && diffTheta < tolerance[2];
+    return pidX.atSetpoint() && pidY.atSetpoint() && pidTheta.atSetpoint();
   }
 }

@@ -21,7 +21,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -41,9 +40,6 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
     public final float initPitch;
     public final float initRoll;
-
-    private double prevAngle = 0;
-    private double prevTime = 0;
 
     public Drivetrain(Limelight lime) {
         this.lime = lime;
@@ -120,7 +116,6 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         }
         SmartDashboard.putNumber("kpTheta", thetaPIDController[0]);
         odometry = new SwerveDrivePoseEstimator(kinematics, Rotation2d.fromDegrees(getHeading()), getModulePositions(), new Pose2d());
-        prevTime = Timer.getFPGATimestamp();
     }
 
     @Override
@@ -150,16 +145,6 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // SmartDashboard.putNumber("Compass Offset", compassOffset);
         // SmartDashboard.putBoolean("Current Magnetic Field Disturbance",
         // gyro.isMagneticDisturbance());
-
-        // drive to point testing
-
-        // PID testing for rotations
-        thetaPIDController[0] = SmartDashboard.getNumber("kpTheta", thetaPIDController[0]);
-        double temp = gyro.getAngle();
-        double tempTime = Timer.getFPGATimestamp();
-        SmartDashboard.putNumber("Angular Vel", Units.degreesToRadians(temp - prevAngle) / (tempTime - prevTime));
-        prevAngle = temp;
-        prevTime = tempTime;
     }
 
     @Override
@@ -249,6 +234,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
     //#region Getters and Setters
 
+    // I this returns a value from -180 to 180
     public double getHeading() {
         double x = gyro.getAngle();
         if (fieldOriented) x -= fieldOffset;
