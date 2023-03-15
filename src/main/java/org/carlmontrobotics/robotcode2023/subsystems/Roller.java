@@ -101,7 +101,7 @@ public class Roller extends SubsystemBase {
     }
 
     public double getGamePieceDistanceIn() {
-        return Units.metersToInches((distSensor.getRange() - 16)/1000); // TODO: Remove magic numbers (waiting on @ProfessorAtomicManiac to get back to me)
+        return Units.metersToInches((distSensor.getRange() - distSensorDepthMM /* The sensor measures from the back of the sensor */) /1000 /* Convert mm to m */);
     }
 
     public static class RollerMode {

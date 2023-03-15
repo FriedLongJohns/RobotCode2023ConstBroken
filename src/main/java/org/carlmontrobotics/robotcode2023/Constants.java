@@ -28,6 +28,7 @@ public final class Constants {
         public static final Color conePickupColor = new Color(150, 150, 0);
         public static final Color cubePickupColor = new Color(50, 0, 200);
 
+        public static final double distSensorDepthMM = 16;
         public static final double gamePieceDetectDistanceIn = 20;
 
         //#endregion
