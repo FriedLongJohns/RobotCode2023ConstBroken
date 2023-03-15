@@ -27,6 +27,8 @@ public class RunRoller extends CommandBase {
         roller.setSpeed(mode.speed);
         roller.setLedColor(ledColor);
         timer.reset();
+
+        if(roller.hasGamePiece() == mode.intake) cancel();
     }
 
     @Override
