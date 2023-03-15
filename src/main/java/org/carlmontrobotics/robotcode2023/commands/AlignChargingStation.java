@@ -46,6 +46,9 @@ public class AlignChargingStation extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
+        if(!interrupted) {
+            drivetrain.drive(fwd ? 0 : wheelTurnDriveSpeed, fwd ? wheelTurnDriveSpeed : 0, 0); // Turn the wheels to be perpendicular to the charging station
+        }
         drivetrain.stop();
         drivetrain.setFieldOriented(fieldOriented);
     }
