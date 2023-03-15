@@ -1,33 +1,6 @@
 package org.carlmontrobotics.robotcode2023.subsystems;
 
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_ANGLE_MAX;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_ANGLE_MIN;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_ANGLE_TOLERANCE;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_LENGTH_METERS;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_MASS_KG;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.COM_ARM_LENGTH_METERS;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.COM_ROLLER_LENGTH_METERS;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ROLLER_MASS_KG;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.V_PER_NM;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST_ANGLE_MAX;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST_ANGLE_MIN;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST_ANGLE_TOLERANCE;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.armMotorPort;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.g;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.goalPosRad;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kA;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kD;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kG_WRIST;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kI;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kP;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kS;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kV;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.offsetRad;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.posToleranceRad;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.velToleranceRadPSec;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.wristMotorPort;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.MAX_FF_ACCEL;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.MAX_FF_VEL;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.*;
 
 import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
