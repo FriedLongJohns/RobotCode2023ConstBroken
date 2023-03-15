@@ -42,7 +42,7 @@ public class RunRoller extends CommandBase {
     public boolean isFinished() {
         double time = timer.get();
 
-        if (roller.hasGamePiece()) {
+        if (roller.hasGamePiece() == mode.intake) {
             timer.start();
         }
         SmartDashboard.putNumber("Time Target", mode.time);
