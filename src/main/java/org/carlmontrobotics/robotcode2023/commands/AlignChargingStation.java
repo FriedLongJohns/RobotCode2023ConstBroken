@@ -27,8 +27,8 @@ public class AlignChargingStation extends CommandBase {
     public void execute() {
         double pitch = getPitch();
         double roll = getRoll();
-        double forward = fwd && Math.abs(pitch) > chargeStationAlignTolerance ? chargeStationAlignSpeed * pitch + chargeStationAlignFF : 0;
-        double strafe = !fwd && Math.abs(roll) > chargeStationAlignTolerance ? chargeStationAlignSpeed * roll + chargeStationAlignFF : 0;
+        double forward = fwd && Math.abs(pitch) > chargeStationAlignTolerance ? chargeStationAlignSpeed * pitch + Math.copySign(chargeStationAlignFF, pitch) : 0;
+        double strafe = !fwd && Math.abs(roll) > chargeStationAlignTolerance ? chargeStationAlignSpeed * roll + Math.copySign(chargeStationAlignFF, roll) : 0;
         drivetrain.drive(-forward, strafe, 0);
     }
 
