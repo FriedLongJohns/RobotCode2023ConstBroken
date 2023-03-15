@@ -27,14 +27,14 @@ public class AlignChargingStation extends CommandBase {
     public void execute() {
         double pitch = getPitch();
         double roll = getRoll();
-        double forward = fwd && Math.abs(pitch) > chargeStationAlignTolerance ? chargeStationAlignSpeed * pitch + Math.copySign(chargeStationAlignFF, pitch) : 0;
-        double strafe = !fwd && Math.abs(roll) > chargeStationAlignTolerance ? chargeStationAlignSpeed * roll + Math.copySign(chargeStationAlignFF, roll) : 0;
+        double forward = fwd && Math.abs(pitch) > chargeStationAlignToleranceDeg ? chargeStationAlignSpeedMpSPerDeg * pitch + Math.copySign(chargeStationAlignFFMpS, pitch) : 0;
+        double strafe = !fwd && Math.abs(roll) > chargeStationAlignToleranceDeg ? chargeStationAlignSpeedMpSPerDeg * roll + Math.copySign(chargeStationAlignFFMpS, roll) : 0;
         drivetrain.drive(-forward, strafe, 0);
     }
 
     @Override
     public boolean isFinished() {
-        lastTime = Math.abs(fwd ? getPitch() : getRoll() /* Select which axis to use based on the direction of alignment */) < chargeStationAlignTolerance ? // If the robot is aligned
+        lastTime = Math.abs(fwd ? getPitch() : getRoll() /* Select which axis to use based on the direction of alignment */) < chargeStationAlignToleranceDeg ? // If the robot is aligned
                     lastTime == -1 ? // Set the last time to the current time if it hasn't been set yet
                         System.currentTimeMillis() :
                         lastTime : // else NOP
