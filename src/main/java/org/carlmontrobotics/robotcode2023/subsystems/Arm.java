@@ -9,10 +9,12 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 
 public class Arm extends SubsystemBase {
@@ -30,7 +32,7 @@ public class Arm extends SubsystemBase {
   
   //FIXME WRIST NEEDS SYSID DONE
   // kS, kG, kV, kA
-  private final double[] armFeedConsts = {.067766, 0, .019762, .00039212};
+  private final double[] armFeedConsts = {0.20642, 0.6697, 4.3735, 0.24914};
   private final double[] wristFeedConsts = {.074798, 0.36214, 1.6743, 0.032177};
   // Arm kG will be dynamically updated, pass 0 to constructor (kG is final in ArmFeedForward)
   private double armKG = 0;
@@ -44,7 +46,7 @@ public class Arm extends SubsystemBase {
   //PID
   //FIXME BOTH WRIST AND ARM NEED PID DONE
   // Arm, Wrist for each "column"
-  private double[] kP = {0,        0};
+  private double[] kP = {4.2736,        0};
   private double[] kI = {0,        0};
   private double[] kD = {0,        0}; 
   
@@ -52,9 +54,10 @@ public class Arm extends SubsystemBase {
   private double[] velTolerance = {1,   1};
   
   private PIDController armpid = new PIDController(kP[0], kI[0], kD[0]);
+  //private SparkMaxPIDController armpid = armpid.;
   private PIDController wristpid = new PIDController(kP[1], kI[1], kD[1]);
 
-  private double[] goalPos = {-Math.PI / 2, 0};
+  private double[] goalPos = {3 * Math.PI / 2, 0};
   private double[] offset = {-0.844154, 0};
   
   // needed to calculate feedforward values dynamically
@@ -77,14 +80,19 @@ public class Arm extends SubsystemBase {
     wristEncoder.setInverted(false);
     armpid.setTolerance(posTolerance[0], velTolerance[0]);
     wristpid.setTolerance(posTolerance[1], velTolerance[1]);
-    wristEncoder.setZeroOffset(2.08);
+    wristEncoder.setZeroOffset(3.50 + Math.PI / 2);
     wristpid.enableContinuousInput(0, 2*Math.PI);
+    armpid.enableContinuousInput(0, 2*Math.PI);
     armEncoder.setZeroOffset(4.02);
-    SmartDashboard.putNumber("WristGoalPos", 0);
+    armMotor.setInverted(true);
+    SmartDashboard.putNumber("WristGoalDeg", 0);
     SmartDashboard.putNumber("kP: Wis",      kP[1]           );
     SmartDashboard.putNumber("kI: Wis",      kI[1]           );
     SmartDashboard.putNumber("kD: Wis",      kD[1]           );
-    SmartDashboard.putNumber("Arm Voltage", 0);
+    SmartDashboard.putNumber("kP: Arm",      kP[0]           );
+    SmartDashboard.putNumber("kI: Arm",      kI[0]           );
+    SmartDashboard.putNumber("kD: Arm",      kD[0]           );
+    SmartDashboard.putNumber("ArmGoalDeg", 0);
 
   }
 
@@ -95,20 +103,35 @@ public class Arm extends SubsystemBase {
     // + wristpid.calculate(getRobotWristAngle(), goalPos[1]));
     // wristMotor.setVoltage(wristFeed.calculate(getRobotWristAngle(), 0, 0)
     //     + wristpid.calculate(getRobotWristAngle(), goalPos[1]));
+    goalPos[1] = Units.degreesToRadians(SmartDashboard.getNumber("WristGoalDeg", Units.radiansToDegrees(goalPos[1])));
+    goalPos[0] = Units.degreesToRadians(SmartDashboard.getNumber("ArmGoalDeg", Units.radiansToDegrees(goalPos[0])));
+    Rotation2d currentAngle = new Rotation2d(getArmPos());
     //Rotation2d currentAngle = getCoM().getAngle();
-    //armMotor.setVoltage(armFeed.calculate(currentAngle.getRadians(), 0, 0)
-    //+ armpid.calculate(currentPos[0], goalPos[0]) + armKG * currentAngle.getCos());
-    goalPos[1] = SmartDashboard.getNumber("WristGoalPos", goalPos[1]);
-    armMotor.set(SmartDashboard.getNumber("Arm Voltage", 0));
-    SmartDashboard.putNumber("ArmPos",      getArmPos());
-    SmartDashboard.putNumber("WisPos",      getWristPos());
-    SmartDashboard.putNumber("RobotWisPos", getRobotWristAngle());
+    double armFeedVolts = armFeed.calculate(currentAngle.getRadians(), 0, 0);
+    double armPIDVolts = armpid.calculate(getArmPos(), goalPos[0]);
+    double armVolts = armFeedVolts + armPIDVolts + armKG * currentAngle.getCos();
+    SmartDashboard.putNumber("ArmFeedVolts", armFeedVolts);
+    SmartDashboard.putNumber("ArmPIDVolts", armPIDVolts);
+    SmartDashboard.putNumber("Arm Voltage", armVolts);
+    armMotor.setVoltage(armVolts);
+    
+    //armMotor.set(SmartDashboard.getNumber("Arm Voltage", 0));
+    SmartDashboard.putNumber("ArmDeg",      Units.radiansToDegrees(getArmPos()));
+    SmartDashboard.putNumber("WisDeg",      Units.radiansToDegrees(getWristPos()));
+    SmartDashboard.putNumber("RobotWisDeg", Units.radiansToDegrees(getRobotWristAngle()));
     kP[1] = SmartDashboard.getNumber("kP: Wis",      kP[1]           );
     kI[1] = SmartDashboard.getNumber("kI: Wis",      kI[1]           );
     kD[1] = SmartDashboard.getNumber("kD: Wis",      kD[1]           );
+    kP[0] = SmartDashboard.getNumber("kP: Arm",      kP[0]           );
+    kI[0] = SmartDashboard.getNumber("kI: Arm",      kI[0]           );
+    kD[0] = SmartDashboard.getNumber("kD: Arm",      kD[0]           );
     wristpid.setP(kP[1]);
     wristpid.setI(kI[1]);
     wristpid.setD(kD[1]);
+
+    armpid.setP(kP[0]);
+    armpid.setI(kI[0]);
+    armpid.setD(kD[0]);
     
   }
   
@@ -150,7 +173,8 @@ public class Arm extends SubsystemBase {
   }
 
   public double calculateKG() {
-    return TORQUE_TO_KG * maxHoldingTorque();
+    return 0;
+    //return TORQUE_TO_KG * maxHoldingTorque();
   }
 
   public double getWristPos() {
