@@ -12,8 +12,11 @@ import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
 import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.commands.AlignChargingStation;
 import org.carlmontrobotics.robotcode2023.commands.RotateToFieldRelativeAngle;
+import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
+import org.carlmontrobotics.robotcode2023.subsystems.Roller;
+import org.carlmontrobotics.robotcode2023.subsystems.Roller.RollerMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -34,6 +37,7 @@ public class RobotContainer {
 
   public final Limelight lime = new Limelight();
   public final Drivetrain drivetrain = new Drivetrain(lime);
+  public final Roller roller = new Roller();
 
   public final PPRobotPath[] autoPaths;
   public final DigitalInput[] autoSelectors;
@@ -70,7 +74,18 @@ public class RobotContainer {
     new POVButton(driverController, 180).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(180), drivetrain));
     new POVButton(driverController, 270).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(90), drivetrain));
   }
-  private void configureButtonBindingsManipulator() {}
+
+  private void configureButtonBindingsManipulator() {
+    new JoystickButton(manipulatorController, Manipulator.rollerIntakeConeButton)
+      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
+    new JoystickButton(manipulatorController, Manipulator.rollerIntakeCubeButton)
+      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor));
+    new JoystickButton(manipulatorController, Manipulator.rollerOuttakeConeButton)
+      .onFalse(new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.conePickupColor));
+    new JoystickButton(manipulatorController, Manipulator.rollerOuttakeCubeButton)
+      .onFalse(new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.cubePickupColor));
+    new JoystickButton(manipulatorController, Manipulator.rollerStopButton).onTrue(new InstantCommand(() -> roller.setSpeed(0)));
+  }
 
   public Command getAutonomousCommand() {
     // PPRobotPath autoPath = new PPRobotPath("New Path", drivetrain, false, new HashMap<>());
@@ -104,5 +119,4 @@ public class RobotContainer {
         value);
     return processedInput;
   }
-
 }
