@@ -28,6 +28,7 @@ public class Robot extends TimedRobot {
     MotorErrors.printSparkMaxErrorMessages();
   }
 
+
   @Override
   public void disabledInit() {}
 

@@ -4,6 +4,10 @@
 
 package org.carlmontrobotics.robotcode2023;
 
+import java.awt.Color;
+
+import edu.wpi.first.wpilibj.XboxController.Button;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -13,13 +17,53 @@ package org.carlmontrobotics.robotcode2023;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    public static final class Roller {
+        //#region Subsystem Constants
+
+        public static final int ledLength = 85;
+        public static final double ledDefaultColorRestoreTime = 3; // The time in seconds after picking up a game piece to restore the LED color to defaultColor
+        public static final Color defaultColor = new Color(0, 0, 200);
+        public static final Color pickupSuccessColor = new Color(0, 200, 0);
+        public static final Color conePickupColor = new Color(150, 150, 0);
+        public static final Color cubePickupColor = new Color(50, 0, 200);
+
+        public static final double distSensorDepthMM = 16;
+        public static final double gamePieceDetectDistanceIn = 20;
+
+        //#endregion
+
+
+        //#region Ports
+        public static final int rollerPort = 18;
+        public static final int ledPort = 0;
+
+        //#endregion
+
+
+
+        //#region Command Constants
+
+        public static final double coneIntakeConeOuttakeSpeed = -.3;
+        public static final double coneOuttakeConeIntakeSpeed = .7;
+
+        //#endregion
+    }
+
     public static final class OI {
         public static final class Driver {
             public static final int port = 0;
+
         }
+
         public static final class Manipulator {
             public static final int port = 1;
+
+            public static final int rollerIntakeConeButton = Button.kA.value;
+            public static final int rollerOuttakeConeButton = Button.kB.value;
+            public static final int rollerIntakeCubeButton = Button.kX.value;
+            public static final int rollerOuttakeCubeButton = Button.kY.value;
+            public static final int rollerStopButton = Button.kRightBumper.value;
         }
     }
-
 }
