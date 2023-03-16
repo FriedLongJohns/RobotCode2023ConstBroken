@@ -39,11 +39,11 @@ public final class Constants {
         public static final double kG_WRIST = .36214; // (V)
 
         // PID
-        // FIXME BOTH WRIST AND ARM NEED TO TEST PID
+        // FIXME BOTH WRIST AND ARM NEED TO TEST PID (Wrist PID never tested)
         // Arm, Wrist
-        public static double[] kP = {4.2736,   0}; // 6.7868 for arm from sysid, current value is tested value (V / rad)
-        public static double[] kI = {0,        0}; // (V / (rad * s) )
-        public static double[] kD = {0,        0}; // 4.4327 for arm from sysid, current value is tested value (V / (rad / s) )
+        public static double[] kP = {6.7868, 4.7391}; // 4.2736 for arm from sysid was tested and it worked fine (V / rad)
+        public static double[] kI = {0, 0}; // (V / (rad * s) )
+        public static double[] kD = {4.4327, 0.69517}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
 
         // Arm, Wrist
         public static double[] posToleranceRad = { .05, .05 }; // rad
