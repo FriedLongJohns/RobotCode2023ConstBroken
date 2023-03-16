@@ -78,7 +78,7 @@ public class Arm extends SubsystemBase {
     }
 
     public double driveArm(double vel, double accel, boolean usePID) {
-        if (Math.abs(ARM_ANGLE_MAX_RAD - getArmPos()) < ARM_ANGLE_TOLERANCE_RAD) {
+        if (Math.abs(ARM_ANGLE_MAX_RAD - getArmPos()) < ARM_ANGLE_TOLERANCE_RAD || Math.abs(ARM_ANGLE_MIN_RAD - getArmPos()) < ARM_ANGLE_TOLERANCE_RAD) {
             double armFeedVolts = getKg() * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
             double armPIDVolts = armPID.calculate(armEncoder.getPosition(), goalPosRad[ARM]);
             // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
@@ -95,7 +95,7 @@ public class Arm extends SubsystemBase {
     }
 
     public double driveWrist(double vel, double accel, boolean usePID) {
-        if (Math.abs(WRIST_ANGLE_MAX_RAD - getWristPos()) < WRIST_ANGLE_TOLERANCE_RAD) {
+        if (Math.abs(WRIST_ANGLE_MAX_RAD - getWristPos()) < WRIST_ANGLE_TOLERANCE_RAD || Math.abs(WRIST_ANGLE_MIN_RAD - getArmPos()) < ARM_ANGLE_TOLERANCE_RAD) {
             double wristFeedVolts = wristFeed.calculate(getWristPosRelativeToGround(), 0, 0);
             double wristPIDVolts = wristPID.calculate(getWristPos(), goalPosRad[WRIST]);
             // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
