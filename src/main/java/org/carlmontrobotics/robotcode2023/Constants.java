@@ -72,6 +72,7 @@ public final class Constants {
         public static double MAX_FF_ACCEL = 0.11; // rad / s
         //#endregion
 
+
         //#region Ports
 
         public static final int armMotorPort = 17;
@@ -79,6 +80,12 @@ public final class Constants {
 
         //#endregion
 
+
+        //#region Command Constants
+
+        public static final double wristStowPos = Units.degreesToRadians(135);
+
+        //#endregion
     }
 
     public static final class GoalPos {
