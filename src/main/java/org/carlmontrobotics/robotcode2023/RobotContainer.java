@@ -5,26 +5,30 @@
 package org.carlmontrobotics.robotcode2023;
 
 import org.carlmontrobotics.robotcode2023.Constants.GoalPos;
-import org.carlmontrobotics.robotcode2023.Constants.OI.Controller;
+import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.commands.ArmPeriodic;
+import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.commands.SetArmWristPosition;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
+import org.carlmontrobotics.robotcode2023.subsystems.Roller;
+import org.carlmontrobotics.robotcode2023.subsystems.Roller.RollerMode;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj.XboxController.Axis;
 
 public class RobotContainer {
 
   public final Joystick driverController = new Joystick(0);
   public final Joystick manipulatorController = new Joystick(1);
   public final PowerDistribution pd = new PowerDistribution();
+
   public final Arm arm = new Arm();
+  public final Roller roller = new Roller();
 
   public RobotContainer() {
     configureButtonBindingsDriver();
@@ -35,34 +39,44 @@ public class RobotContainer {
       () -> inputProcessing(getStickValue(manipulatorController, Axis.kRightX))
     ));
   }
-  //need to update the buttons
+
   private void configureButtonBindingsDriver() {}
+
   private void configureButtonBindingsManipulator() {
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.toggleCubeCone).onTrue(new InstantCommand(() -> arm.toggleCube()));
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.toggleFrontBack).onTrue(new InstantCommand(() -> arm.toggleFront()));
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.store).onTrue(
+    new JoystickButton(manipulatorController, Manipulator.toggleCubeCone).onTrue(new InstantCommand(() -> arm.toggleCube()));
+    new JoystickButton(manipulatorController, Manipulator.toggleFrontBack).onTrue(new InstantCommand(() -> arm.toggleFront()));
+    new JoystickButton(manipulatorController, Manipulator.store).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.STORED), arm.getWristGoal(GoalPos.STORED), arm)
     );
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.low).onTrue(
+    new JoystickButton(manipulatorController, Manipulator.low).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.LOW), arm.getWristGoal(GoalPos.LOW), arm)
     );
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.mid).onTrue(
+    new JoystickButton(manipulatorController, Manipulator.mid).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.MID), arm.getWristGoal(GoalPos.MID), arm)
     );
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.high).onTrue(
+    new JoystickButton(manipulatorController, Manipulator.high).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.HIGH), arm.getWristGoal(GoalPos.HIGH), arm)
     );
-    new JoystickButton(manipulatorController, Constants.OI.Manipulator.store).onTrue(
+    new JoystickButton(manipulatorController, Manipulator.store).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.STORED), arm.getWristGoal(GoalPos.STORED), arm)
     );
+    new JoystickButton(manipulatorController, Manipulator.rollerIntakeConeButton)
+      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
+    new JoystickButton(manipulatorController, Manipulator.rollerIntakeCubeButton)
+      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor));
+    new JoystickButton(manipulatorController, Manipulator.rollerOuttakeConeButton)
+      .onFalse(new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.conePickupColor));
+    new JoystickButton(manipulatorController, Manipulator.rollerOuttakeCubeButton)
+      .onFalse(new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.cubePickupColor));
+    new JoystickButton(manipulatorController, Manipulator.rollerStopButton).onTrue(new InstantCommand(() -> roller.setSpeed(0)));
   }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
   }
 
-  private double getStickValue(Joystick stick, XboxController.Axis axis) {
-    return stick.getRawAxis(axis.value) * (axis == XboxController.Axis.kLeftY || axis == XboxController.Axis.kRightY ? -1 : 1);
+  private double getStickValue(Joystick stick, Axis axis) {
+    return stick.getRawAxis(axis.value) * (axis == Axis.kLeftY || axis == Axis.kRightY ? -1 : 1);
   }
 
   /**
