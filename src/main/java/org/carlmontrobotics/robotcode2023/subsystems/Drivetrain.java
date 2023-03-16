@@ -5,9 +5,9 @@ import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.*;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
+import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
-import org.carlmontrobotics.lib199.MotorErrors.TemperatureLimit;
 import org.carlmontrobotics.lib199.path.SwerveDriveInterface;
 import org.carlmontrobotics.lib199.swerve.SwerveModule;
 
@@ -90,26 +90,26 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
             // Supplier<Float> rollSupplier = () -> gyro.getRoll();
 
             SwerveModule moduleFL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FL,
-                    MotorControllerFactory.createSparkMax(driveFrontLeftPort, TemperatureLimit.NEO),
-                    MotorControllerFactory.createSparkMax(turnFrontLeftPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createSparkMax(driveFrontLeftPort, MotorConfig.NEO),
+                    MotorControllerFactory.createSparkMax(turnFrontLeftPort, MotorConfig.NEO),
                     MotorControllerFactory.createCANCoder(canCoderPortFL), 0,
                     pitchSupplier, rollSupplier);
             // Forward-Right
             SwerveModule moduleFR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FR,
-                    MotorControllerFactory.createSparkMax(driveFrontRightPort, TemperatureLimit.NEO),
-                    MotorControllerFactory.createSparkMax(turnFrontRightPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createSparkMax(driveFrontRightPort, MotorConfig.NEO),
+                    MotorControllerFactory.createSparkMax(turnFrontRightPort, MotorConfig.NEO),
                     MotorControllerFactory.createCANCoder(canCoderPortFR), 1,
                     pitchSupplier, rollSupplier);
             // Backward-Left
             SwerveModule moduleBL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BL,
-                    MotorControllerFactory.createSparkMax(driveBackLeftPort, TemperatureLimit.NEO),
-                    MotorControllerFactory.createSparkMax(turnBackLeftPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createSparkMax(driveBackLeftPort, MotorConfig.NEO),
+                    MotorControllerFactory.createSparkMax(turnBackLeftPort, MotorConfig.NEO),
                     MotorControllerFactory.createCANCoder(canCoderPortBL), 2,
                     pitchSupplier, rollSupplier);
             // Backward-Right
             SwerveModule moduleBR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BR,
-                    MotorControllerFactory.createSparkMax(driveBackRightPort, TemperatureLimit.NEO),
-                    MotorControllerFactory.createSparkMax(turnBackRightPort, TemperatureLimit.NEO),
+                    MotorControllerFactory.createSparkMax(driveBackRightPort, MotorConfig.NEO),
+                    MotorControllerFactory.createSparkMax(turnBackRightPort, MotorConfig.NEO),
                     MotorControllerFactory.createCANCoder(canCoderPortBR), 3,
                     pitchSupplier, rollSupplier);
             modules = new SwerveModule[] { moduleFL, moduleFR, moduleBL, moduleBR };
