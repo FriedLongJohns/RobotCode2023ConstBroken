@@ -72,7 +72,6 @@ public final class Constants {
         public static double MAX_FF_ACCEL = 0.11; // rad / s
         //#endregion
 
-
         //#region Ports
 
         public static final int armMotorPort = 17;
@@ -80,14 +79,10 @@ public final class Constants {
 
         //#endregion
 
-
-        //#region Command Constants
-
-        public static final double wristStowPos = Units.degreesToRadians(135);
-
-        //#endregion
     }
+    public static final class Wrist {
 
+    }
     public static final class GoalPos {
 
         // copy pasted from Wrist branch - These positions seem incorrect
@@ -120,12 +115,12 @@ public final class Constants {
         public static GoalPos[] INTAKE = {new GoalPos(Units.degreesToRadians(-90), 0), new GoalPos(Units.degreesToRadians(-90), 0)};
 
         public double armPos, wristPos;
-
+    
         public GoalPos(double armPos, double wristPos) {
             this.armPos = armPos;
             this.wristPos = wristPos;
         }
-
+    
     }
 
     public static final class Roller {
