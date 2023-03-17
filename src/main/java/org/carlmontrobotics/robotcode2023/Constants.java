@@ -31,7 +31,6 @@ public final class Constants {
 
         // Feedforward
         // Arm, Wrist
-        // kS, kG, kV, kA
         public static final double[] kS = {0.20642, .074798};
         public static final double[] kG = {0.6697, 0.36214};
         public static final double[] kV = {4.3735, 1.6743};
