@@ -93,13 +93,37 @@ public final class Constants {
         // These positions are for if the intake/outtake takes place on the front (battery) side of the robot
         // if intake/outtake on back, the "negative" pos will be used
         // 0 = CUBE, 1 = CONE
-        public static GoalPos[] LOW = {new GoalPos(40, -0.9225673417), new GoalPos(40, -0.9225673417)};
-        public static GoalPos[] MID = {new GoalPos(40, -1.5006099006), new GoalPos(40, -1.5006099006)};
-        public static GoalPos[] HIGH = {new GoalPos(Units.degreesToRadians(11), -1.8861790155), new GoalPos(40, -1.8861790155)};
-        public static GoalPos[] STORED = {new GoalPos(Units.degreesToRadians(-90), 0), new GoalPos(40, -1.8861790155)};
-        public static GoalPos[] SHELF = {new GoalPos(Units.degreesToRadians(-90), 0), new GoalPos(0, 0)};
-        public static GoalPos[] SUBSTATION = {new GoalPos(Units.degreesToRadians(-90), 0), new GoalPos(0, 0)};
-        public static GoalPos[] INTAKE = {new GoalPos(Units.degreesToRadians(-90), 0), new GoalPos(Units.degreesToRadians(-90), 0)};
+        // {Cone, Cube}
+        // GoalPos(arm, wrist)
+      
+        public static GoalPos[] LOW = {
+          new GoalPos(40, -0.9225673417), 
+          new GoalPos(40, -0.9225673417)
+        };
+        public static GoalPos[] MID = {
+          new GoalPos(40, -1.5006099006), 
+          new GoalPos(40, -1.5006099006)
+        };
+        public static GoalPos[] HIGH = {
+          new GoalPos(Units.degreesToRadians(11), -1.8861790155), 
+          new GoalPos(40, -1.8861790155)
+        };
+        public static GoalPos[] STORED = {
+          new GoalPos(Units.degreesToRadians(-90), 0), 
+          new GoalPos(40, -1.8861790155)
+        };
+        public static GoalPos[] SHELF = {
+          new GoalPos(Units.degreesToRadians(-90), 0), 
+          new GoalPos(0, 0)
+        };
+        public static GoalPos[] SUBSTATION = {
+          new GoalPos(Units.degreesToRadians(-90), 0), 
+          new GoalPos(0, 0)
+        };
+        public static GoalPos[] INTAKE = {
+          new GoalPos(Units.degreesToRadians(-90), 0), 
+          new GoalPos(Units.degreesToRadians(-90), 0)
+        };
 
         public double armPos, wristPos;
     
