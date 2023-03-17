@@ -37,7 +37,7 @@ public class ArmPeriodic extends CommandBase {
   public void execute() {
     double[] speeds = getRequestedSpeeds();
     // if driven by joysticks, run only feedforward
-    if (speeds[0] == 0) 
+    if (speeds[ARM] == 0) 
       armSubsystem.driveArm(0, 0, true);
     else {
       armSubsystem.driveArm(speeds[ARM], 0, false);
