@@ -43,7 +43,7 @@ public class ArmPeriodic extends CommandBase {
       armSubsystem.driveArm(speeds[ARM], 0, false);
       armSubsystem.setArmTarget(armSubsystem.getArmPos());
     }
-    if (speeds[1] == 0)
+    if (speeds[WRIST] == 0)
       armSubsystem.driveWrist(0, 0, true);
     else {
       armSubsystem.driveWrist(speeds[WRIST], 0, false);
