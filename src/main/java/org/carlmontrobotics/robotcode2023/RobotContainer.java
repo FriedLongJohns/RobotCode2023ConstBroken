@@ -43,7 +43,7 @@ public class RobotContainer {
   private void configureButtonBindingsDriver() {}
 
   private void configureButtonBindingsManipulator() {
-    new JoystickButton(manipulatorController, Manipulator.toggleCubeCone).onTrue(new InstantCommand(() -> arm.toggleCube()));
+    new JoystickButton(manipulatorController, Manipulator.toggleCubeCone).onTrue(new InstantCommand(() -> arm.toggleObjectType()));
     new JoystickButton(manipulatorController, Manipulator.toggleFrontBack).onTrue(new InstantCommand(() -> arm.toggleFront()));
     new JoystickButton(manipulatorController, Manipulator.store).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.STORED), arm.getWristGoal(GoalPos.STORED), arm)
