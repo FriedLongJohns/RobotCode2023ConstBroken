@@ -34,8 +34,8 @@ public class Arm extends SubsystemBase {
     private final SimpleMotorFeedforward armFeed = new SimpleMotorFeedforward(kS[ARM], kV[ARM], kA[ARM]);
     private ArmFeedforward wristFeed = new ArmFeedforward(kS[WRIST], kG[WRIST], kV[WRIST], kA[WRIST]);
 
-    private PIDController armPID = new PIDController(kP[0], kI[0], kD[0]);
-    private PIDController wristPID = new PIDController(kP[1], kI[1], kD[1]);
+    private PIDController armPID = new PIDController(kP[ARM], kI[ARM], kD[ARM]);
+    private PIDController wristPID = new PIDController(kP[WRIST], kI[WRIST], kD[WRIST]);
 
     private int object = CUBE;
     private boolean isFront = true;
@@ -68,47 +68,35 @@ public class Arm extends SubsystemBase {
 
         getArmControlOnSmartDashboard();
     }
-
-    public void setArmVoltage(double volts) {
+ 
+    public void driveArm(double vel, double accel, boolean usePID) {
+        double armFeedVolts = getKg() * getCoM().getAngle().getCos() + armFeed.calculate(vel, accel);
+        double armPIDVolts = armPID.calculate(armEncoder.getPosition(), goalPosRad[ARM]);
+        if (getArmPos() > ARM_UPPER_LIMIT_RAD || getArmPos() < ARM_LOWER_LIMIT_RAD) {
+            armFeedVolts = getKg() * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
+        }
+        // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
+        // TO MASTER IF THIS IS STILL HERE)
+        SmartDashboard.putNumber("ArmFeedVolts", armFeedVolts);
+        SmartDashboard.putNumber("ArmPIDVolts", armPIDVolts);
+        double volts = usePID ? armFeedVolts + armPIDVolts : armFeedVolts;
+        SmartDashboard.putNumber("ArmTotalVolts", volts);
         armMotor.setVoltage(volts);
     }
 
-    public void setWristVoltage(double volts) {
-        wristMotor.setVoltage(volts);
-    }
-
-    public double driveArm(double vel, double accel, boolean usePID) {
-        if (Math.abs(ARM_ANGLE_MAX_RAD - getArmPos()) < ARM_ANGLE_TOLERANCE_RAD || Math.abs(ARM_ANGLE_MIN_RAD - getArmPos()) < ARM_ANGLE_TOLERANCE_RAD) {
-            double armFeedVolts = getKg() * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
-            double armPIDVolts = armPID.calculate(armEncoder.getPosition(), goalPosRad[ARM]);
-            // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
-            // TO MASTER IF THIS IS STILL HERE)
-            SmartDashboard.putNumber("ArmFeedVolts", armFeedVolts);
-            SmartDashboard.putNumber("ArmPIDVolts", armPIDVolts);
-            return (usePID ? armFeedVolts + armPIDVolts : armFeedVolts);
-        }
-        double armFeedVolts = getKg() * getCoM().getAngle().getCos() + armFeed.calculate(vel, accel);
-        double armPIDVolts = armPID.calculate(armEncoder.getPosition(), goalPosRad[ARM]);
-        SmartDashboard.putNumber("ArmFeedVolts", armFeedVolts);
-        SmartDashboard.putNumber("ArmPIDVolts", armPIDVolts);
-        return (usePID ? armFeedVolts + armPIDVolts : armFeedVolts);
-    }
-
-    public double driveWrist(double vel, double accel, boolean usePID) {
-        if (Math.abs(WRIST_ANGLE_MAX_RAD - getWristPos()) < WRIST_ANGLE_TOLERANCE_RAD || Math.abs(WRIST_ANGLE_MIN_RAD - getArmPos()) < ARM_ANGLE_TOLERANCE_RAD) {
-            double wristFeedVolts = wristFeed.calculate(getWristPosRelativeToGround(), 0, 0);
-            double wristPIDVolts = wristPID.calculate(getWristPos(), goalPosRad[WRIST]);
-            // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
-            // TO MASTER IF THIS IS STILL HERE)
-            SmartDashboard.putNumber("WristFeedVolts", wristFeedVolts);
-            SmartDashboard.putNumber("WristPIDVolts", wristPIDVolts);
-            return (usePID ? wristFeedVolts + wristPIDVolts : wristFeedVolts);
-        }
+    public void driveWrist(double vel, double accel, boolean usePID) {
         double wristFeedVolts = wristFeed.calculate(getWristPosRelativeToGround(), vel, accel);
         double wristPIDVolts = wristPID.calculate(getWristPos(), goalPosRad[WRIST]);
+        if (getWristPos() > WRIST_UPPER_LIMIT_RAD || getWristPos() < WRIST_LOWER_LIMIT_RAD) {
+            wristFeedVolts = wristFeed.calculate(getWristPosRelativeToGround(), 0, 0);
+        }
+        // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
+        // TO MASTER IF THIS IS STILL HERE)
         SmartDashboard.putNumber("WristFeedVolts", wristFeedVolts);
         SmartDashboard.putNumber("WristPIDVolts", wristPIDVolts);
-        return (usePID ? wristFeedVolts + wristPIDVolts : wristFeedVolts);
+        double volts = usePID ? wristFeedVolts + wristPIDVolts : wristFeedVolts;
+        SmartDashboard.putNumber("WristTotalVolts", volts);
+        wristMotor.setVoltage(volts);
     }
 
     // distance from center of mass relative to joint holding arm
@@ -131,11 +119,13 @@ public class Arm extends SubsystemBase {
     }
 
     public double getArmPos() {
-        return MathUtil.inputModulus(armEncoder.getPosition(), ARM_ANGLE_MIN_RAD, ARM_ANGLE_MAX_RAD);
+        return MathUtil.inputModulus(armEncoder.getPosition(), ARM_DISCONTINUITY_RAD,
+                ARM_DISCONTINUITY_RAD + 2 * Math.PI);
     }
 
     public double getWristPos() {
-        return MathUtil.inputModulus(wristEncoder.getPosition(), WRIST_ANGLE_MIN_RAD, WRIST_ANGLE_MAX_RAD);
+        return MathUtil.inputModulus(wristEncoder.getPosition(), ARM_DISCONTINUITY_RAD,
+                ARM_DISCONTINUITY_RAD + 2 * Math.PI);
     }
 
     // Unbounded wrist position relative to ground
@@ -144,15 +134,16 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmTarget(double target) {
-        goalPosRad[ARM] = MathUtil.clamp(MathUtil.inputModulus(target, ARM_ANGLE_MIN_RAD, ARM_ANGLE_MAX_RAD),
-                ARM_ANGLE_MIN_RAD + ARM_ANGLE_TOLERANCE_RAD,
-                ARM_ANGLE_MAX_RAD - ARM_ANGLE_TOLERANCE_RAD);
+        goalPosRad[ARM] = MathUtil.clamp(MathUtil.inputModulus(target, ARM_DISCONTINUITY_RAD, ARM_DISCONTINUITY_RAD),
+                ARM_LOWER_LIMIT_RAD,
+                ARM_UPPER_LIMIT_RAD);
     }
 
     public void setWristTarget(double target) {
-        goalPosRad[WRIST] = MathUtil.clamp(MathUtil.inputModulus(target, WRIST_ANGLE_MIN_RAD, WRIST_ANGLE_MAX_RAD),
-                WRIST_ANGLE_MIN_RAD + WRIST_ANGLE_TOLERANCE_RAD,
-                WRIST_ANGLE_MAX_RAD - WRIST_ANGLE_TOLERANCE_RAD);
+        goalPosRad[WRIST] = MathUtil.clamp(
+                MathUtil.inputModulus(target, WRIST_DISCONTINUITY_RAD, WRIST_DISCONTINUITY_RAD + 2 * Math.PI),
+                WRIST_LOWER_LIMIT_RAD,
+                WRIST_UPPER_LIMIT_RAD);
     }
 
     public void setArmWristTarget(double targetArm, double targetWrist) {

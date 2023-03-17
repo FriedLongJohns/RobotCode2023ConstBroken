@@ -37,7 +37,7 @@ public class ArmPeriodic extends CommandBase {
   public void execute() {
     double[] speeds = getRequestedSpeeds();
     // if driven by joysticks, run only feedforward
-    if (speeds[0] == 0) 
+    if (speeds[0] == 0)
       armSubsystem.driveArm(0, 0, true);
     else {
       armSubsystem.driveArm(speeds[ARM], 0, false);
@@ -88,7 +88,7 @@ public class ArmPeriodic extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    
+
   }
 
   // Returns true when the command should end.

@@ -66,14 +66,13 @@ public final class Constants {
 
         public static final double V_PER_NM = 0;
 
-        public static final double ARM_ANGLE_MIN_RAD = -3 * Math.PI / 2;
-        public static final double ARM_ANGLE_MAX_RAD = Math.PI / 2;
-        // how far it is from the min/max until it should stop the arm so that arm doesn't break robot
-        public static final double ARM_ANGLE_TOLERANCE_RAD = Math.PI / 4;
-        public static final double WRIST_ANGLE_MIN_RAD = -Math.PI;
-        public static final double WRIST_ANGLE_MAX_RAD = Math.PI;
-        // how far it is from the min/max until it should stop the wrist so that wrist doesn't break robot
-        public static final double WRIST_ANGLE_TOLERANCE_RAD = Math.PI / 6;
+        // TODO: Replace these values with Design's actual values
+        public static final double ARM_LOWER_LIMIT_RAD = -3 * Math.PI / 2;
+        public static final double ARM_UPPER_LIMIT_RAD = Math.PI / 2;
+        public static final double ARM_DISCONTINUITY_RAD = (ARM_LOWER_LIMIT_RAD + ARM_UPPER_LIMIT_RAD) / 2 - Math.PI;
+        public static final double WRIST_LOWER_LIMIT_RAD = -Math.PI;
+        public static final double WRIST_UPPER_LIMIT_RAD = Math.PI;
+        public static final double WRIST_DISCONTINUITY_RAD = (WRIST_LOWER_LIMIT_RAD + WRIST_UPPER_LIMIT_RAD) / 2 - Math.PI;
 
         // TODO: Determine actual max vel/accel
         public static double[] MAX_FF_VEL = {0.1, 0}; // rad / s
