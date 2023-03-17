@@ -14,11 +14,11 @@ public class SetArmWristPosition extends SequentialCommandGroup {
         // TODO: Alex simplify this command
         super(
             new InstantCommand(() -> arm.setWristTarget(wristStowPos)),
-            new WaitUntilCommand(arm::wristAtSetpoint),
+            new WaitUntilCommand(arm.wristPID::atSetpoint),
             new InstantCommand(() -> arm.setArmTarget(armPos)),
-            new WaitUntilCommand(arm::armAtSetpoint),
+            new WaitUntilCommand(arm.armPID::atSetpoint),
             new InstantCommand(() -> arm.setWristTarget(wristPos)),
-            new WaitUntilCommand(arm::wristAtSetpoint)
+            new WaitUntilCommand(arm.wristPID::atSetpoint)
         );
         addRequirements(arm);
     }

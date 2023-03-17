@@ -104,18 +104,18 @@ public final class Constants {
         // 0 = CUBE, 1 = CONE
         // {Cone, Cube}
         // GoalPos(arm, wrist)
-      
+       
         public static GoalPos[] LOW = {
-          new GoalPos(40, -0.9225673417), 
-          new GoalPos(40, -0.9225673417)
+          new GoalPos(Units.degreesToRadians(-134.46), Units.degreesToRadians(117.17)), 
+          new GoalPos(Units.degreesToRadians(-90), Units.degreesToRadians(-100.78))
         };
         public static GoalPos[] MID = {
-          new GoalPos(40, -1.5006099006), 
-          new GoalPos(40, -1.5006099006)
+          new GoalPos(Units.degreesToRadians(-175.98), Units.degreesToRadians(132.01)), 
+          new GoalPos(Units.degreesToRadians(-196.85), Units.degreesToRadians(65.47)) 
         };
         public static GoalPos[] HIGH = {
-          new GoalPos(Units.degreesToRadians(11), -1.8861790155), 
-          new GoalPos(40, -1.8861790155)
+          new GoalPos(Units.degreesToRadians(-190.02), Units.degreesToRadians(-149.079)), 
+          new GoalPos(Units.degreesToRadians(-194.18), Units.degreesToRadians(54.24)) 
         };
         public static GoalPos[] STORED = {
           new GoalPos(Units.degreesToRadians(-90), 0), 
@@ -130,8 +130,8 @@ public final class Constants {
           new GoalPos(0, 0)
         };
         public static GoalPos[] INTAKE = {
-          new GoalPos(Units.degreesToRadians(-90), 0), 
-          new GoalPos(Units.degreesToRadians(-90), 0)
+          new GoalPos(Units.degreesToRadians(-72.5), Units.degreesToRadians(92.21)),
+          new GoalPos(Units.degreesToRadians(-66.6), Units.degreesToRadians(48.78)) 
         };
 
         public double armPos, wristPos;
