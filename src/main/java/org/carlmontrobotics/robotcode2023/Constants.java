@@ -80,13 +80,22 @@ public final class Constants {
         //#endregion
 
         //#region Motor Details
+
+        //#region Ports
+
         public static final int armMotorPort = 17;
         public static final int wristMotorPort = 19;
         public static final boolean[] inverted = { true, false };
         public static final double rotationToRad = 2 * Math.PI;
         //#endregion
 
+        //#region Command Constants
+
+        public static final double wristStowPos = Units.degreesToRadians(135);
+
+        //#endregion
     }
+
     public static final class GoalPos {
 
         //#region Goal Positions
@@ -103,7 +112,7 @@ public final class Constants {
         public static GoalPos[] INTAKE = {new GoalPos(Units.degreesToRadians(-90), 0), new GoalPos(Units.degreesToRadians(-90), 0)};
 
         public double armPos, wristPos;
-    
+
         public GoalPos(double armPos, double wristPos) {
             this.armPos = armPos;
             this.wristPos = wristPos;
