@@ -11,6 +11,8 @@ import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 
 import static org.carlmontrobotics.robotcode2023.Constants.Arm.*;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ArmPeriodic extends CommandBase {
@@ -18,7 +20,9 @@ public class ArmPeriodic extends CommandBase {
   private Arm armSubsystem;
   private DoubleSupplier arm;
   private DoubleSupplier wrist;
-  private double currentArm = 0, currentWrist = 0; // current velocities
+  private double currArmRad = 0, currWristRad = 0;
+  private double lastTime = 0;
+  private final double EPSILON = 0.0001;
 
   public ArmPeriodic(Arm armSubsystem, DoubleSupplier arm, DoubleSupplier wrist) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -30,59 +34,67 @@ public class ArmPeriodic extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    lastTime = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double[] speeds = getRequestedSpeeds();
-    // if driven by joysticks, run only feedforward
-    if (speeds[ARM] == 0) 
-      armSubsystem.driveArm(0, 0, true);
-    else {
-      armSubsystem.driveArm(speeds[ARM], 0, false);
+    currArmRad = armSubsystem.getArmPos();
+    currWristRad = armSubsystem.getWristPos();
+    double currTime = Timer.getFPGATimestamp();
+    double deltaT = currTime - lastTime;
+    double[] goals = getRequestedSpeeds(deltaT);
+
+    TrapezoidProfile.Constraints armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
+    var armProfile = new TrapezoidProfile(armConstraints,
+        new TrapezoidProfile.State(goals[0], goals[1]),
+        new TrapezoidProfile.State(currArmRad, armSubsystem.getArmPos()));
+
+    TrapezoidProfile.Constraints wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
+    var wristProfile = new TrapezoidProfile(wristConstraints,
+        new TrapezoidProfile.State(goals[2], goals[3]),
+        new TrapezoidProfile.State(currWristRad, armSubsystem.getWristPos()));
+
+    // Retrieve the profiled setpoint for the next timestep. This setpoint moves
+    // toward the goal while obeying the constraints.
+    TrapezoidProfile.State armSetpoint = armProfile.calculate(deltaT);
+    TrapezoidProfile.State wristSetpoint = wristProfile.calculate(deltaT);
+    armSetpoint.position = armSubsystem.getArmClampedGoal(armSetpoint.position);
+    wristSetpoint.position = armSubsystem.getWristClampedGoal(wristSetpoint.position);
+    armSubsystem.driveArm(armSetpoint);
+    armSubsystem.driveWrist(wristSetpoint);
+
+    if (Math.abs(goals[1]) < EPSILON)
       armSubsystem.setArmTarget(armSubsystem.getArmPos());
-    }
-    if (speeds[WRIST] == 0)
-      armSubsystem.driveWrist(0, 0, true);
-    else {
-      armSubsystem.driveWrist(speeds[WRIST], 0, false);
+
+    if (Math.abs(goals[3]) < EPSILON) {
       armSubsystem.setWristTarget(armSubsystem.getWristPos());
     }
+    lastTime = currTime;
   }
 
   // Copy and pasted from drivetrain, handles input from joysticks
-  public double[] getRequestedSpeeds() {
-    double rawArm, rawWrist, deltaT;
-    deltaT = .05;
+  public double[] getRequestedSpeeds(double deltaT) {
+    double rawArmVel, rawWristVel;
     // Sets all values less than or equal to a very small value (determined by the
     // idle joystick state) to zero.
     // Used to make sure that the robot does not try to change its angle unless it
     // is moving,
     if (Math.abs(arm.getAsDouble()) <= Constants.OI.JOY_THRESH)
-      rawArm = 0.0;
+      rawArmVel = 0.0;
     else
-      rawArm = MAX_FF_VEL[ARM] * arm.getAsDouble();
-    if (Math.abs(wrist.getAsDouble()) <= Constants.OI.JOY_THRESH)
-      rawWrist = 0.0;
-    else
-      rawWrist = MAX_FF_VEL[WRIST] * wrist.getAsDouble();
+      rawArmVel = MAX_FF_VEL[ARM] * arm.getAsDouble();
 
-    double targetAccelerationArm = (rawArm - currentArm) / deltaT;
-    double targetAccelerationWrist = (rawWrist - currentWrist) / deltaT;
-    if (targetAccelerationArm >= MAX_FF_ACCEL[ARM]) {
-      targetAccelerationArm *= MAX_FF_ACCEL[ARM] / targetAccelerationArm;
-    }
-    if (targetAccelerationWrist >= MAX_FF_ACCEL[WRIST]) {
-      targetAccelerationWrist *= MAX_FF_ACCEL[WRIST] / targetAccelerationWrist;
-    }
-    currentArm += targetAccelerationArm * deltaT;
-    currentWrist += targetAccelerationWrist * deltaT;
-    if (Math.abs(currentArm) <= Constants.OI.JOY_THRESH)
-      currentArm = 0;
-    if (Math.abs(currentWrist) <= Constants.OI.JOY_THRESH)
-      currentWrist = 0;
-    return new double[] { currentArm, currentWrist };
+    if (Math.abs(wrist.getAsDouble()) <= Constants.OI.JOY_THRESH)
+      rawWristVel = 0.0;
+    else
+      rawWristVel = MAX_FF_VEL[WRIST] * wrist.getAsDouble();
+
+    double goalArmRad = armSubsystem.getArmPos() + rawArmVel * deltaT;
+    double goalWristRad = armSubsystem.getWristPos() + rawWristVel * deltaT;
+
+    return new double[] { goalArmRad, rawArmVel, goalWristRad, rawWristVel };
   }
 
   // Called once the command ends or is interrupted.
