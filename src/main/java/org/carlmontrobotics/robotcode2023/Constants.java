@@ -101,7 +101,7 @@ public final class Constants {
         // These positions are for if the intake/outtake takes place on the front (battery) side of the robot
         // if intake/outtake on back, the "negative" pos will be used
         // 0 = CUBE, 1 = CONE
-        // {Cone, Cube}
+        // {Cube, Cone}
         // GoalPos(arm, wrist)
        
         public static GoalPos[] LOW = {
