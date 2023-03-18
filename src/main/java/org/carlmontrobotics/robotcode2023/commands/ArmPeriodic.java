@@ -22,7 +22,6 @@ public class ArmPeriodic extends CommandBase {
   private DoubleSupplier wrist;
   private double currArmRad = 0, currWristRad = 0;
   private double lastTime = 0;
-  private final double EPSILON = 0.0001;
 
   public ArmPeriodic(Arm armSubsystem, DoubleSupplier arm, DoubleSupplier wrist) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -65,10 +64,8 @@ public class ArmPeriodic extends CommandBase {
     TrapezoidProfile.State wristSetpoint = wristProfile.calculate(deltaT);
     armSetpoint.position = armSubsystem.getArmClampedGoal(armSetpoint.position);
     wristSetpoint.position = armSubsystem.getWristClampedGoal(wristSetpoint.position);
-    armSubsystem.setArmTarget(goalArmRad);
-    armSubsystem.setWristTarget(goalWristRad);
-    armSubsystem.driveArm(armSetpoint);
-    armSubsystem.driveWrist(wristSetpoint);
+    armSubsystem.setArmTarget(armSetpoint.position, armSetpoint.velocity);
+    armSubsystem.setWristTarget(wristSetpoint.position, wristSetpoint.velocity);
 
     lastTime = currTime;
   }

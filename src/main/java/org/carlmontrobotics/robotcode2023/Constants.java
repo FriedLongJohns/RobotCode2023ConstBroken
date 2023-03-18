@@ -6,6 +6,7 @@ package org.carlmontrobotics.robotcode2023;
 
 import java.awt.Color;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -51,7 +52,8 @@ public final class Constants {
         public static double[] posToleranceRad = { .05, .05 }; // rad
         public static double[] velToleranceRadPSec = { 0.5, 0.5 }; // rad/s
 
-        public static double[] goalPosRad = { -Math.PI / 2, 0 }; // rad
+        // rad, rad/s
+        public static TrapezoidProfile.State[] goalState = { new TrapezoidProfile.State(-Math.PI / 2, 0), new TrapezoidProfile.State(0, 0) }; // rad
         public static double[] offsetRad = { 4.02, 3.50 + Math.PI / 2 }; // rad
 
         // needed to calculate feedforward values dynamically
@@ -77,8 +79,8 @@ public final class Constants {
         public static final double WRIST_DISCONTINUITY_RAD = (WRIST_LOWER_LIMIT_RAD + WRIST_UPPER_LIMIT_RAD) / 2 - Math.PI;
 
         // TODO: Determine actual max vel/accel
-        public static double[] MAX_FF_VEL = {0.1, 0}; // rad / s
-        public static double[] MAX_FF_ACCEL = {0.11, 0}; // rad / s
+        public static double[] MAX_FF_VEL = {1, 1}; // rad / s
+        public static double[] MAX_FF_ACCEL = {1, 1}; // rad / s
         //#endregion
 
         //#region Motor Details

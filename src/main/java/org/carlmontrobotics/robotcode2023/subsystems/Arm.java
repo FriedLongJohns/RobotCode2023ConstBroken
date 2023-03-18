@@ -74,14 +74,16 @@ public class Arm extends SubsystemBase {
         if (SmartDashboard.getBoolean("Toggle", false)) {
             senb.update();
         }
+        driveArm();
+        driveWrist();
     }
 
-    public void driveArm(double vel, double accel) {
+    private void driveArm() {
         double kgv = getKg();
-        double armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(vel, accel);
-        double armPIDVolts = armPID.calculate(armEncoder.getPosition(), goalPosRad[ARM]);
-        if ((getArmPos() > ARM_UPPER_LIMIT_RAD && vel > 0) || 
-            (getArmPos() < ARM_LOWER_LIMIT_RAD && vel < 0)) {
+        double armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(goalState[ARM].velocity, 0);
+        double armPIDVolts = armPID.calculate(armEncoder.getPosition(), goalState[ARM].position);
+        if ((getArmPos() > ARM_UPPER_LIMIT_RAD && goalState[ARM].velocity > 0) || 
+            (getArmPos() < ARM_LOWER_LIMIT_RAD && goalState[ARM].velocity < 0)) {
             armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
@@ -93,12 +95,12 @@ public class Arm extends SubsystemBase {
         armMotor.setVoltage(volts);
     }
 
-    public void driveWrist(double vel, double accel) {
-        double kgv = wristFeed.calculate(getWristPosRelativeToGround(), 0, 0);
-        double wristFeedVolts = wristFeed.calculate(getWristPosRelativeToGround(), vel, accel);
-        double wristPIDVolts = wristPID.calculate(getWristPos(), goalPosRad[WRIST]);
-        if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && vel > 0) || 
-            (getWristPos() < WRIST_LOWER_LIMIT_RAD && vel < 0)) {
+    private void driveWrist() {
+        double kgv = wristFeed.calculate(getWristPosRelativeToGround(), goalState[WRIST].velocity, 0);
+        double wristFeedVolts = wristFeed.calculate(getWristPosRelativeToGround(), goalState[WRIST].velocity, 0);
+        double wristPIDVolts = wristPID.calculate(getWristPos(), goalState[WRIST].position);
+        if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && goalState[WRIST].velocity > 0) || 
+            (getWristPos() < WRIST_LOWER_LIMIT_RAD && goalState[WRIST].velocity < 0)) {
             wristFeedVolts = kgv;
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
@@ -110,7 +112,7 @@ public class Arm extends SubsystemBase {
         wristMotor.setVoltage(volts);
     }
 
-    public void driveArm(TrapezoidProfile.State profile) {
+    private void driveArm(TrapezoidProfile.State profile) {
         double kgv = getKg();
         double armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(profile.velocity, 0);
         double armPIDVolts = armPID.calculate(armEncoder.getPosition(), profile.position);
@@ -127,7 +129,7 @@ public class Arm extends SubsystemBase {
         armMotor.setVoltage(volts);
     }
 
-    public void driveWrist(TrapezoidProfile.State profile) {
+    private void driveWrist(TrapezoidProfile.State profile) {
         double kgv = wristFeed.calculate(getWristPosRelativeToGround(), 0, 0);
         double wristFeedVolts = kgv * getCoM().getAngle().getCos() + wristFeed.calculate(profile.velocity, 0);
         double wristPIDVolts = wristPID.calculate(wristEncoder.getPosition(), profile.position);
@@ -194,17 +196,14 @@ public class Arm extends SubsystemBase {
         return getArmPos() + wristEncoder.getPosition();
     }
 
-    public void setArmTarget(double target) {
-        goalPosRad[ARM] = getArmClampedGoal(target);
+    public void setArmTarget(double targetPos, double targetVel) {
+        goalState[ARM].position = getArmClampedGoal(targetPos);
+        goalState[ARM].velocity = MathUtil.clamp(targetVel, 0, MAX_FF_VEL[ARM]);
     }
 
-    public void setWristTarget(double target) {
-        goalPosRad[WRIST] = getWristClampedGoal(target);
-    }
-
-    public void setArmWristTarget(double targetArm, double targetWrist) {
-        setArmTarget(targetArm);
-        setWristTarget(targetWrist);
+    public void setWristTarget(double targetPos, double targetVel) {
+        goalState[WRIST].position = getWristClampedGoal(targetPos);
+        goalState[WRIST].velocity = MathUtil.clamp(targetVel, 0, MAX_FF_VEL[WRIST]);
     }
 
     public double getArmGoal(GoalPos[][] pos) {
@@ -219,8 +218,8 @@ public class Arm extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
         senb=builder;
-        builder.addDoubleProperty("WristGoalPos", () -> goalPosRad[WRIST], goal -> goalPosRad[WRIST] = goal);
-        builder.addDoubleProperty("ArmGoalPos",   () -> goalPosRad[ARM], goal -> goalPosRad[ARM] = goal);
+        builder.addDoubleProperty("WristGoalPos", () -> goalState[WRIST].position, goal -> goalState[WRIST].position = goal);
+        builder.addDoubleProperty("ArmGoalPos",   () -> goalState[ARM].position, goal -> goalState[ARM].position = goal);
         builder.addDoubleProperty("ArmPos",       () -> getArmPos(), null);
         builder.addDoubleProperty("WisPos",       () -> getWristPos(), null);
         builder.addDoubleProperty("RobotWisPos",  () -> getWristPosRelativeToGround(), null);
@@ -341,15 +340,15 @@ public class Arm extends SubsystemBase {
         SmartDashboard.putNumber("kP: Arm", kP[ARM]);
         SmartDashboard.putNumber("kI: Arm", kI[ARM]);
         SmartDashboard.putNumber("kD: Arm", kD[ARM]);
-        SmartDashboard.putNumber("WristGoalDeg", Units.radiansToDegrees(goalPosRad[WRIST]));
-        SmartDashboard.putNumber("ArmGoalDeg", Units.radiansToDegrees(goalPosRad[ARM]));
+        SmartDashboard.putNumber("WristGoalDeg", Units.radiansToDegrees(goalState[WRIST].position));
+        SmartDashboard.putNumber("ArmGoalDeg", Units.radiansToDegrees(goalState[ARM].position));
         SmartDashboard.putNumber("Max FF Vel Arm", MAX_FF_VEL[ARM]);
         SmartDashboard.putNumber("Max FF Accel Arm", MAX_FF_ACCEL[ARM]);
     }
 
     public void getArmControlOnSmartDashboard() {
-        goalPosRad[WRIST] = Units.degreesToRadians(SmartDashboard.getNumber("WristGoalDeg", Units.radiansToDegrees(goalPosRad[WRIST])));
-        goalPosRad[ARM] = Units.degreesToRadians(SmartDashboard.getNumber("ArmGoalDeg", Units.radiansToDegrees(goalPosRad[ARM])));
+        goalState[WRIST].position = Units.degreesToRadians(SmartDashboard.getNumber("WristGoalDeg", Units.radiansToDegrees(goalState[WRIST].position)));
+        goalState[ARM].position = Units.degreesToRadians(SmartDashboard.getNumber("ArmGoalDeg", Units.radiansToDegrees(goalState[ARM].position)));
         MAX_FF_VEL[ARM] = SmartDashboard.getNumber("Max FF Vel Arm", MAX_FF_VEL[ARM]);
         MAX_FF_ACCEL[ARM] = SmartDashboard.getNumber("Max FF Accel Arm", MAX_FF_ACCEL[ARM]);
         kP[WRIST] = SmartDashboard.getNumber("kP: Wis", kP[WRIST]);
