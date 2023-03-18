@@ -4,9 +4,8 @@
 
 package org.carlmontrobotics.robotcode2023;
 
-import java.awt.Color;
-
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController.Button;
 
 /**
@@ -142,7 +141,7 @@ public final class Constants {
         }
         //#endregion
     }
-
+    
     public static final class Roller {
         //#region Subsystem Constants
 
@@ -194,12 +193,9 @@ public final class Constants {
         public static final double JOY_THRESH = 0.01;
         public static final class Driver {
             public static final int port = 0;
-
         }
-
         public static final class Manipulator {
             public static final int port = 1;
-
             public static final int toggleCubeCone = Button.kLeftBumper.value;
             public static final int toggleFrontBack = Button.kRightBumper.value;
             public static final int store = Button.kA.value;
@@ -211,12 +207,52 @@ public final class Constants {
             public static final int intake = -1;
             public static final int substation = -1;
 
-            public static final int rollerIntakeConeButton = Button.kA.value;
-            public static final int rollerOuttakeConeButton = Button.kB.value;
+            public static final int cycleUp = 1;//FIXME use correct buttons
+            public static final int cycleDown = 2;
+        }
+        public static final class Controller {
+          public static final int port = 2;
 
-            public static final int rollerIntakeCubeButton = Button.kX.value;
-            public static final int rollerOuttakeCubeButton = Button.kY.value;
-            public static final int rollerStopButton = Button.kRightBumper.value;
+          public static Joystick controller = new Joystick(port);
+
+          public static int X;
+          public static int A;
+          public static int B;
+          public static int Y;
+          public static int LB;
+          public static int RB;
+          public static int LT;
+          public static int RT;
+          public static int BACK;
+          public static int START;
+
+          //TODO: mode button setting to teletop init
+          static {
+              if (controller.getName().equals("Logitech Dual Action")) {
+                  // Buttons and triggers
+                  X = 1;
+                  A = 2;
+                  B = 3;
+                  Y = 4;
+                  LB = 5;
+                  RB = 6;
+                  LT = 7;
+                  RT = 8;
+                  BACK = 9;
+                  START = 10;
+              } else {
+                  // Buttons and triggers for xbox controller
+                  X = 3;
+                  A = 1;
+                  B = 2;
+                  Y = 4;
+                  LB = 5;
+                  RB = 6;
+                  BACK = 7;
+                  START = 8;
+                  //todo get arrow buttons
+              }
+           }
         }
     }
 }
