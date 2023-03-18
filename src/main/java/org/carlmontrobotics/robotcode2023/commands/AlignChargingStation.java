@@ -18,23 +18,24 @@ public class AlignChargingStation extends CommandBase {
 
     @Override
     public void initialize() {
-        fwd = Math.abs(getPitch()) > Math.abs(getRoll());
+        fwd = Math.abs(getRoll()) > Math.abs(getPitch());
         fieldOriented = drivetrain.getFieldOriented();
         drivetrain.setFieldOriented(false);
     }
 
     @Override
     public void execute() {
+        double roll = -getRoll();
         double pitch = getPitch();
-        double roll = getRoll();
-        double forward = fwd && Math.abs(pitch) > chargeStationAlignToleranceDeg ? chargeStationAlignSpeedMpSPerDeg * pitch + Math.copySign(chargeStationAlignFFMpS, pitch) : 0;
-        double strafe = !fwd && Math.abs(roll) > chargeStationAlignToleranceDeg ? chargeStationAlignSpeedMpSPerDeg * roll + Math.copySign(chargeStationAlignFFMpS, roll) : 0;
-        drivetrain.drive(-forward, strafe, 0);
+        double forward = fwd && Math.abs(roll) > chargeStationAlignToleranceDeg ? chargeStationAlignSpeedMpSPerDeg * roll + Math.copySign(chargeStationAlignFFMpS, roll) : 0;
+        double strafe = !fwd && Math.abs(pitch) > chargeStationAlignToleranceDeg ? chargeStationAlignSpeedMpSPerDeg * pitch + Math.copySign(chargeStationAlignFFMpS, pitch) : 0;
+        if(Math.abs(fwd ? roll : pitch) < 8) forward = strafe = 0;
+        drivetrain.drive(forward, strafe, 0);
     }
 
     @Override
     public boolean isFinished() {
-        lastTime = Math.abs(fwd ? getPitch() : getRoll() /* Select which axis to use based on the direction of alignment */) < chargeStationAlignToleranceDeg ? // If the robot is aligned
+        lastTime = Math.abs(fwd ? getRoll() : getPitch() /* Select which axis to use based on the direction of alignment */) < chargeStationAlignToleranceDeg ? // If the robot is aligned
                     lastTime == -1 ? // Set the last time to the current time if it hasn't been set yet
                         System.currentTimeMillis() :
                         lastTime : // else NOP

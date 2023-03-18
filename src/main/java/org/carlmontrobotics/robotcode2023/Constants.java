@@ -136,9 +136,9 @@ public final class Constants {
         public static final double kAlignForward = 0.6;
 
         public static final double chargeStationAlignToleranceDeg = 2.5;
-        public static final double chargeStationAlignSpeedMpSPerDeg = 0.3 / 13;
+        public static final double chargeStationAlignSpeedMpSPerDeg = 0.3 / 20;
         public static final double chargeStationAlignTime = 500;
-        public static final double chargeStationAlignFFMpS = 0.1;
+        public static final double chargeStationAlignFFMpS = 0;
         public static final double wheelTurnDriveSpeed = 0.0001; // Meters / Second ; A non-zero speed just used to orient the wheels to the correct angle. This should be very small to avoid actually moving the robot.
 
         public static final double[] positionTolerance = {Units.inchesToMeters(.5), Units.inchesToMeters(.5), Units.degreesToRadians(5)}; // Meters, Meters, Radians

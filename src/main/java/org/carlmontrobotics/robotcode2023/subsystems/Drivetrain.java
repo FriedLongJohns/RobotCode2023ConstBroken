@@ -80,12 +80,12 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
         // Initialize modules
         {
-            initPitch = 0;
-            initRoll = 0;
-            Supplier<Float> pitchSupplier = () -> initPitch;
-            Supplier<Float> rollSupplier = () -> initRoll;
-            // initPitch = gyro.getPitch();
-            // initRoll = gyro.getRoll();
+            // initPitch = 0;
+            // initRoll = 0;
+            Supplier<Float> pitchSupplier = () -> 0F;
+            Supplier<Float> rollSupplier = () -> 0F;
+            initPitch = gyro.getPitch();
+            initRoll = gyro.getRoll();
             // Supplier<Float> pitchSupplier = () -> gyro.getPitch();
             // Supplier<Float> rollSupplier = () -> gyro.getRoll();
 
@@ -114,6 +114,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
                     pitchSupplier, rollSupplier);
             modules = new SwerveModule[] { moduleFL, moduleFR, moduleBL, moduleBR };
         }
+
         SmartDashboard.putNumber("kpTheta", thetaPIDController[0]);
         odometry = new SwerveDrivePoseEstimator(kinematics, Rotation2d.fromDegrees(getHeading()), getModulePositions(), new Pose2d());
     }
@@ -136,11 +137,13 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // odometry.getPoseMeters().getTranslation().getX());
         // SmartDashboard.putNumber("Odometry Y",
         // odometry.getPoseMeters().getTranslation().getY());;
-        //SmartDashboard.putNumber("Pitch", gyro.getPitch());
-        //SmartDashboard.putNumber("Roll", gyro.getRoll());
+        // SmartDashboard.putNumber("Pitch", gyro.getPitch());
+        // SmartDashboard.putNumber("Roll", gyro.getRoll());
        // SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
         SmartDashboard.putNumber("Robot Heading", getHeading());
-        fieldOriented = SmartDashboard.getBoolean("Field Oriented", true);
+        // SmartDashboard.putNumber("AdjRoll", gyro.getPitch() - initPitch);
+        // SmartDashboard.putNumber("AdjPitch", gyro.getRoll() - initRoll);
+        // fieldOriented = SmartDashboard.getBoolean("Field Oriented", true);
         // SmartDashboard.putNumber("Gyro Compass Heading", gyro.getCompassHeading());
         // SmartDashboard.putNumber("Compass Offset", compassOffset);
         // SmartDashboard.putBoolean("Current Magnetic Field Disturbance",
@@ -208,7 +211,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
      */
     private ChassisSpeeds getChassisSpeeds(double forward, double strafe, double rotation) {
         ChassisSpeeds speeds;
-        if (fieldOriented) { //TODO: field oriented
+        if (fieldOriented) {
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Rotation2d.fromDegrees(getHeading()));
         } else {
             speeds = new ChassisSpeeds(forward, strafe, rotation);
