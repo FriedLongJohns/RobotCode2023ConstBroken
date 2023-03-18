@@ -111,8 +111,8 @@ public final class Constants {
         // TODO : Get angles for front
         public static GoalPos[][] LOW = {
             { // front
-                new GoalPos(Units.degreesToRadians(-134.46), Units.degreesToRadians(98.33)), // cube
-                new GoalPos(Units.degreesToRadians(-90), Units.degreesToRadians(-119.62))             // cone
+                new GoalPos(Units.degreesToRadians(-44.46), Units.degreesToRadians(117.17)), // cube
+                new GoalPos(Units.degreesToRadians(0), Units.degreesToRadians(-100.78))             // cone
             },
             { // back
                 new GoalPos(Units.degreesToRadians(-80.2), Units.degreesToRadians(61.37)), 
@@ -121,8 +121,8 @@ public final class Constants {
         };
         public static GoalPos[][] MID = {
             {
-                new GoalPos(Units.degreesToRadians(-175.98), Units.degreesToRadians(113.17)), 
-                new GoalPos(Units.degreesToRadians(-196.85), Units.degreesToRadians(46.63)) 
+                new GoalPos(Units.degreesToRadians(-85.98), Units.degreesToRadians(132.01)), 
+                new GoalPos(Units.degreesToRadians(-106.85), Units.degreesToRadians(65.47)) 
             },
             {
                 new GoalPos(Units.degreesToRadians(15.24), Units.degreesToRadians(-109.64)), 
@@ -131,8 +131,8 @@ public final class Constants {
         };
         public static GoalPos[][] HIGH = {
             {
-                new GoalPos(Units.degreesToRadians(-190.02), Units.degreesToRadians(-167.919)), 
-                new GoalPos(Units.degreesToRadians(-194.18), Units.degreesToRadians(35.4)) 
+                new GoalPos(Units.degreesToRadians(-102.02), Units.degreesToRadians(-149.079)), 
+                new GoalPos(Units.degreesToRadians(-104.18), Units.degreesToRadians(54.24)) 
             },
             {
                 new GoalPos(Units.degreesToRadians(20.76), Units.degreesToRadians(-52.06)), 
