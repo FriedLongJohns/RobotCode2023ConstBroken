@@ -7,6 +7,7 @@ package org.carlmontrobotics.robotcode2023;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 
 import java.awt.Color;
 
@@ -198,8 +199,10 @@ public final class Constants {
         }
         public static final class Manipulator {
             public static final int port = 1;
-            public static final int toggleCubeCone = Button.kLeftBumper.value;
-            public static final int toggleFrontBack = Button.kRightBumper.value;
+            public static final int toggleCube = Button.kLeftBumper.value;
+            public static final int toggleFront = Button.kRightBumper.value;
+            public static final int intakeCube = Axis.kRightTrigger.value;
+            public static final int intakeCone = Axis.kLeftTrigger.value;
             public static final int store = Button.kA.value;
             public static final int low = Button.kX.value;
             public static final int mid = Button.kY.value;
@@ -208,9 +211,6 @@ public final class Constants {
             public static final int shelf = -1;
             public static final int intake = -1;
             public static final int substation = -1;
-
-            public static final int cycleUp = 1;//FIXME use correct buttons
-            public static final int cycleDown = 2;
         }
         public static final class Controller {
           public static final int port = 2;

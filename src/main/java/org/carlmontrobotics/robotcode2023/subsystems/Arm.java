@@ -39,7 +39,7 @@ public class Arm extends SubsystemBase {
 
     private SendableBuilder senb;
 
-    private int object = CUBE;
+    public int object = CUBE;
     public boolean isFront = true;
 
     public Arm() {
