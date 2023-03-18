@@ -115,8 +115,8 @@ public final class Constants {
                 new GoalPos(Units.degreesToRadians(-90), Units.degreesToRadians(-119.62))             // cone
             },
             { // back
-                new GoalPos(Units.degreesToRadians(-134.46), Units.degreesToRadians(98.33)), 
-                new GoalPos(Units.degreesToRadians(-90), Units.degreesToRadians(-119.62))
+                new GoalPos(Units.degreesToRadians(-80.2), Units.degreesToRadians(61.37)), 
+                new GoalPos(Units.degreesToRadians(-90), Units.degreesToRadians(133.24))
             }
         };
         public static GoalPos[][] MID = {
@@ -125,8 +125,8 @@ public final class Constants {
                 new GoalPos(Units.degreesToRadians(-196.85), Units.degreesToRadians(46.63)) 
             },
             {
-                new GoalPos(Units.degreesToRadians(-175.98), Units.degreesToRadians(113.17)), 
-                new GoalPos(Units.degreesToRadians(-196.85), Units.degreesToRadians(46.63)) 
+                new GoalPos(Units.degreesToRadians(15.24), Units.degreesToRadians(-109.64)), 
+                new GoalPos(Units.degreesToRadians(-47.63), Units.degreesToRadians(141.7)) 
             }
         };
         public static GoalPos[][] HIGH = {
@@ -135,8 +135,8 @@ public final class Constants {
                 new GoalPos(Units.degreesToRadians(-194.18), Units.degreesToRadians(35.4)) 
             },
             {
-                new GoalPos(Units.degreesToRadians(-190.02), Units.degreesToRadians(-167.919)), 
-                new GoalPos(Units.degreesToRadians(-194.18), Units.degreesToRadians(35.4)) 
+                new GoalPos(Units.degreesToRadians(20.76), Units.degreesToRadians(-52.06)), 
+                new GoalPos(Units.degreesToRadians(-14.07), Units.degreesToRadians(58.12)) 
             }
         };
         // TODO: Get positions for STORED, SHELF, and SUBSTATION

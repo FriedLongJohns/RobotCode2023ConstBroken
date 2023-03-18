@@ -58,8 +58,9 @@ public class Arm extends SubsystemBase {
         armPID.setTolerance(posToleranceRad[ARM], velToleranceRadPSec[ARM]);
         wristPID.setTolerance(posToleranceRad[WRIST], velToleranceRadPSec[WRIST]);
 
-        SmartDashboard.putBoolean("Toggle", false);
-        senb.update();
+        // SmartDashboard.putBoolean("Toggle", false);
+        // senb.update();
+        SmartDashboard.putData("Arm", this);
     }
 
     @Override
@@ -115,7 +116,7 @@ public class Arm extends SubsystemBase {
     private void driveArm(TrapezoidProfile.State profile) {
         double kgv = getKg();
         double armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(profile.velocity, 0);
-        double armPIDVolts = armPID.calculate(armEncoder.getPosition(), profile.position);
+        double armPIDVolts = armPID.calculate(getArmPos(), profile.position);
         if ((getArmPos() > ARM_UPPER_LIMIT_RAD && profile.velocity > 0) || 
             (getArmPos() < ARM_LOWER_LIMIT_RAD && profile.velocity < 0)) {
             armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
@@ -132,7 +133,7 @@ public class Arm extends SubsystemBase {
     private void driveWrist(TrapezoidProfile.State profile) {
         double kgv = wristFeed.calculate(getWristPosRelativeToGround(), 0, 0);
         double wristFeedVolts = kgv * getCoM().getAngle().getCos() + wristFeed.calculate(profile.velocity, 0);
-        double wristPIDVolts = wristPID.calculate(wristEncoder.getPosition(), profile.position);
+        double wristPIDVolts = wristPID.calculate(getWristPos(), profile.position);
         if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && profile.velocity > 0) || 
             (getWristPos() < WRIST_LOWER_LIMIT_RAD && profile.velocity < 0)) {
             wristFeedVolts = kgv * getCoM().getAngle().getCos() + wristFeed.calculate(0, 0);
@@ -221,8 +222,8 @@ public class Arm extends SubsystemBase {
         builder.addDoubleProperty("WristGoalPos", () -> goalState[WRIST].position, goal -> goalState[WRIST].position = goal);
         builder.addDoubleProperty("ArmGoalPos",   () -> goalState[ARM].position, goal -> goalState[ARM].position = goal);
         builder.addDoubleProperty("ArmPos",       () -> getArmPos(), null);
-        builder.addDoubleProperty("WisPos",       () -> getWristPos(), null);
-        builder.addDoubleProperty("RobotWisPos",  () -> getWristPosRelativeToGround(), null);
+        builder.addDoubleProperty("WristPos",       () -> getWristPos(), null);
+        builder.addDoubleProperty("RobotWristPos",  () -> getWristPosRelativeToGround(), null);
         builder.addDoubleProperty("kP: Arm", () -> kP[ARM], x -> kP[ARM] = x);
         builder.addDoubleProperty("kP: Wis", () -> kP[WRIST], x -> kP[WRIST] = x);
         builder.addDoubleProperty("kI: Arm", () -> kI[ARM], x -> kI[ARM] = x);
