@@ -30,7 +30,6 @@ public class TeleopDrive extends CommandBase {
   private BooleanSupplier slow;
   private double currentForwardVel = 0;
   private double currentStrafeVel = 0;
-  private double currentRotateClockwiseVel = 0;
 
   /**
    * Creates a new TeleopDrive.
@@ -89,12 +88,12 @@ public class TeleopDrive extends CommandBase {
     // Quick-Stop
     if (Math.abs(forward) <= minVelocityMps) currentForwardVel = 0;
     if (Math.abs(strafe) <= minVelocityMps) currentStrafeVel = 0;
-    if (Math.abs(rotateClockwise) <= minRotationRadPSec) currentRotateClockwiseVel = 0;
+    if (Math.abs(rotateClockwise) <= minRotationRadPSec) rotateClockwise = 0;
 
     double driveMultiplier = slow.getAsBoolean() ? kSlowDriveSpeed : kNormalDriveSpeed;
     double rotationMultiplier = slow.getAsBoolean() ? kSlowDriveRotation : kNormalDriveRotation;
 
-    return new double[] {currentForwardVel * driveMultiplier, currentStrafeVel * driveMultiplier, -currentRotateClockwiseVel * rotationMultiplier};
+    return new double[] {currentForwardVel * driveMultiplier, currentStrafeVel * driveMultiplier, -rotateClockwise * rotationMultiplier};
   }
 
   // Called once the command ends or is interrupted.
