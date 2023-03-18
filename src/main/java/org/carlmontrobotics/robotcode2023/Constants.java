@@ -190,9 +190,14 @@ public final class Constants {
             public static final int port = 0;
 
             public static final int slowDriveButton = Button.kLeftBumper.value;
-            public static final int chargeStationAlignButton = Button.kA.value;
-            public static final int resetFieldOrientationButton = Button.kB.value;
-            public static final int toggleFieldOrientedButton = Button.kX.value;
+            public static final int chargeStationAlignButton = Button.kBack.value;
+            public static final int resetFieldOrientationButton = Button.kRightBumper.value;
+            public static final int toggleFieldOrientedButton = Button.kStart.value;
+
+            public static final int rotateToFieldRelativeAngle0Deg = Button.kY.value;
+            public static final int rotateToFieldRelativeAngle90Deg = Button.kB.value;
+            public static final int rotateToFieldRelativeAngle180Deg = Button.kA.value;
+            public static final int rotateToFieldRelativeAngle270Deg = Button.kX.value;
         }
 
         public static final class Manipulator {
