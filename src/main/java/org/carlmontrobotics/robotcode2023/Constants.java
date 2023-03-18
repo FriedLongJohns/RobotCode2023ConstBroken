@@ -141,8 +141,8 @@ public final class Constants {
         public static final double chargeStationAlignFFMpS = 0;
         public static final double wheelTurnDriveSpeed = 0.0001; // Meters / Second ; A non-zero speed just used to orient the wheels to the correct angle. This should be very small to avoid actually moving the robot.
 
-        public static final double[] positionTolerance = {Units.inchesToMeters(.5), Units.inchesToMeters(.5), Units.degreesToRadians(5)}; // Meters, Meters, Radians
-        public static final double[] velocityTolerance = {Units.inchesToMeters(1), Units.inchesToMeters(1), Units.degreesToRadians(5)}; // Meters, Meters, Radians/Second
+        public static final double[] positionTolerance = {Units.inchesToMeters(.5), Units.inchesToMeters(.5), 5}; // Meters, Meters, Degrees
+        public static final double[] velocityTolerance = {Units.inchesToMeters(1), Units.inchesToMeters(1), 5}; // Meters, Meters, Degrees/Second
         public static final double minVelocityMps = 0.01;
 
         //#endregion
