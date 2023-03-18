@@ -44,17 +44,20 @@ public class ArmPeriodic extends CommandBase {
     currWristRad = armSubsystem.getWristPos();
     double currTime = Timer.getFPGATimestamp();
     double deltaT = currTime - lastTime;
-    double[] goals = getRequestedSpeeds(deltaT);
+    double[] speeds = getRequestedSpeeds();
+
+    double goalArmRad = armSubsystem.getArmPos() + speeds[ARM] * deltaT;
+    double goalWristRad = armSubsystem.getWristPos() + speeds[WRIST] * deltaT;
 
     TrapezoidProfile.Constraints armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
     var armProfile = new TrapezoidProfile(armConstraints,
-        new TrapezoidProfile.State(goals[0], goals[1]),
-        new TrapezoidProfile.State(currArmRad, armSubsystem.getArmPos()));
+        new TrapezoidProfile.State(goalArmRad, speeds[ARM]),
+        new TrapezoidProfile.State(currArmRad, armSubsystem.getArmVel()));
 
     TrapezoidProfile.Constraints wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
     var wristProfile = new TrapezoidProfile(wristConstraints,
-        new TrapezoidProfile.State(goals[2], goals[3]),
-        new TrapezoidProfile.State(currWristRad, armSubsystem.getWristPos()));
+        new TrapezoidProfile.State(goalWristRad, speeds[WRIST]),
+        new TrapezoidProfile.State(currWristRad, armSubsystem.getWristVel()));
 
     // Retrieve the profiled setpoint for the next timestep. This setpoint moves
     // toward the goal while obeying the constraints.
@@ -62,25 +65,19 @@ public class ArmPeriodic extends CommandBase {
     TrapezoidProfile.State wristSetpoint = wristProfile.calculate(deltaT);
     armSetpoint.position = armSubsystem.getArmClampedGoal(armSetpoint.position);
     wristSetpoint.position = armSubsystem.getWristClampedGoal(wristSetpoint.position);
+    armSubsystem.setArmTarget(goalArmRad);
+    armSubsystem.setWristTarget(goalWristRad);
     armSubsystem.driveArm(armSetpoint);
     armSubsystem.driveWrist(wristSetpoint);
 
-    if (Math.abs(goals[1]) < EPSILON)
-      armSubsystem.setArmTarget(armSubsystem.getArmPos());
-
-    if (Math.abs(goals[3]) < EPSILON) {
-      armSubsystem.setWristTarget(armSubsystem.getWristPos());
-    }
     lastTime = currTime;
   }
 
   // Copy and pasted from drivetrain, handles input from joysticks
-  public double[] getRequestedSpeeds(double deltaT) {
+  public double[] getRequestedSpeeds() {
     double rawArmVel, rawWristVel;
     // Sets all values less than or equal to a very small value (determined by the
     // idle joystick state) to zero.
-    // Used to make sure that the robot does not try to change its angle unless it
-    // is moving,
     if (Math.abs(arm.getAsDouble()) <= Constants.OI.JOY_THRESH)
       rawArmVel = 0.0;
     else
@@ -90,11 +87,8 @@ public class ArmPeriodic extends CommandBase {
       rawWristVel = 0.0;
     else
       rawWristVel = MAX_FF_VEL[WRIST] * wrist.getAsDouble();
-
-    double goalArmRad = armSubsystem.getArmPos() + rawArmVel * deltaT;
-    double goalWristRad = armSubsystem.getWristPos() + rawWristVel * deltaT;
-
-    return new double[] { goalArmRad, rawArmVel, goalWristRad, rawWristVel };
+    
+    return new double[] {rawArmVel, rawWristVel};
   }
 
   // Called once the command ends or is interrupted.

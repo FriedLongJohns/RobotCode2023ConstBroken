@@ -49,6 +49,8 @@ public class Arm extends SubsystemBase {
 
         armEncoder.setPositionConversionFactor(rotationToRad);
         wristEncoder.setPositionConversionFactor(rotationToRad);
+        armEncoder.setVelocityConversionFactor(rotationToRad);
+        wristEncoder.setVelocityConversionFactor(rotationToRad);
 
         wristEncoder.setZeroOffset(offsetRad[ARM]);
         armEncoder.setZeroOffset(offsetRad[WRIST]);
@@ -174,9 +176,17 @@ public class Arm extends SubsystemBase {
                 ARM_DISCONTINUITY_RAD + 2 * Math.PI);
     }
 
+    public double getArmVel() {
+        return armEncoder.getVelocity();
+    }
+
     public double getWristPos() {
         return MathUtil.inputModulus(wristEncoder.getPosition(), WRIST_DISCONTINUITY_RAD,
                 WRIST_DISCONTINUITY_RAD + 2 * Math.PI);
+    }
+
+    public double getWristVel() {
+        return wristEncoder.getVelocity();
     }
 
     // Unbounded wrist position relative to ground
