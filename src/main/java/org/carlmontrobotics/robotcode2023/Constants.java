@@ -81,6 +81,9 @@ public final class Constants {
         // TODO: Determine actual max vel/accel
         public static double[] MAX_FF_VEL = {1, 1}; // rad / s
         public static double[] MAX_FF_ACCEL = {1, 1}; // rad / s
+        public static TrapezoidProfile.Constraints wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
+        public static TrapezoidProfile.Constraints armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
+
         //#endregion
 
         //#region Motor Details
