@@ -168,8 +168,8 @@ public class Arm extends SubsystemBase {
     }
 
     public double getWristPos() {
-        return MathUtil.clamp(wristEncoder.getPosition(), ARM_DISCONTINUITY_RAD,
-                ARM_DISCONTINUITY_RAD + 2 * Math.PI);
+        return MathUtil.clamp(wristEncoder.getPosition(), WRIST_DISCONTINUITY_RAD,
+                WRIST_DISCONTINUITY_RAD + 2 * Math.PI);
     }
 
     // Unbounded wrist position relative to ground
