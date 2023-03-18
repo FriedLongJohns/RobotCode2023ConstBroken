@@ -58,8 +58,9 @@ public class Arm extends SubsystemBase {
         armPID.setTolerance(posToleranceRad[ARM], velToleranceRadPSec[ARM]);
         wristPID.setTolerance(posToleranceRad[WRIST], velToleranceRadPSec[WRIST]);
 
-        SmartDashboard.putBoolean("Toggle", false);
-        senb.update();
+        // SmartDashboard.putBoolean("Toggle", false);
+        // senb.update();
+        SmartDashboard.putData("Arm", this);
     }
 
     @Override
