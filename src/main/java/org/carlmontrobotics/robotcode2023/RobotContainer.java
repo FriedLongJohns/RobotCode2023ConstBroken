@@ -42,7 +42,7 @@ public class RobotContainer {
     arm.setDefaultCommand(new ArmPeriodic(
       arm, 
       () -> inputProcessing(getStickValue(manipulatorController, Axis.kLeftY)),
-      () -> inputProcessing(getStickValue(manipulatorController, Axis.kRightX))
+      () -> inputProcessing(getStickValue(manipulatorController, Axis.kRightY))
     ));
   }
 

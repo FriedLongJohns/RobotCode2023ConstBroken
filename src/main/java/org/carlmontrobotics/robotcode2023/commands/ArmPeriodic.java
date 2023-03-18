@@ -67,8 +67,7 @@ public class ArmPeriodic extends CommandBase {
     wristSetpoint.position = armSubsystem.getWristClampedGoal(wristSetpoint.position);
     armSubsystem.setArmTarget(goalArmRad);
     armSubsystem.setWristTarget(goalWristRad);
-    armSubsystem.driveArm(armSetpoint);
-    armSubsystem.driveWrist(wristSetpoint);
+    
 
     lastTime = currTime;
   }
