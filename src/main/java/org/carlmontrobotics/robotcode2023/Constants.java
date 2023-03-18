@@ -102,7 +102,7 @@ public final class Constants {
         //#region Goal Positions
         // TODO: PUT IN CORRECT POSITIONS
         // These positions are for if the intake/outtake takes place on the front (battery) side of the robot
-        // if intake/outtake on back, the "negative" pos will be used
+        // if intake/outtake on back, the "negative" pos will be used, which is offset by a a specific amount of degrees to account for wrist being in a different COM
         // 0 = CUBE, 1 = CONE
         // {Cube, Cone}
         // GoalPos(arm, wrist)
