@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 import static org.carlmontrobotics.robotcode2023.Constants.Arm.CUBE;
 import static org.carlmontrobotics.robotcode2023.Constants.Arm.CONE;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.FRONT;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.BACK;
 
 public class RobotContainer {
 
@@ -50,11 +52,11 @@ public class RobotContainer {
     new JoystickButton(manipulatorController, Manipulator.toggleCubeButton)
       .onTrue(new InstantCommand(() -> {arm.object = CONE;}))
       .onFalse(new InstantCommand(() -> {arm.object = CUBE;}));
-    /*
+    
     new JoystickButton(manipulatorController, Manipulator.toggleFrontButton)
-      .onTrue(new InstantCommand(() -> arm.isFront = false))
-      .onFalse(new InstantCommand(() -> arm.isFront = true));
-    */
+      .onTrue(new InstantCommand(() -> arm.side = FRONT))
+      .onFalse(new InstantCommand(() -> arm.side = BACK));
+    
     new JoystickButton(manipulatorController, Manipulator.storeButton).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.STORED), arm.getWristGoal(GoalPos.STORED), arm)
     );
