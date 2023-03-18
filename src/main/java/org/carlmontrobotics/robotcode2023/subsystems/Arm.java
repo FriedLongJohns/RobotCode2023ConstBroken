@@ -74,11 +74,12 @@ public class Arm extends SubsystemBase {
     }
 
     public void driveArm(double vel, double accel) {
-        double armFeedVolts = getKg() * getCoM().getAngle().getCos() + armFeed.calculate(vel, accel);
+        double kgv = getKg();
+        double armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(vel, accel);
         double armPIDVolts = armPID.calculate(armEncoder.getPosition(), goalPosRad[ARM]);
-        if ((getArmPos() > ARM_UPPER_LIMIT_RAD && armFeedVolts > 0) || 
-            (getArmPos() < ARM_LOWER_LIMIT_RAD && armFeedVolts < 0)) {
-            armFeedVolts = getKg() * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
+        if ((getArmPos() > ARM_UPPER_LIMIT_RAD && armFeedVolts > kgv) || 
+            (getArmPos() < ARM_LOWER_LIMIT_RAD && armFeedVolts < kgv)) {
+            armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
         // TO MASTER IF THIS IS STILL HERE)
@@ -90,11 +91,12 @@ public class Arm extends SubsystemBase {
     }
 
     public void driveWrist(double vel, double accel) {
+        double kgv = wristFeed.calculate(getWristPosRelativeToGround(), 0, 0);
         double wristFeedVolts = wristFeed.calculate(getWristPosRelativeToGround(), vel, accel);
         double wristPIDVolts = wristPID.calculate(getWristPos(), goalPosRad[WRIST]);
-        if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && wristFeedVolts > 0) || 
-            (getWristPos() < WRIST_LOWER_LIMIT_RAD && wristFeedVolts < 0)) {
-            wristFeedVolts = wristFeed.calculate(getWristPosRelativeToGround(), 0, 0);
+        if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && wristFeedVolts > kgv) || 
+            (getWristPos() < WRIST_LOWER_LIMIT_RAD && wristFeedVolts < kgv)) {
+            wristFeedVolts = kgv;
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
         // TO MASTER IF THIS IS STILL HERE)
@@ -106,10 +108,12 @@ public class Arm extends SubsystemBase {
     }
 
     public void driveArm(TrapezoidProfile.State profile) {
-        double armFeedVolts = getKg() * getCoM().getAngle().getCos() + armFeed.calculate(profile.velocity, 0);
+        double kgv = getKg();
+        double armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(profile.velocity, 0);
         double armPIDVolts = armPID.calculate(armEncoder.getPosition(), profile.position);
-        if (getArmPos() > ARM_UPPER_LIMIT_RAD || getArmPos() < ARM_LOWER_LIMIT_RAD) {
-            armFeedVolts = getKg() * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
+        if ((getArmPos() > ARM_UPPER_LIMIT_RAD && armFeedVolts > kgv) || 
+            (getArmPos() < ARM_LOWER_LIMIT_RAD && armFeedVolts < kgv)) {
+            armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
         // TO MASTER IF THIS IS STILL HERE)
@@ -121,10 +125,12 @@ public class Arm extends SubsystemBase {
     }
 
     public void driveWrist(TrapezoidProfile.State profile) {
-        double wristFeedVolts = getKg() * getCoM().getAngle().getCos() + wristFeed.calculate(profile.velocity, 0);
+        double kgv = wristFeed.calculate(getWristPosRelativeToGround(), 0, 0);
+        double wristFeedVolts = kgv * getCoM().getAngle().getCos() + wristFeed.calculate(profile.velocity, 0);
         double wristPIDVolts = wristPID.calculate(wristEncoder.getPosition(), profile.position);
-        if (getWristPos() > WRIST_UPPER_LIMIT_RAD || getWristPos() < WRIST_LOWER_LIMIT_RAD) {
-            wristFeedVolts = getKg() * getCoM().getAngle().getCos() + wristFeed.calculate(0, 0);
+        if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && wristFeedVolts > kgv) || 
+            (getWristPos() < WRIST_LOWER_LIMIT_RAD && wristFeedVolts < kgv)) {
+            wristFeedVolts = kgv * getCoM().getAngle().getCos() + wristFeed.calculate(0, 0);
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
         // TO MASTER IF THIS IS STILL HERE)
