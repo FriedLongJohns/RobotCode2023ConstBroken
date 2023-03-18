@@ -77,8 +77,8 @@ public class Arm extends SubsystemBase {
         double kgv = getKg();
         double armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(vel, accel);
         double armPIDVolts = armPID.calculate(armEncoder.getPosition(), goalPosRad[ARM]);
-        if ((getArmPos() > ARM_UPPER_LIMIT_RAD && armFeedVolts > kgv) || 
-            (getArmPos() < ARM_LOWER_LIMIT_RAD && armFeedVolts < kgv)) {
+        if ((getArmPos() > ARM_UPPER_LIMIT_RAD && vel > 0) || 
+            (getArmPos() < ARM_LOWER_LIMIT_RAD && vel < 0)) {
             armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
@@ -94,8 +94,8 @@ public class Arm extends SubsystemBase {
         double kgv = wristFeed.calculate(getWristPosRelativeToGround(), 0, 0);
         double wristFeedVolts = wristFeed.calculate(getWristPosRelativeToGround(), vel, accel);
         double wristPIDVolts = wristPID.calculate(getWristPos(), goalPosRad[WRIST]);
-        if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && wristFeedVolts > kgv) || 
-            (getWristPos() < WRIST_LOWER_LIMIT_RAD && wristFeedVolts < kgv)) {
+        if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && vel > 0) || 
+            (getWristPos() < WRIST_LOWER_LIMIT_RAD && vel < 0)) {
             wristFeedVolts = kgv;
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
@@ -111,8 +111,8 @@ public class Arm extends SubsystemBase {
         double kgv = getKg();
         double armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(profile.velocity, 0);
         double armPIDVolts = armPID.calculate(armEncoder.getPosition(), profile.position);
-        if ((getArmPos() > ARM_UPPER_LIMIT_RAD && armFeedVolts > kgv) || 
-            (getArmPos() < ARM_LOWER_LIMIT_RAD && armFeedVolts < kgv)) {
+        if ((getArmPos() > ARM_UPPER_LIMIT_RAD && profile.velocity > 0) || 
+            (getArmPos() < ARM_LOWER_LIMIT_RAD && profile.velocity < 0)) {
             armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
@@ -128,8 +128,8 @@ public class Arm extends SubsystemBase {
         double kgv = wristFeed.calculate(getWristPosRelativeToGround(), 0, 0);
         double wristFeedVolts = kgv * getCoM().getAngle().getCos() + wristFeed.calculate(profile.velocity, 0);
         double wristPIDVolts = wristPID.calculate(wristEncoder.getPosition(), profile.position);
-        if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && wristFeedVolts > kgv) || 
-            (getWristPos() < WRIST_LOWER_LIMIT_RAD && wristFeedVolts < kgv)) {
+        if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && profile.velocity > 0) || 
+            (getWristPos() < WRIST_LOWER_LIMIT_RAD && profile.velocity < 0)) {
             wristFeedVolts = kgv * getCoM().getAngle().getCos() + wristFeed.calculate(0, 0);
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
