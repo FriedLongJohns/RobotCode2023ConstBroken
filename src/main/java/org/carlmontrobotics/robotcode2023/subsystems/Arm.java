@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -273,5 +274,96 @@ public class Arm extends SubsystemBase {
         builder.addDoubleProperty("Wis.Intak.Cube", () -> GoalPos.INTAKE[CUBE].wristPos,     x -> GoalPos.INTAKE[CUBE].wristPos = x);
     }
 
+    // In the scenario that initSendable method does not work like last time
+    public void putPositionsOnSmartDashboard() {
+        SmartDashboard.putNumber("LowArmCube", GoalPos.LOW[ARM].armPos);
+        SmartDashboard.putNumber("LowWristCube", GoalPos.LOW[ARM].wristPos);
+        SmartDashboard.putNumber("MidArmCube", GoalPos.MID[ARM].armPos);
+        SmartDashboard.putNumber("MidWristCube", GoalPos.MID[ARM].wristPos);
+        SmartDashboard.putNumber("HighArmCube", GoalPos.HIGH[ARM].armPos);
+        SmartDashboard.putNumber("HighWristCube", GoalPos.HIGH[ARM].wristPos);
+        SmartDashboard.putNumber("StoredArmCube", GoalPos.STORED[ARM].armPos);
+        SmartDashboard.putNumber("StoredWristCube", GoalPos.STORED[ARM].wristPos);
+        SmartDashboard.putNumber("ShelfArmCube", GoalPos.SHELF[ARM].armPos);
+        SmartDashboard.putNumber("ShelfWristCube", GoalPos.SHELF[ARM].wristPos);
+        SmartDashboard.putNumber("SubstationArmCube", GoalPos.SUBSTATION[ARM].armPos);
+        SmartDashboard.putNumber("SubstationWristCube", GoalPos.SUBSTATION[ARM].wristPos);
+        SmartDashboard.putNumber("IntakeArmCube", GoalPos.INTAKE[ARM].armPos);
+        SmartDashboard.putNumber("IntakeWristCube", GoalPos.INTAKE[ARM].wristPos);
+        SmartDashboard.putNumber("LowArmCone", GoalPos.LOW[WRIST].armPos);
+        SmartDashboard.putNumber("LowWristCone", GoalPos.LOW[WRIST].wristPos);
+        SmartDashboard.putNumber("MidArmCone", GoalPos.MID[WRIST].armPos);
+        SmartDashboard.putNumber("MidWristCone", GoalPos.MID[WRIST].wristPos);
+        SmartDashboard.putNumber("HighArmCone", GoalPos.HIGH[WRIST].armPos);
+        SmartDashboard.putNumber("HighWristCone", GoalPos.HIGH[WRIST].wristPos);
+        SmartDashboard.putNumber("StoredArmCone", GoalPos.STORED[WRIST].armPos);
+        SmartDashboard.putNumber("StoredWristCone", GoalPos.STORED[WRIST].wristPos);
+        SmartDashboard.putNumber("ShelfArmCone", GoalPos.SHELF[WRIST].armPos);
+        SmartDashboard.putNumber("ShelfWristCone", GoalPos.SHELF[WRIST].wristPos);
+        SmartDashboard.putNumber("SubstationArmCone", GoalPos.SUBSTATION[WRIST].armPos);
+        SmartDashboard.putNumber("SubstationWristCone", GoalPos.SUBSTATION[WRIST].wristPos);
+        SmartDashboard.putNumber("IntakeArmCone", GoalPos.INTAKE[WRIST].armPos);
+        SmartDashboard.putNumber("IntakeWristCone", GoalPos.INTAKE[WRIST].wristPos);
+    }
 
+    public void getPositionsOnSmartDashboard() {
+        GoalPos.LOW[CUBE].armPos = SmartDashboard.getNumber("LowArmCube", GoalPos.LOW[CUBE].armPos);
+        GoalPos.LOW[CUBE].wristPos = SmartDashboard.getNumber("LowWristCube", GoalPos.LOW[CUBE].wristPos);
+        GoalPos.MID[CUBE].armPos = SmartDashboard.getNumber("MidArmCube", GoalPos.MID[CUBE].armPos);
+        GoalPos.MID[CUBE].wristPos = SmartDashboard.getNumber("MidWristCube", GoalPos.MID[CUBE].wristPos);
+        GoalPos.HIGH[CUBE].armPos = SmartDashboard.getNumber("HighArmCube", GoalPos.HIGH[CUBE].armPos);
+        GoalPos.HIGH[CUBE].wristPos = SmartDashboard.getNumber("HighWristCube", GoalPos.HIGH[CUBE].wristPos);
+        GoalPos.STORED[CUBE].armPos = SmartDashboard.getNumber("StoredArmCube", GoalPos.STORED[CUBE].armPos);
+        GoalPos.STORED[CUBE].wristPos = SmartDashboard.getNumber("StoredWristCube", GoalPos.STORED[CUBE].wristPos);
+        GoalPos.SHELF[CUBE].armPos = SmartDashboard.getNumber("ShelfArmCube", GoalPos.SHELF[CUBE].armPos);
+        GoalPos.SHELF[CUBE].wristPos = SmartDashboard.getNumber("ShelfWristCube", GoalPos.SHELF[CUBE].wristPos);
+        GoalPos.SUBSTATION[CUBE].armPos = SmartDashboard.getNumber("SubstationArmCube",
+                GoalPos.SUBSTATION[CUBE].armPos);
+        GoalPos.SUBSTATION[CUBE].wristPos = SmartDashboard.getNumber("SubstationWristCube",
+                GoalPos.SUBSTATION[CUBE].wristPos);
+        GoalPos.INTAKE[CUBE].armPos = SmartDashboard.getNumber("IntakeArmCube", GoalPos.INTAKE[CUBE].armPos);
+        GoalPos.INTAKE[CUBE].wristPos = SmartDashboard.getNumber("IntakeWristCube", GoalPos.INTAKE[CUBE].wristPos);
+        GoalPos.LOW[CONE].armPos = SmartDashboard.getNumber("LowArmCone", GoalPos.LOW[CONE].armPos);
+        GoalPos.LOW[CONE].wristPos = SmartDashboard.getNumber("LowWristCone", GoalPos.LOW[CONE].wristPos);
+        GoalPos.MID[CONE].armPos = SmartDashboard.getNumber("MidArmCone", GoalPos.MID[CONE].armPos);
+        GoalPos.MID[CONE].wristPos = SmartDashboard.getNumber("MidWristCone", GoalPos.MID[CONE].wristPos);
+        GoalPos.HIGH[CONE].armPos = SmartDashboard.getNumber("HighArmCone", GoalPos.HIGH[CONE].armPos);
+        GoalPos.HIGH[CONE].wristPos = SmartDashboard.getNumber("HighWristCone", GoalPos.HIGH[CONE].wristPos);
+        GoalPos.STORED[CONE].armPos = SmartDashboard.getNumber("StoredArmCone", GoalPos.STORED[CONE].armPos);
+        GoalPos.STORED[CONE].wristPos = SmartDashboard.getNumber("StoredWristCone", GoalPos.STORED[CONE].wristPos);
+        GoalPos.SHELF[CONE].armPos = SmartDashboard.getNumber("ShelfArmCone", GoalPos.SHELF[CONE].armPos);
+        GoalPos.SHELF[CONE].wristPos = SmartDashboard.getNumber("ShelfWristCone", GoalPos.SHELF[CONE].wristPos);
+        GoalPos.SUBSTATION[CONE].armPos = SmartDashboard.getNumber("SubstationArmCone",
+                GoalPos.SUBSTATION[CONE].armPos);
+        GoalPos.SUBSTATION[CONE].wristPos = SmartDashboard.getNumber("SubstationWristCone",
+                GoalPos.SUBSTATION[CONE].wristPos);
+        GoalPos.INTAKE[CONE].armPos = SmartDashboard.getNumber("IntakeArmCone", GoalPos.INTAKE[CONE].armPos);
+        GoalPos.INTAKE[CONE].wristPos = SmartDashboard.getNumber("IntakeWristCone", GoalPos.INTAKE[CONE].wristPos);
+    }
+
+    public void putArmControlOnSmartDashboard() {
+        SmartDashboard.putNumber("kP: Wis", kP[WRIST]);
+        SmartDashboard.putNumber("kI: Wis", kI[WRIST]);
+        SmartDashboard.putNumber("kD: Wis", kD[WRIST]);
+        SmartDashboard.putNumber("kP: Arm", kP[ARM]);
+        SmartDashboard.putNumber("kI: Arm", kI[ARM]);
+        SmartDashboard.putNumber("kD: Arm", kD[ARM]);
+        SmartDashboard.putNumber("WristGoalDeg", Units.radiansToDegrees(goalPosRad[WRIST]));
+        SmartDashboard.putNumber("ArmGoalDeg", Units.radiansToDegrees(goalPosRad[ARM]));
+        SmartDashboard.putNumber("Max FF Vel Arm", MAX_FF_VEL[ARM]);
+        SmartDashboard.putNumber("Max FF Accel Arm", MAX_FF_ACCEL[ARM]);
+    }
+
+    public void getArmControlOnSmartDashboard() {
+        goalPosRad[WRIST] = Units.degreesToRadians(SmartDashboard.getNumber("WristGoalDeg", Units.radiansToDegrees(goalPosRad[WRIST])));
+        goalPosRad[ARM] = Units.degreesToRadians(SmartDashboard.getNumber("ArmGoalDeg", Units.radiansToDegrees(goalPosRad[ARM])));
+        MAX_FF_VEL[ARM] = SmartDashboard.getNumber("Max FF Vel Arm", MAX_FF_VEL[ARM]);
+        MAX_FF_ACCEL[ARM] = SmartDashboard.getNumber("Max FF Accel Arm", MAX_FF_ACCEL[ARM]);
+        kP[WRIST] = SmartDashboard.getNumber("kP: Wis", kP[WRIST]);
+        kI[WRIST] = SmartDashboard.getNumber("kI: Wis", kI[WRIST]);
+        kD[WRIST] = SmartDashboard.getNumber("kD: Wis", kD[WRIST]);
+        kP[ARM] = SmartDashboard.getNumber("kP: Arm", kP[ARM]);
+        kI[ARM] = SmartDashboard.getNumber("kI: Arm", kI[ARM]);
+        kD[ARM] = SmartDashboard.getNumber("kD: Arm", kD[ARM]);
+    }
 }
