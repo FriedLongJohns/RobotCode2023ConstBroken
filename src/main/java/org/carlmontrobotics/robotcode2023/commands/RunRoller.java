@@ -2,8 +2,8 @@ package org.carlmontrobotics.robotcode2023.commands;
 
 import java.awt.Color;
 
+import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller;
-import org.carlmontrobotics.robotcode2023.subsystems.Roller.RollerMode;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
