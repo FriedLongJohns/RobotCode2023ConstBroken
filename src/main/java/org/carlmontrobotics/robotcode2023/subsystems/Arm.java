@@ -163,12 +163,12 @@ public class Arm extends SubsystemBase {
     }
 
     public double getArmPos() {
-        return MathUtil.clamp(armEncoder.getPosition(), ARM_DISCONTINUITY_RAD,
+        return MathUtil.inputModulus(armEncoder.getPosition(), ARM_DISCONTINUITY_RAD,
                 ARM_DISCONTINUITY_RAD + 2 * Math.PI);
     }
 
     public double getWristPos() {
-        return MathUtil.clamp(wristEncoder.getPosition(), WRIST_DISCONTINUITY_RAD,
+        return MathUtil.inputModulus(wristEncoder.getPosition(), WRIST_DISCONTINUITY_RAD,
                 WRIST_DISCONTINUITY_RAD + 2 * Math.PI);
     }
 
