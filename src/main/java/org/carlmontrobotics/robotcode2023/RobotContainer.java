@@ -50,9 +50,11 @@ public class RobotContainer {
     new JoystickButton(manipulatorController, Manipulator.toggleCubeButton)
       .onTrue(new InstantCommand(() -> {arm.object = CONE;}))
       .onFalse(new InstantCommand(() -> {arm.object = CUBE;}));
+    /*
     new JoystickButton(manipulatorController, Manipulator.toggleFrontButton)
       .onTrue(new InstantCommand(() -> arm.isFront = false))
       .onFalse(new InstantCommand(() -> arm.isFront = true));
+    */
     new JoystickButton(manipulatorController, Manipulator.storeButton).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.STORED), arm.getWristGoal(GoalPos.STORED), arm)
     );

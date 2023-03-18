@@ -29,6 +29,8 @@ public final class Constants {
         public static final int WRIST = 1;
         public static final int CUBE = 0;
         public static final int CONE = 1;
+        public static final int FRONT = 0;
+        public static final int BACK = 1;
 
         // Feedforward
         // Arm, Wrist
@@ -99,44 +101,83 @@ public final class Constants {
     public static final class GoalPos {
 
         //#region Goal Positions
-        // These positions are for if the intake/outtake takes place on the front (battery) side of the robot
         // if intake/outtake on back, the "negative" pos will be used
+        // 0 = "Front", 1 = "Back" (i.e. front refers to the side with the battery)
         // 0 = CUBE, 1 = CONE
-        // {Cone, Cube}
         // GoalPos(arm, wrist)
-       
-        public static GoalPos[] LOW = {
-          new GoalPos(Units.degreesToRadians(-134.46), Units.degreesToRadians(117.17)), 
-          new GoalPos(Units.degreesToRadians(-90), Units.degreesToRadians(-100.78))
+        
+        // TODO : Get angles for front
+        public static GoalPos[][] LOW = {
+            { // front
+                new GoalPos(Units.degreesToRadians(-134.46), Units.degreesToRadians(98.33)), // cube
+                new GoalPos(Units.degreesToRadians(-90), Units.degreesToRadians(-119.62))             // cone
+            },
+            { // back
+                new GoalPos(Units.degreesToRadians(-134.46), Units.degreesToRadians(98.33)), 
+                new GoalPos(Units.degreesToRadians(-90), Units.degreesToRadians(-119.62))
+            }
         };
-        public static GoalPos[] MID = {
-          new GoalPos(Units.degreesToRadians(-175.98), Units.degreesToRadians(132.01)), 
-          new GoalPos(Units.degreesToRadians(-196.85), Units.degreesToRadians(65.47)) 
+        public static GoalPos[][] MID = {
+            {
+                new GoalPos(Units.degreesToRadians(-175.98), Units.degreesToRadians(113.17)), 
+                new GoalPos(Units.degreesToRadians(-196.85), Units.degreesToRadians(46.63)) 
+            },
+            {
+                new GoalPos(Units.degreesToRadians(-175.98), Units.degreesToRadians(113.17)), 
+                new GoalPos(Units.degreesToRadians(-196.85), Units.degreesToRadians(46.63)) 
+            }
         };
-        public static GoalPos[] HIGH = {
-          new GoalPos(Units.degreesToRadians(-190.02), Units.degreesToRadians(-149.079)), 
-          new GoalPos(Units.degreesToRadians(-194.18), Units.degreesToRadians(54.24)) 
+        public static GoalPos[][] HIGH = {
+            {
+                new GoalPos(Units.degreesToRadians(-190.02), Units.degreesToRadians(-167.919)), 
+                new GoalPos(Units.degreesToRadians(-194.18), Units.degreesToRadians(35.4)) 
+            },
+            {
+                new GoalPos(Units.degreesToRadians(-190.02), Units.degreesToRadians(-167.919)), 
+                new GoalPos(Units.degreesToRadians(-194.18), Units.degreesToRadians(35.4)) 
+            }
         };
-        public static GoalPos[] STORED = {
-          new GoalPos(Units.degreesToRadians(-90), 0), 
-          new GoalPos(40, -1.8861790155)
+        // TODO: Get positions for STORED, SHELF, and SUBSTATION
+        public static GoalPos[][] STORED = {
+            {
+                new GoalPos(Units.degreesToRadians(-90), 0), 
+                new GoalPos(40, -1.8861790155)
+            },
+            {
+                new GoalPos(Units.degreesToRadians(-90), 0), 
+                new GoalPos(40, -1.8861790155)
+            }
         };
-        public static GoalPos[] SHELF = {
-          new GoalPos(Units.degreesToRadians(-90), 0), 
-          new GoalPos(0, 0)
+        public static GoalPos[][] SHELF = {
+            {
+                new GoalPos(Units.degreesToRadians(-90), 0), 
+                new GoalPos(0, 0)
+            },
+            {
+                new GoalPos(Units.degreesToRadians(-90), 0), 
+                new GoalPos(0, 0)
+            }
         };
-        public static GoalPos[] SUBSTATION = {
-          new GoalPos(Units.degreesToRadians(-90), 0), 
-          new GoalPos(0, 0)
+        public static GoalPos[][] SUBSTATION = {
+            {
+                new GoalPos(Units.degreesToRadians(-90), 0), 
+                new GoalPos(0, 0)
+            },
+            {
+                new GoalPos(Units.degreesToRadians(-90), 0), 
+                new GoalPos(0, 0)
+            }
         };
-        public static GoalPos[] INTAKE = {
-          new GoalPos(Units.degreesToRadians(-72.5), Units.degreesToRadians(92.21)),
-          new GoalPos(Units.degreesToRadians(-66.6), Units.degreesToRadians(48.78)) 
+        public static GoalPos[][] INTAKE = {
+            {
+                new GoalPos(Units.degreesToRadians(-72.5), Units.degreesToRadians(73.37)),
+                new GoalPos(Units.degreesToRadians(-66.6), Units.degreesToRadians(29.94)) 
+            },
+            {
+                new GoalPos(Units.degreesToRadians(-72.5), Units.degreesToRadians(73.37)),
+                new GoalPos(Units.degreesToRadians(-66.6), Units.degreesToRadians(29.94)) 
+            }
         };
-        // Rollers are asymmetric, so when moving rollers to other side of robot, this value will correct
-        // the roller so that the rollers will act as if its on the front side
-        public static double asymmetricCorrectionDeg = 10;
-
         public double armPos, wristPos;
 
         public GoalPos(double armPos, double wristPos) {

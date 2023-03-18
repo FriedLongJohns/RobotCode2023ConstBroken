@@ -41,7 +41,7 @@ public class Arm extends SubsystemBase {
     private SendableBuilder senb;
 
     public int object = CUBE;
-    public boolean isFront = true;
+    public int side = BACK;
 
     public Arm() {
         armMotor.setInverted(inverted[ARM]);
@@ -207,20 +207,12 @@ public class Arm extends SubsystemBase {
         setWristTarget(targetWrist);
     }
 
-    public double getArmGoal(GoalPos[] pos) {
-        if (isFront) {
-            return pos[object].armPos;
-        } else {
-            return Rotation2d.fromRadians(-Math.PI).minus(Rotation2d.fromRadians(pos[object].armPos)).plus(Rotation2d.fromDegrees(GoalPos.asymmetricCorrectionDeg)).getRadians();
-        }
+    public double getArmGoal(GoalPos[][] pos) {
+        return pos[side][object].armPos;
     }
 
-    public double getWristGoal(GoalPos[] pos) {
-        if (isFront) {
-            return pos[object].wristPos;
-        } else {
-            return Rotation2d.fromRadians(pos[object].wristPos).unaryMinus().plus(Rotation2d.fromDegrees(GoalPos.asymmetricCorrectionDeg)).getRadians();
-        }
+    public double getWristGoal(GoalPos[][] pos) {
+        return pos[side][object].wristPos;
     }
 
     @Override
@@ -244,102 +236,102 @@ public class Arm extends SubsystemBase {
         builder.addDoubleProperty("Max FF Vel Wis", () -> MAX_FF_VEL[WRIST],   x -> MAX_FF_VEL[WRIST] = x);
         builder.addDoubleProperty("Max FF Acc Wis", () -> MAX_FF_ACCEL[WRIST], x -> MAX_FF_ACCEL[WRIST] = x);
         //arm positions
-        builder.addDoubleProperty("Arm.High.Cone",  () -> GoalPos.HIGH[CONE].armPos,       x -> GoalPos.HIGH[CONE].armPos = x);
-        builder.addDoubleProperty("Arm.Mid.Cone",   () -> GoalPos.MID[CONE].armPos,        x -> GoalPos.MID[CONE].armPos = x);
-        builder.addDoubleProperty("Arm.Low.Cone",   () -> GoalPos.LOW[CONE].armPos,        x -> GoalPos.LOW[CONE].armPos = x);
-        builder.addDoubleProperty("Arm.Store.Cone", () -> GoalPos.STORED[CONE].armPos,     x -> GoalPos.STORED[CONE].armPos = x);
-        builder.addDoubleProperty("Arm.Shelf.Cone", () -> GoalPos.SHELF[CONE].armPos,      x -> GoalPos.SHELF[CONE].armPos = x);
-        builder.addDoubleProperty("Arm.Subst.Cone", () -> GoalPos.SUBSTATION[CONE].armPos, x -> GoalPos.SUBSTATION[CONE].armPos = x);
-        builder.addDoubleProperty("Arm.Intak.Cone", () -> GoalPos.INTAKE[CONE].armPos,     x -> GoalPos.INTAKE[CONE].armPos = x);
-        builder.addDoubleProperty("Arm.High.Cube",  () -> GoalPos.HIGH[CUBE].armPos,       x -> GoalPos.HIGH[CUBE].armPos = x);
-        builder.addDoubleProperty("Arm.Mid.Cube",   () -> GoalPos.MID[CUBE].armPos,        x -> GoalPos.MID[CUBE].armPos = x);
-        builder.addDoubleProperty("Arm.Low.Cube",   () -> GoalPos.LOW[CUBE].armPos,        x -> GoalPos.LOW[CUBE].armPos = x);
-        builder.addDoubleProperty("Arm.Store.Cube", () -> GoalPos.STORED[CUBE].armPos,     x -> GoalPos.STORED[CUBE].armPos = x);
-        builder.addDoubleProperty("Arm.Shelf.Cube", () -> GoalPos.SHELF[CUBE].armPos,      x -> GoalPos.SHELF[CUBE].armPos = x);
-        builder.addDoubleProperty("Arm.Subst.Cube", () -> GoalPos.SUBSTATION[CUBE].armPos, x -> GoalPos.SUBSTATION[CUBE].armPos = x);
-        builder.addDoubleProperty("Arm.Intak.Cube", () -> GoalPos.INTAKE[CUBE].armPos,     x -> GoalPos.INTAKE[CUBE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.High.Cone",  () -> GoalPos.HIGH[BACK][CONE].armPos,       x -> GoalPos.HIGH[BACK][CONE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Mid.Cone",   () -> GoalPos.MID[BACK][CONE].armPos,        x -> GoalPos.MID[BACK][CONE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Low.Cone",   () -> GoalPos.LOW[BACK][CONE].armPos,        x -> GoalPos.LOW[BACK][CONE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Store.Cone", () -> GoalPos.STORED[BACK][CONE].armPos,     x -> GoalPos.STORED[BACK][CONE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Shelf.Cone", () -> GoalPos.SHELF[BACK][CONE].armPos,      x -> GoalPos.SHELF[BACK][CONE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Subst.Cone", () -> GoalPos.SUBSTATION[BACK][CONE].armPos, x -> GoalPos.SUBSTATION[BACK][CONE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Intak.Cone", () -> GoalPos.INTAKE[BACK][CONE].armPos,     x -> GoalPos.INTAKE[BACK][CONE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.High.Cube",  () -> GoalPos.HIGH[BACK][CUBE].armPos,       x -> GoalPos.HIGH[BACK][CUBE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Mid.Cube",   () -> GoalPos.MID[BACK][CUBE].armPos,        x -> GoalPos.MID[BACK][CUBE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Low.Cube",   () -> GoalPos.LOW[BACK][CUBE].armPos,        x -> GoalPos.LOW[BACK][CUBE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Store.Cube", () -> GoalPos.STORED[BACK][CUBE].armPos,     x -> GoalPos.STORED[BACK][CUBE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Shelf.Cube", () -> GoalPos.SHELF[BACK][CUBE].armPos,      x -> GoalPos.SHELF[BACK][CUBE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Subst.Cube", () -> GoalPos.SUBSTATION[BACK][CUBE].armPos, x -> GoalPos.SUBSTATION[BACK][CUBE].armPos = x);
+        builder.addDoubleProperty("Arm.Back.Intak.Cube", () -> GoalPos.INTAKE[BACK][CUBE].armPos,     x -> GoalPos.INTAKE[BACK][CUBE].armPos = x);
         //wrist positions
-        builder.addDoubleProperty("Wis.High.Cone",  () -> GoalPos.HIGH[CONE].wristPos,       x -> GoalPos.HIGH[CONE].wristPos = x);
-        builder.addDoubleProperty("Wis.Mid.Cone",   () -> GoalPos.MID[CONE].wristPos,        x -> GoalPos.MID[CONE].wristPos = x);
-        builder.addDoubleProperty("Wis.Low.Cone",   () -> GoalPos.LOW[CONE].wristPos,        x -> GoalPos.LOW[CONE].wristPos = x);
-        builder.addDoubleProperty("Wis.Store.Cone", () -> GoalPos.STORED[CONE].wristPos,     x -> GoalPos.STORED[CONE].wristPos = x);
-        builder.addDoubleProperty("Wis.Shelf.Cone", () -> GoalPos.SHELF[CONE].wristPos,      x -> GoalPos.SHELF[CONE].wristPos = x);
-        builder.addDoubleProperty("Wis.Subst.Cone", () -> GoalPos.SUBSTATION[CONE].wristPos, x -> GoalPos.SUBSTATION[CONE].wristPos = x);
-        builder.addDoubleProperty("Wis.Intak.Cone", () -> GoalPos.INTAKE[CONE].wristPos,     x -> GoalPos.INTAKE[CONE].wristPos = x);
-        builder.addDoubleProperty("Wis.High.Cube",  () -> GoalPos.HIGH[CUBE].wristPos,       x -> GoalPos.HIGH[CUBE].wristPos = x);
-        builder.addDoubleProperty("Wis.Mid.Cube",   () -> GoalPos.MID[CUBE].wristPos,        x -> GoalPos.MID[CUBE].wristPos = x);
-        builder.addDoubleProperty("Wis.Low.Cube",   () -> GoalPos.LOW[CUBE].wristPos,        x -> GoalPos.LOW[CUBE].wristPos = x);
-        builder.addDoubleProperty("Wis.Store.Cube", () -> GoalPos.STORED[CUBE].wristPos,     x -> GoalPos.STORED[CUBE].wristPos = x);
-        builder.addDoubleProperty("Wis.Shelf.Cube", () -> GoalPos.SHELF[CUBE].wristPos,      x -> GoalPos.SHELF[CUBE].wristPos = x);
-        builder.addDoubleProperty("Wis.Subst.Cube", () -> GoalPos.SUBSTATION[CUBE].wristPos, x -> GoalPos.SUBSTATION[CUBE].wristPos = x);
-        builder.addDoubleProperty("Wis.Intak.Cube", () -> GoalPos.INTAKE[CUBE].wristPos,     x -> GoalPos.INTAKE[CUBE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.High.Cone",  () -> GoalPos.HIGH[BACK][CONE].wristPos,       x -> GoalPos.HIGH[BACK][CONE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Mid.Cone",   () -> GoalPos.MID[BACK][CONE].wristPos,        x -> GoalPos.MID[BACK][CONE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Low.Cone",   () -> GoalPos.LOW[BACK][CONE].wristPos,        x -> GoalPos.LOW[BACK][CONE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Store.Cone", () -> GoalPos.STORED[BACK][CONE].wristPos,     x -> GoalPos.STORED[BACK][CONE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Shelf.Cone", () -> GoalPos.SHELF[BACK][CONE].wristPos,      x -> GoalPos.SHELF[BACK][CONE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Substation.Cone", () -> GoalPos.SUBSTATION[BACK][CONE].wristPos, x -> GoalPos.SUBSTATION[BACK][CONE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Intake.Cone", () -> GoalPos.INTAKE[BACK][CONE].wristPos,     x -> GoalPos.INTAKE[BACK][CONE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.High.Cube",  () -> GoalPos.HIGH[BACK][CUBE].wristPos,       x -> GoalPos.HIGH[BACK][CUBE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Mid.Cube",   () -> GoalPos.MID[BACK][CUBE].wristPos,        x -> GoalPos.MID[BACK][CUBE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Low.Cube",   () -> GoalPos.LOW[BACK][CUBE].wristPos,        x -> GoalPos.LOW[BACK][CUBE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Store.Cube", () -> GoalPos.STORED[BACK][CUBE].wristPos,     x -> GoalPos.STORED[BACK][CUBE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Shelf.Cube", () -> GoalPos.SHELF[BACK][CUBE].wristPos,      x -> GoalPos.SHELF[BACK][CUBE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Substation.Cube", () -> GoalPos.SUBSTATION[BACK][CUBE].wristPos, x -> GoalPos.SUBSTATION[BACK][CUBE].wristPos = x);
+        builder.addDoubleProperty("Wrist.Back.Intake.Cube", () -> GoalPos.INTAKE[BACK][CUBE].wristPos,     x -> GoalPos.INTAKE[BACK][CUBE].wristPos = x);
     }
 
     // In the scenario that initSendable method does not work like last time
     public void putPositionsOnSmartDashboard() {
-        SmartDashboard.putNumber("LowArmCube", GoalPos.LOW[ARM].armPos);
-        SmartDashboard.putNumber("LowWristCube", GoalPos.LOW[ARM].wristPos);
-        SmartDashboard.putNumber("MidArmCube", GoalPos.MID[ARM].armPos);
-        SmartDashboard.putNumber("MidWristCube", GoalPos.MID[ARM].wristPos);
-        SmartDashboard.putNumber("HighArmCube", GoalPos.HIGH[ARM].armPos);
-        SmartDashboard.putNumber("HighWristCube", GoalPos.HIGH[ARM].wristPos);
-        SmartDashboard.putNumber("StoredArmCube", GoalPos.STORED[ARM].armPos);
-        SmartDashboard.putNumber("StoredWristCube", GoalPos.STORED[ARM].wristPos);
-        SmartDashboard.putNumber("ShelfArmCube", GoalPos.SHELF[ARM].armPos);
-        SmartDashboard.putNumber("ShelfWristCube", GoalPos.SHELF[ARM].wristPos);
-        SmartDashboard.putNumber("SubstationArmCube", GoalPos.SUBSTATION[ARM].armPos);
-        SmartDashboard.putNumber("SubstationWristCube", GoalPos.SUBSTATION[ARM].wristPos);
-        SmartDashboard.putNumber("IntakeArmCube", GoalPos.INTAKE[ARM].armPos);
-        SmartDashboard.putNumber("IntakeWristCube", GoalPos.INTAKE[ARM].wristPos);
-        SmartDashboard.putNumber("LowArmCone", GoalPos.LOW[WRIST].armPos);
-        SmartDashboard.putNumber("LowWristCone", GoalPos.LOW[WRIST].wristPos);
-        SmartDashboard.putNumber("MidArmCone", GoalPos.MID[WRIST].armPos);
-        SmartDashboard.putNumber("MidWristCone", GoalPos.MID[WRIST].wristPos);
-        SmartDashboard.putNumber("HighArmCone", GoalPos.HIGH[WRIST].armPos);
-        SmartDashboard.putNumber("HighWristCone", GoalPos.HIGH[WRIST].wristPos);
-        SmartDashboard.putNumber("StoredArmCone", GoalPos.STORED[WRIST].armPos);
-        SmartDashboard.putNumber("StoredWristCone", GoalPos.STORED[WRIST].wristPos);
-        SmartDashboard.putNumber("ShelfArmCone", GoalPos.SHELF[WRIST].armPos);
-        SmartDashboard.putNumber("ShelfWristCone", GoalPos.SHELF[WRIST].wristPos);
-        SmartDashboard.putNumber("SubstationArmCone", GoalPos.SUBSTATION[WRIST].armPos);
-        SmartDashboard.putNumber("SubstationWristCone", GoalPos.SUBSTATION[WRIST].wristPos);
-        SmartDashboard.putNumber("IntakeArmCone", GoalPos.INTAKE[WRIST].armPos);
-        SmartDashboard.putNumber("IntakeWristCone", GoalPos.INTAKE[WRIST].wristPos);
+        SmartDashboard.putNumber("LowBackArmCube", GoalPos.LOW[BACK][ARM].armPos);
+        SmartDashboard.putNumber("LowBackWristCube", GoalPos.LOW[BACK][ARM].wristPos);
+        SmartDashboard.putNumber("MidBackArmCube", GoalPos.MID[BACK][ARM].armPos);
+        SmartDashboard.putNumber("MidBackWristCube", GoalPos.MID[BACK][ARM].wristPos);
+        SmartDashboard.putNumber("HighBackArmCube", GoalPos.HIGH[BACK][ARM].armPos);
+        SmartDashboard.putNumber("HighBackWristCube", GoalPos.HIGH[BACK][ARM].wristPos);
+        SmartDashboard.putNumber("StoredBackArmCube", GoalPos.STORED[BACK][ARM].armPos);
+        SmartDashboard.putNumber("StoredBackWristCube", GoalPos.STORED[BACK][ARM].wristPos);
+        SmartDashboard.putNumber("ShelfBackArmCube", GoalPos.SHELF[BACK][ARM].armPos);
+        SmartDashboard.putNumber("ShelfBackWristCube", GoalPos.SHELF[BACK][ARM].wristPos);
+        SmartDashboard.putNumber("SubstationBackArmCube", GoalPos.SUBSTATION[BACK][ARM].armPos);
+        SmartDashboard.putNumber("SubstationBackWristCube", GoalPos.SUBSTATION[BACK][ARM].wristPos);
+        SmartDashboard.putNumber("IntakeBackArmCube", GoalPos.INTAKE[BACK][ARM].armPos);
+        SmartDashboard.putNumber("IntakeBackWristCube", GoalPos.INTAKE[BACK][ARM].wristPos);
+        SmartDashboard.putNumber("LowBackArmCone", GoalPos.LOW[BACK][WRIST].armPos);
+        SmartDashboard.putNumber("LowBackWristCone", GoalPos.LOW[BACK][WRIST].wristPos);
+        SmartDashboard.putNumber("MidBackArmCone", GoalPos.MID[BACK][WRIST].armPos);
+        SmartDashboard.putNumber("MidBackWristCone", GoalPos.MID[BACK][WRIST].wristPos);
+        SmartDashboard.putNumber("HighBackArmCone", GoalPos.HIGH[BACK][WRIST].armPos);
+        SmartDashboard.putNumber("HighBackWristCone", GoalPos.HIGH[BACK][WRIST].wristPos);
+        SmartDashboard.putNumber("StoredBackArmCone", GoalPos.STORED[BACK][WRIST].armPos);
+        SmartDashboard.putNumber("StoredBackWristCone", GoalPos.STORED[BACK][WRIST].wristPos);
+        SmartDashboard.putNumber("ShelfBackArmCone", GoalPos.SHELF[BACK][WRIST].armPos);
+        SmartDashboard.putNumber("ShelfBackWristCone", GoalPos.SHELF[BACK][WRIST].wristPos);
+        SmartDashboard.putNumber("SubstationBackArmCone", GoalPos.SUBSTATION[BACK][WRIST].armPos);
+        SmartDashboard.putNumber("SubstationBackWristCone", GoalPos.SUBSTATION[BACK][WRIST].wristPos);
+        SmartDashboard.putNumber("IntakeBackArmCone", GoalPos.INTAKE[BACK][WRIST].armPos);
+        SmartDashboard.putNumber("IntakeBackWristCone", GoalPos.INTAKE[BACK][WRIST].wristPos);
     }
 
     public void getPositionsOnSmartDashboard() {
-        GoalPos.LOW[CUBE].armPos = SmartDashboard.getNumber("LowArmCube", GoalPos.LOW[CUBE].armPos);
-        GoalPos.LOW[CUBE].wristPos = SmartDashboard.getNumber("LowWristCube", GoalPos.LOW[CUBE].wristPos);
-        GoalPos.MID[CUBE].armPos = SmartDashboard.getNumber("MidArmCube", GoalPos.MID[CUBE].armPos);
-        GoalPos.MID[CUBE].wristPos = SmartDashboard.getNumber("MidWristCube", GoalPos.MID[CUBE].wristPos);
-        GoalPos.HIGH[CUBE].armPos = SmartDashboard.getNumber("HighArmCube", GoalPos.HIGH[CUBE].armPos);
-        GoalPos.HIGH[CUBE].wristPos = SmartDashboard.getNumber("HighWristCube", GoalPos.HIGH[CUBE].wristPos);
-        GoalPos.STORED[CUBE].armPos = SmartDashboard.getNumber("StoredArmCube", GoalPos.STORED[CUBE].armPos);
-        GoalPos.STORED[CUBE].wristPos = SmartDashboard.getNumber("StoredWristCube", GoalPos.STORED[CUBE].wristPos);
-        GoalPos.SHELF[CUBE].armPos = SmartDashboard.getNumber("ShelfArmCube", GoalPos.SHELF[CUBE].armPos);
-        GoalPos.SHELF[CUBE].wristPos = SmartDashboard.getNumber("ShelfWristCube", GoalPos.SHELF[CUBE].wristPos);
-        GoalPos.SUBSTATION[CUBE].armPos = SmartDashboard.getNumber("SubstationArmCube",
-                GoalPos.SUBSTATION[CUBE].armPos);
-        GoalPos.SUBSTATION[CUBE].wristPos = SmartDashboard.getNumber("SubstationWristCube",
-                GoalPos.SUBSTATION[CUBE].wristPos);
-        GoalPos.INTAKE[CUBE].armPos = SmartDashboard.getNumber("IntakeArmCube", GoalPos.INTAKE[CUBE].armPos);
-        GoalPos.INTAKE[CUBE].wristPos = SmartDashboard.getNumber("IntakeWristCube", GoalPos.INTAKE[CUBE].wristPos);
-        GoalPos.LOW[CONE].armPos = SmartDashboard.getNumber("LowArmCone", GoalPos.LOW[CONE].armPos);
-        GoalPos.LOW[CONE].wristPos = SmartDashboard.getNumber("LowWristCone", GoalPos.LOW[CONE].wristPos);
-        GoalPos.MID[CONE].armPos = SmartDashboard.getNumber("MidArmCone", GoalPos.MID[CONE].armPos);
-        GoalPos.MID[CONE].wristPos = SmartDashboard.getNumber("MidWristCone", GoalPos.MID[CONE].wristPos);
-        GoalPos.HIGH[CONE].armPos = SmartDashboard.getNumber("HighArmCone", GoalPos.HIGH[CONE].armPos);
-        GoalPos.HIGH[CONE].wristPos = SmartDashboard.getNumber("HighWristCone", GoalPos.HIGH[CONE].wristPos);
-        GoalPos.STORED[CONE].armPos = SmartDashboard.getNumber("StoredArmCone", GoalPos.STORED[CONE].armPos);
-        GoalPos.STORED[CONE].wristPos = SmartDashboard.getNumber("StoredWristCone", GoalPos.STORED[CONE].wristPos);
-        GoalPos.SHELF[CONE].armPos = SmartDashboard.getNumber("ShelfArmCone", GoalPos.SHELF[CONE].armPos);
-        GoalPos.SHELF[CONE].wristPos = SmartDashboard.getNumber("ShelfWristCone", GoalPos.SHELF[CONE].wristPos);
-        GoalPos.SUBSTATION[CONE].armPos = SmartDashboard.getNumber("SubstationArmCone",
-                GoalPos.SUBSTATION[CONE].armPos);
-        GoalPos.SUBSTATION[CONE].wristPos = SmartDashboard.getNumber("SubstationWristCone",
-                GoalPos.SUBSTATION[CONE].wristPos);
-        GoalPos.INTAKE[CONE].armPos = SmartDashboard.getNumber("IntakeArmCone", GoalPos.INTAKE[CONE].armPos);
-        GoalPos.INTAKE[CONE].wristPos = SmartDashboard.getNumber("IntakeWristCone", GoalPos.INTAKE[CONE].wristPos);
+        GoalPos.LOW[BACK][CUBE].armPos = SmartDashboard.getNumber("LowArmCube", GoalPos.LOW[BACK][CUBE].armPos);
+        GoalPos.LOW[BACK][CUBE].wristPos = SmartDashboard.getNumber("LowWristCube", GoalPos.LOW[BACK][CUBE].wristPos);
+        GoalPos.MID[BACK][CUBE].armPos = SmartDashboard.getNumber("MidArmCube", GoalPos.MID[BACK][CUBE].armPos);
+        GoalPos.MID[BACK][CUBE].wristPos = SmartDashboard.getNumber("MidWristCube", GoalPos.MID[BACK][CUBE].wristPos);
+        GoalPos.HIGH[BACK][CUBE].armPos = SmartDashboard.getNumber("HighArmCube", GoalPos.HIGH[BACK][CUBE].armPos);
+        GoalPos.HIGH[BACK][CUBE].wristPos = SmartDashboard.getNumber("HighWristCube", GoalPos.HIGH[BACK][CUBE].wristPos);
+        GoalPos.STORED[BACK][CUBE].armPos = SmartDashboard.getNumber("StoredArmCube", GoalPos.STORED[BACK][CUBE].armPos);
+        GoalPos.STORED[BACK][CUBE].wristPos = SmartDashboard.getNumber("StoredWristCube", GoalPos.STORED[BACK][CUBE].wristPos);
+        GoalPos.SHELF[BACK][CUBE].armPos = SmartDashboard.getNumber("ShelfArmCube", GoalPos.SHELF[BACK][CUBE].armPos);
+        GoalPos.SHELF[BACK][CUBE].wristPos = SmartDashboard.getNumber("ShelfWristCube", GoalPos.SHELF[BACK][CUBE].wristPos);
+        GoalPos.SUBSTATION[BACK][CUBE].armPos = SmartDashboard.getNumber("SubstationArmCube",
+                GoalPos.SUBSTATION[BACK][CUBE].armPos);
+        GoalPos.SUBSTATION[BACK][CUBE].wristPos = SmartDashboard.getNumber("SubstationWristCube",
+                GoalPos.SUBSTATION[BACK][CUBE].wristPos);
+        GoalPos.INTAKE[BACK][CUBE].armPos = SmartDashboard.getNumber("IntakeArmCube", GoalPos.INTAKE[BACK][CUBE].armPos);
+        GoalPos.INTAKE[BACK][CUBE].wristPos = SmartDashboard.getNumber("IntakeWristCube", GoalPos.INTAKE[BACK][CUBE].wristPos);
+        GoalPos.LOW[BACK][CONE].armPos = SmartDashboard.getNumber("LowArmCone", GoalPos.LOW[BACK][CONE].armPos);
+        GoalPos.LOW[BACK][CONE].wristPos = SmartDashboard.getNumber("LowWristCone", GoalPos.LOW[BACK][CONE].wristPos);
+        GoalPos.MID[BACK][CONE].armPos = SmartDashboard.getNumber("MidArmCone", GoalPos.MID[BACK][CONE].armPos);
+        GoalPos.MID[BACK][CONE].wristPos = SmartDashboard.getNumber("MidWristCone", GoalPos.MID[BACK][CONE].wristPos);
+        GoalPos.HIGH[BACK][CONE].armPos = SmartDashboard.getNumber("HighArmCone", GoalPos.HIGH[BACK][CONE].armPos);
+        GoalPos.HIGH[BACK][CONE].wristPos = SmartDashboard.getNumber("HighWristCone", GoalPos.HIGH[BACK][CONE].wristPos);
+        GoalPos.STORED[BACK][CONE].armPos = SmartDashboard.getNumber("StoredArmCone", GoalPos.STORED[BACK][CONE].armPos);
+        GoalPos.STORED[BACK][CONE].wristPos = SmartDashboard.getNumber("StoredWristCone", GoalPos.STORED[BACK][CONE].wristPos);
+        GoalPos.SHELF[BACK][CONE].armPos = SmartDashboard.getNumber("ShelfArmCone", GoalPos.SHELF[BACK][CONE].armPos);
+        GoalPos.SHELF[BACK][CONE].wristPos = SmartDashboard.getNumber("ShelfWristCone", GoalPos.SHELF[BACK][CONE].wristPos);
+        GoalPos.SUBSTATION[BACK][CONE].armPos = SmartDashboard.getNumber("SubstationArmCone",
+                GoalPos.SUBSTATION[BACK][CONE].armPos);
+        GoalPos.SUBSTATION[BACK][CONE].wristPos = SmartDashboard.getNumber("SubstationWristCone",
+                GoalPos.SUBSTATION[BACK][CONE].wristPos);
+        GoalPos.INTAKE[BACK][CONE].armPos = SmartDashboard.getNumber("IntakeArmCone", GoalPos.INTAKE[BACK][CONE].armPos);
+        GoalPos.INTAKE[BACK][CONE].wristPos = SmartDashboard.getNumber("IntakeWristCone", GoalPos.INTAKE[BACK][CONE].wristPos);
     }
 
     public void putArmControlOnSmartDashboard() {
