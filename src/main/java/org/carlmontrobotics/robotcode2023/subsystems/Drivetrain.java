@@ -12,6 +12,7 @@ import org.carlmontrobotics.lib199.path.SwerveDriveInterface;
 import org.carlmontrobotics.lib199.swerve.SwerveModule;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -37,6 +38,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     private Limelight lime;
     private boolean fieldOriented = true;
     private double fieldOffset = 0;
+    private CANSparkMax[] driveMotors = new CANSparkMax[4];
 
     public final float initPitch;
     public final float initRoll;
@@ -90,29 +92,33 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
             // Supplier<Float> rollSupplier = () -> gyro.getRoll();
 
             SwerveModule moduleFL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FL,
-                    MotorControllerFactory.createSparkMax(driveFrontLeftPort, MotorConfig.NEO),
+                    driveMotors[0] = MotorControllerFactory.createSparkMax(driveFrontLeftPort, MotorConfig.NEO),
                     MotorControllerFactory.createSparkMax(turnFrontLeftPort, MotorConfig.NEO),
                     MotorControllerFactory.createCANCoder(canCoderPortFL), 0,
                     pitchSupplier, rollSupplier);
             // Forward-Right
             SwerveModule moduleFR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.FR,
-                    MotorControllerFactory.createSparkMax(driveFrontRightPort, MotorConfig.NEO),
+                    driveMotors[1] = MotorControllerFactory.createSparkMax(driveFrontRightPort, MotorConfig.NEO),
                     MotorControllerFactory.createSparkMax(turnFrontRightPort, MotorConfig.NEO),
                     MotorControllerFactory.createCANCoder(canCoderPortFR), 1,
                     pitchSupplier, rollSupplier);
             // Backward-Left
             SwerveModule moduleBL = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BL,
-                    MotorControllerFactory.createSparkMax(driveBackLeftPort, MotorConfig.NEO),
+                    driveMotors[2] = MotorControllerFactory.createSparkMax(driveBackLeftPort, MotorConfig.NEO),
                     MotorControllerFactory.createSparkMax(turnBackLeftPort, MotorConfig.NEO),
                     MotorControllerFactory.createCANCoder(canCoderPortBL), 2,
                     pitchSupplier, rollSupplier);
             // Backward-Right
             SwerveModule moduleBR = new SwerveModule(swerveConfig, SwerveModule.ModuleType.BR,
-                    MotorControllerFactory.createSparkMax(driveBackRightPort, MotorConfig.NEO),
+                    driveMotors[3] = MotorControllerFactory.createSparkMax(driveBackRightPort, MotorConfig.NEO),
                     MotorControllerFactory.createSparkMax(turnBackRightPort, MotorConfig.NEO),
                     MotorControllerFactory.createCANCoder(canCoderPortBR), 3,
                     pitchSupplier, rollSupplier);
             modules = new SwerveModule[] { moduleFL, moduleFR, moduleBL, moduleBR };
+
+            // for(CANSparkMax driveMotor : driveMotors) {
+            //     driveMotor.setSmartCurrentLimit(80);
+            // }
         }
 
         SmartDashboard.putNumber("kpTheta", thetaPIDController[0]);
@@ -148,6 +154,13 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // SmartDashboard.putNumber("Compass Offset", compassOffset);
         // SmartDashboard.putBoolean("Current Magnetic Field Disturbance",
         // gyro.isMagneticDisturbance());
+        for(SwerveModule module: modules) {
+            String name = module.getType().name();
+            CANSparkMax driveMotor = driveMotors[module.getType().ordinal()];
+            SmartDashboard.putNumber(name + " Drive Motor Current (A)", driveMotor.getOutputCurrent());
+            SmartDashboard.putNumber(name + " Drive Motor Voltage (V)", driveMotor.getAppliedOutput() * driveMotor.getBusVoltage());
+            SmartDashboard.putNumber(name + " Speed (m/s)", module.getCurrentSpeed());
+        }
     }
 
     @Override
