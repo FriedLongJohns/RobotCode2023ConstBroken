@@ -133,6 +133,9 @@ public final class Constants {
           new GoalPos(Units.degreesToRadians(-72.5), Units.degreesToRadians(92.21)),
           new GoalPos(Units.degreesToRadians(-66.6), Units.degreesToRadians(48.78)) 
         };
+        // Rollers are asymmetric, so when moving rollers to other side of robot, this value will correct
+        // the roller so that the rollers will act as if its on the front side
+        public static double asymmetricCorrectionDeg = 10;
 
         public double armPos, wristPos;
 

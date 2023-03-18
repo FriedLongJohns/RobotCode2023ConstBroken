@@ -201,7 +201,7 @@ public class Arm extends SubsystemBase {
         if (isFront) {
             return pos[object].armPos;
         } else {
-            return Rotation2d.fromRadians(-Math.PI).minus(Rotation2d.fromRadians(pos[object].armPos)).plus(Rotation2d.fromDegrees(10)).getRadians();
+            return Rotation2d.fromRadians(-Math.PI).minus(Rotation2d.fromRadians(pos[object].armPos)).plus(Rotation2d.fromDegrees(GoalPos.asymmetricCorrectionDeg)).getRadians();
         }
     }
 
@@ -209,7 +209,7 @@ public class Arm extends SubsystemBase {
         if (isFront) {
             return pos[object].wristPos;
         } else {
-            return Rotation2d.fromRadians(pos[object].wristPos).unaryMinus().plus(Rotation2d.fromDegrees(10)).getRadians();
+            return Rotation2d.fromRadians(pos[object].wristPos).unaryMinus().plus(Rotation2d.fromDegrees(GoalPos.asymmetricCorrectionDeg)).getRadians();
         }
     }
 
