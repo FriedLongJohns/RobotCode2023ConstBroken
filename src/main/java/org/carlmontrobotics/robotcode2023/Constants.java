@@ -4,12 +4,11 @@
 
 package org.carlmontrobotics.robotcode2023;
 
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController.Button;
-import edu.wpi.first.wpilibj.XboxController.Axis;
-
 import java.awt.Color;
+
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.XboxController.Axis;
+import edu.wpi.first.wpilibj.XboxController.Button;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -65,7 +64,7 @@ public final class Constants {
         public static final double COM_ROLLER_LENGTH_METERS = Units.inchesToMeters(9.47);
         public static final double g = 9.81;
 
-        public static final double V_PER_NM = 0;
+        public static final double V_PER_NM = 0.01423;
 
         // TODO: Replace these values with Design's actual values
         public static final double ARM_LOWER_LIMIT_RAD = -3 * Math.PI / 2;
@@ -100,24 +99,23 @@ public final class Constants {
     public static final class GoalPos {
 
         //#region Goal Positions
-        // TODO: PUT IN CORRECT POSITIONS
         // These positions are for if the intake/outtake takes place on the front (battery) side of the robot
-        // if intake/outtake on back, the "negative" pos will be used, which is offset by a a specific amount of degrees to account for wrist being in a different COM
+        // if intake/outtake on back, the "negative" pos will be used
         // 0 = CUBE, 1 = CONE
-        // {Cube, Cone}
+        // {Cone, Cube}
         // GoalPos(arm, wrist)
        
         public static GoalPos[] LOW = {
-          new GoalPos(Units.degreesToRadians(-134.46), Units.degreesToRadians(98.33)), 
-          new GoalPos(Units.degreesToRadians(-90), Units.degreesToRadians(-119.62))
+          new GoalPos(Units.degreesToRadians(-134.46), Units.degreesToRadians(117.17)), 
+          new GoalPos(Units.degreesToRadians(-90), Units.degreesToRadians(-100.78))
         };
         public static GoalPos[] MID = {
-          new GoalPos(Units.degreesToRadians(-175.98), Units.degreesToRadians(113.17)), 
-          new GoalPos(Units.degreesToRadians(-196.85), Units.degreesToRadians(46.63)) 
+          new GoalPos(Units.degreesToRadians(-175.98), Units.degreesToRadians(132.01)), 
+          new GoalPos(Units.degreesToRadians(-196.85), Units.degreesToRadians(65.47)) 
         };
         public static GoalPos[] HIGH = {
-          new GoalPos(Units.degreesToRadians(-190.02), Units.degreesToRadians(-167.919)), 
-          new GoalPos(Units.degreesToRadians(-194.18), Units.degreesToRadians(35.4)) 
+          new GoalPos(Units.degreesToRadians(-190.02), Units.degreesToRadians(-149.079)), 
+          new GoalPos(Units.degreesToRadians(-194.18), Units.degreesToRadians(54.24)) 
         };
         public static GoalPos[] STORED = {
           new GoalPos(Units.degreesToRadians(-90), 0), 
@@ -132,8 +130,8 @@ public final class Constants {
           new GoalPos(0, 0)
         };
         public static GoalPos[] INTAKE = {
-          new GoalPos(Units.degreesToRadians(-72.5), Units.degreesToRadians(73.37)),
-          new GoalPos(Units.degreesToRadians(-66.6), Units.degreesToRadians(29.94)) 
+          new GoalPos(Units.degreesToRadians(-72.5), Units.degreesToRadians(92.21)),
+          new GoalPos(Units.degreesToRadians(-66.6), Units.degreesToRadians(48.78)) 
         };
 
         public double armPos, wristPos;
@@ -144,7 +142,7 @@ public final class Constants {
         }
         //#endregion
     }
-    
+
     public static final class Roller {
         //#region Subsystem Constants
 
@@ -196,65 +194,25 @@ public final class Constants {
         public static final double JOY_THRESH = 0.01;
         public static final class Driver {
             public static final int port = 0;
+
         }
+
         public static final class Manipulator {
             public static final int port = 1;
-            public static final int toggleCube = Button.kLeftBumper.value;
-            public static final int toggleFront = Button.kRightBumper.value;
-            public static final int intakeCube = Axis.kRightTrigger.value;
-            public static final int intakeCone = Axis.kLeftTrigger.value;
-            public static final int store = Button.kA.value;
-            public static final int low = Button.kX.value;
-            public static final int mid = Button.kY.value;
-            public static final int high = Button.kB.value;
+
+            public static final int toggleCubeButton = Button.kLeftBumper.value;
+            public static final int toggleFrontButton = Button.kRightBumper.value;
+            public static final int storeButton = Button.kA.value;
+            public static final int lowButton = Button.kX.value;
+            public static final int midButton = Button.kY.value;
+            public static final int highButton = Button.kB.value;
             // TODO: Determine real ports for the following buttons. I couldn't find what buttons referred to the "4-pad"
-            public static final int shelf = -1;
-            public static final int intake = -1;
-            public static final int substation = -1;
-        }
-        public static final class Controller {
-          public static final int port = 2;
+            public static final int shelfButton = -1;
+            public static final int intakeButton = -1;
+            public static final int substationButton = -1;
 
-          public static Joystick controller = new Joystick(port);
-
-          public static int X;
-          public static int A;
-          public static int B;
-          public static int Y;
-          public static int LB;
-          public static int RB;
-          public static int LT;
-          public static int RT;
-          public static int BACK;
-          public static int START;
-
-          //TODO: mode button setting to teletop init
-          static {
-              if (controller.getName().equals("Logitech Dual Action")) {
-                  // Buttons and triggers
-                  X = 1;
-                  A = 2;
-                  B = 3;
-                  Y = 4;
-                  LB = 5;
-                  RB = 6;
-                  LT = 7;
-                  RT = 8;
-                  BACK = 9;
-                  START = 10;
-              } else {
-                  // Buttons and triggers for xbox controller
-                  X = 3;
-                  A = 1;
-                  B = 2;
-                  Y = 4;
-                  LB = 5;
-                  RB = 6;
-                  BACK = 7;
-                  START = 8;
-                  //todo get arrow buttons
-              }
-           }
+            public static final int rollerIntakeCubeButton = Axis.kRightTrigger.value;
+            public static final int rollerIntakeConeButton = Axis.kLeftTrigger.value;
         }
     }
 }

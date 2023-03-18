@@ -197,15 +197,6 @@ public class Arm extends SubsystemBase {
         setWristTarget(targetWrist);
     }
 
-    public void toggleObjectType() {
-        object++;
-        object %= 2;
-    }
-
-    public void toggleFront() {
-        isFront = !isFront;
-    }
-
     public double getArmGoal(GoalPos[] pos) {
         if (isFront) {
             return pos[object].armPos;

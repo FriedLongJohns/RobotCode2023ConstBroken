@@ -20,6 +20,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.CUBE;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.CONE;
 
 public class RobotContainer {
 
@@ -43,31 +47,44 @@ public class RobotContainer {
   private void configureButtonBindingsDriver() {}
 
   private void configureButtonBindingsManipulator() {
-    new JoystickButton(manipulatorController, Manipulator.toggleCube)
-      .onTrue(new InstantCommand(() -> {arm.object=0;}))
-      .onFalse(new InstantCommand(() -> {arm.object=1;}));
-    new JoystickButton(manipulatorController, Manipulator.toggleFront)
-      .onTrue(new InstantCommand(() -> arm.isFront=true))
-      .onFalse(new InstantCommand(() -> arm.isFront=false));
-    new JoystickButton(manipulatorController, Manipulator.store).onTrue(
+    new JoystickButton(manipulatorController, Manipulator.toggleCubeButton)
+      .onTrue(new InstantCommand(() -> {arm.object = CONE;}))
+      .onFalse(new InstantCommand(() -> {arm.object = CUBE;}));
+    new JoystickButton(manipulatorController, Manipulator.toggleFrontButton)
+      .onTrue(new InstantCommand(() -> arm.isFront = false))
+      .onFalse(new InstantCommand(() -> arm.isFront = true));
+    new JoystickButton(manipulatorController, Manipulator.storeButton).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.STORED), arm.getWristGoal(GoalPos.STORED), arm)
     );
-    new JoystickButton(manipulatorController, Manipulator.low).onTrue(
+    new JoystickButton(manipulatorController, Manipulator.lowButton).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.LOW), arm.getWristGoal(GoalPos.LOW), arm)
     );
-    new JoystickButton(manipulatorController, Manipulator.mid).onTrue(
+    new JoystickButton(manipulatorController, Manipulator.midButton).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.MID), arm.getWristGoal(GoalPos.MID), arm)
     );
-    new JoystickButton(manipulatorController, Manipulator.high).onTrue(
+    new JoystickButton(manipulatorController, Manipulator.highButton).onTrue(
       new SetArmWristPosition(arm.getArmGoal(GoalPos.HIGH), arm.getWristGoal(GoalPos.HIGH), arm)
     );
-    new JoystickButton(manipulatorController, Manipulator.store).onTrue(
-      new SetArmWristPosition(arm.getArmGoal(GoalPos.STORED), arm.getWristGoal(GoalPos.STORED), arm)
+    new POVButton(driverController, 0).onTrue(
+      new SetArmWristPosition(arm.getArmGoal(GoalPos.SHELF), arm.getWristGoal(GoalPos.SHELF), arm)
     );
-    new JoystickButton(manipulatorController, Manipulator.intakeCube)
-      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.conePickupColor));
-    new JoystickButton(manipulatorController, Manipulator.intakeCone)
+    new POVButton(driverController, 90).onTrue(
+      new InstantCommand(() -> {arm.object = CUBE;}).andThen(
+        new SetArmWristPosition(arm.getArmGoal(GoalPos.INTAKE), arm.getWristGoal(GoalPos.INTAKE), arm)
+      )
+    );
+    new POVButton(driverController, 180).onTrue(
+      new SetArmWristPosition(arm.getArmGoal(GoalPos.SUBSTATION), arm.getWristGoal(GoalPos.SUBSTATION), arm)
+    );
+    new POVButton(driverController, 270).onTrue(
+      new InstantCommand(() -> {arm.object = CONE;}).andThen(
+        new SetArmWristPosition(arm.getArmGoal(GoalPos.INTAKE), arm.getWristGoal(GoalPos.INTAKE), arm)
+      )
+    );
+    new JoystickButton(manipulatorController, Manipulator.rollerIntakeConeButton)
       .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
+    new JoystickButton(manipulatorController, Manipulator.rollerIntakeCubeButton)
+      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.conePickupColor));
   }
 
   public Command getAutonomousCommand() {
