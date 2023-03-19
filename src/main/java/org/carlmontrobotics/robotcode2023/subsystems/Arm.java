@@ -71,6 +71,8 @@ public class Arm extends SubsystemBase {
 
         setArmTarget(goalState[ARM].position, 0);
         setWristTarget(goalState[WRIST].position, 0);
+
+
     }
 
     @Override
@@ -86,12 +88,15 @@ public class Arm extends SubsystemBase {
         wristPID.setI(kI[WRIST]);
         wristPID.setD(kD[WRIST]);
 
+        SmartDashboard.putNumber("MaxHoldingTorque", maxHoldingTorqueNM());
+
         TrapezoidProfile.State armSetpoint = armProfile.calculate(armProfileTimer.get());
         TrapezoidProfile.State wristSetpoint = wristProfile.calculate(wristProfileTimer.get());
 
         driveArm(armSetpoint);
         driveWrist(wristSetpoint);
         SmartDashboard.putNumber("V_PER_NM", getV_PER_NM());
+        SmartDashboard.putNumber("COMDistance", getCoM().getNorm());
     }
 
     private void driveArm(TrapezoidProfile.State state) {
