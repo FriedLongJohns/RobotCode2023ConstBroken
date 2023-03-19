@@ -4,12 +4,16 @@
 
 package org.carlmontrobotics.robotcode2023;
 
+import static org.carlmontrobotics.robotcode2023.Constants.OI.MIN_AXIS_TRIGGER_VALUE;
+
+import java.util.function.BooleanSupplier;
+
 import org.carlmontrobotics.robotcode2023.Constants.GoalPos;
 import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
 import org.carlmontrobotics.robotcode2023.commands.RunRoller;
-import org.carlmontrobotics.robotcode2023.commands.SetArmWristPosition;
+import org.carlmontrobotics.robotcode2023.commands.SetArmWristGoalPreset;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller;
 
@@ -18,14 +22,9 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.CUBE;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.CONE;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.FRONT;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.BACK;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
 
@@ -49,46 +48,22 @@ public class RobotContainer {
   private void configureButtonBindingsDriver() {}
 
   private void configureButtonBindingsManipulator() {
-    new JoystickButton(manipulatorController, Manipulator.toggleCubeButton)
-      .onTrue(new InstantCommand(() -> {arm.object = CONE;}))
-      .onFalse(new InstantCommand(() -> {arm.object = CUBE;}));
-    
-    new JoystickButton(manipulatorController, Manipulator.toggleFrontButton)
-      .onTrue(new InstantCommand(() -> arm.side = FRONT))
-      .onFalse(new InstantCommand(() -> arm.side = BACK));
-    
-    new JoystickButton(manipulatorController, Manipulator.storeButton).onTrue(
-      new SetArmWristPosition(arm.getArmGoal(GoalPos.STORED), arm.getWristGoal(GoalPos.STORED), arm)
-    );
-    new JoystickButton(manipulatorController, Manipulator.lowButton).onTrue(
-      new SetArmWristPosition(arm.getArmGoal(GoalPos.LOW), arm.getWristGoal(GoalPos.LOW), arm)
-    );
-    new JoystickButton(manipulatorController, Manipulator.midButton).onTrue(
-      new SetArmWristPosition(arm.getArmGoal(GoalPos.MID), arm.getWristGoal(GoalPos.MID), arm)
-    );
-    new JoystickButton(manipulatorController, Manipulator.highButton).onTrue(
-      new SetArmWristPosition(arm.getArmGoal(GoalPos.HIGH), arm.getWristGoal(GoalPos.HIGH), arm)
-    );
-    new POVButton(driverController, 0).onTrue(
-      new SetArmWristPosition(arm.getArmGoal(GoalPos.SHELF), arm.getWristGoal(GoalPos.SHELF), arm)
-    );
-    new POVButton(driverController, 90).onTrue(
-      new InstantCommand(() -> {arm.object = CUBE;}).andThen(
-        new SetArmWristPosition(arm.getArmGoal(GoalPos.INTAKE), arm.getWristGoal(GoalPos.INTAKE), arm)
-      )
-    );
-    new POVButton(driverController, 180).onTrue(
-      new SetArmWristPosition(arm.getArmGoal(GoalPos.SUBSTATION), arm.getWristGoal(GoalPos.SUBSTATION), arm)
-    );
-    new POVButton(driverController, 270).onTrue(
-      new InstantCommand(() -> {arm.object = CONE;}).andThen(
-        new SetArmWristPosition(arm.getArmGoal(GoalPos.INTAKE), arm.getWristGoal(GoalPos.INTAKE), arm)
-      )
-    );
-    new JoystickButton(manipulatorController, Manipulator.rollerIntakeConeButton)
+    BooleanSupplier isCube = () -> new JoystickButton(manipulatorController, Manipulator.toggleCubeButton).getAsBoolean();
+    BooleanSupplier isFront = () -> new JoystickButton(manipulatorController, Manipulator.toggleFrontButton).getAsBoolean();
+
+    new JoystickButton(manipulatorController, Manipulator.storePosButton).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
+    new JoystickButton(manipulatorController, Manipulator.lowPosButton).onTrue(new SetArmWristGoalPreset(GoalPos.LOW, isCube, isFront, arm));
+    new JoystickButton(manipulatorController, Manipulator.midPosButton).onTrue(new SetArmWristGoalPreset(GoalPos.MID, isCube, isFront, arm));
+    new JoystickButton(manipulatorController, Manipulator.highPosButton).onTrue(new SetArmWristGoalPreset(GoalPos.HIGH, isCube, isFront, arm));
+    new POVButton(manipulatorController, Manipulator.shelfPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.SHELF, isCube, isFront, arm));
+    new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm));
+    new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
+    new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, () -> true, isFront, arm));
+
+    axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
       .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
-    new JoystickButton(manipulatorController, Manipulator.rollerIntakeCubeButton)
-      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.conePickupColor));
+    axisTrigger(manipulatorController, Manipulator.rollerIntakeCubeButton)
+      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor));
   }
 
   public Command getAutonomousCommand() {
@@ -112,5 +87,9 @@ public class RobotContainer {
     processedInput = Math.copySign(((1 - Math.cos(value * Math.PI)) / 2) * ((1 - Math.cos(value * Math.PI)) / 2),
         value);
     return processedInput;
+  }
+
+  private Trigger axisTrigger(Joystick stick, Axis axis) {
+    return new Trigger(() -> Math.abs(getStickValue(stick, axis)) > MIN_AXIS_TRIGGER_VALUE);
   }
 }

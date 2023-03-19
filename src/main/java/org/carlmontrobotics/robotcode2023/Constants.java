@@ -239,6 +239,7 @@ public final class Constants {
 
     public static final class OI {
         public static final double JOY_THRESH = 0.01;
+        public static final double MIN_AXIS_TRIGGER_VALUE = 0.25;
         public static final class Driver {
             public static final int port = 0;
 
@@ -249,17 +250,19 @@ public final class Constants {
 
             public static final int toggleCubeButton = Button.kLeftBumper.value;
             public static final int toggleFrontButton = Button.kRightBumper.value;
-            public static final int storeButton = Button.kA.value;
-            public static final int lowButton = Button.kX.value;
-            public static final int midButton = Button.kY.value;
-            public static final int highButton = Button.kB.value;
-            // TODO: Determine real ports for the following buttons. I couldn't find what buttons referred to the "4-pad"
-            public static final int shelfButton = -1;
-            public static final int intakeButton = -1;
-            public static final int substationButton = -1;
 
-            public static final int rollerIntakeCubeButton = Axis.kRightTrigger.value;
-            public static final int rollerIntakeConeButton = Axis.kLeftTrigger.value;
+            public static final int storePosButton = Button.kA.value;
+            public static final int lowPosButton = Button.kX.value;
+            public static final int midPosButton = Button.kY.value;
+            public static final int highPosButton = Button.kB.value;
+
+            public static final int shelfPickupPOV = 0;
+            public static final int intakeConePOV = 90;
+            public static final int substationPickupPOV = 180;
+            public static final int intakeCubePOV = 270;
+
+            public static final Axis rollerIntakeCubeButton = Axis.kRightTrigger;
+            public static final Axis rollerIntakeConeButton = Axis.kLeftTrigger;
         }
     }
 }
