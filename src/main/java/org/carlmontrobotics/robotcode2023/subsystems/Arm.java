@@ -91,6 +91,7 @@ public class Arm extends SubsystemBase {
 
         driveArm(armSetpoint);
         driveWrist(wristSetpoint);
+        SmartDashboard.putNumber("V_PER_NM", getV_PER_NM());
     }
 
     private void driveArm(TrapezoidProfile.State state) {
@@ -148,6 +149,20 @@ public class Arm extends SubsystemBase {
 
     public double maxHoldingTorqueNM() {
         return (ARM_MASS_KG + ROLLER_MASS_KG) * g * getCoM().getNorm();
+    }
+
+    public double getV_PER_NM() {
+        double kg = kG[ARM];
+        double phi = 2.638;
+        double Ma = ARM_MASS_KG;
+        double Mr = ROLLER_MASS_KG;
+        double Ra = ARM_LENGTH_METERS;
+        double Rr = COM_ROLLER_LENGTH_METERS;
+        double PaRa = COM_ARM_LENGTH_METERS;
+        double g = 9.80;
+
+        double c = (kg) / (g * Math.sqrt(Math.pow(Ma * PaRa + Mr * Ra, 2) + Math.pow(Mr * Rr, 2) + 2 * (Ma * PaRa + Mr * Ra) * (Mr * Rr) * Math.cos(phi)));
+        return c;
     }
 
     public double getKg() {

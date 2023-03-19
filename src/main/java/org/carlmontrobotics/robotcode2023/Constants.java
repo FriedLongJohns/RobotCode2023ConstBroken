@@ -57,12 +57,12 @@ public final class Constants {
         public static double[] offsetRad = { 4.02, -0.7 + Math.PI / 2 }; // rad
 
         // needed to calculate feedforward values dynamically
-        public static final double ARM_MASS_KG = Units.lbsToKilograms(6.57);
+        public static final double ARM_MASS_KG = Units.lbsToKilograms(8.1);
         public static final double ARM_LENGTH_METERS = Units.inchesToMeters(38.25);
 
         // Distance from the arm motor to the center of mass of the  arm
         public static final double COM_ARM_LENGTH_METERS = Units.inchesToMeters(13.23);
-        public static final double ROLLER_MASS_KG = Units.lbsToKilograms(10.91);
+        public static final double ROLLER_MASS_KG = Units.lbsToKilograms(14.04);
 
         // distance of center of mass of roller to the WRIST motor
         public static final double COM_ROLLER_LENGTH_METERS = Units.inchesToMeters(9.47);
