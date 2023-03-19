@@ -62,7 +62,7 @@ public final class Constants {
 
         // Distance from the arm motor to the center of mass of the  arm
         public static final double COM_ARM_LENGTH_METERS = Units.inchesToMeters(13.23);
-        public static final double ROLLER_MASS_KG = Units.lbsToKilograms(10.91);
+        public static final double ROLLER_MASS_KG = Units.lbsToKilograms(15);
 
         // distance of center of mass of roller to the WRIST motor
         public static final double COM_ROLLER_LENGTH_METERS = Units.inchesToMeters(9.47);
