@@ -39,7 +39,7 @@ public final class Constants {
         public static final double driveGearing = 6.75;
 
         public static final double driveModifier = 1;
-        public static final double wheelDiameterMeters = Units.inchesToMeters(4.0);
+        public static final double wheelDiameterMeters = Units.inchesToMeters(4.0) * 7.36/7.65 /* empirical correction */;
         public static final double mu = 0.5; /* 70/83.2;  */
 
         public static final double NEOFreeSpeed = 5676 * (2 * Math.PI) / 60;    // radians/s
@@ -145,8 +145,6 @@ public final class Constants {
 
         public static final double[] positionTolerance = {Units.inchesToMeters(.5), Units.inchesToMeters(.5), Units.degreesToRadians(5)}; // Meters, Meters, Radians
         public static final double[] velocityTolerance = {Units.inchesToMeters(1), Units.inchesToMeters(1), Units.degreesToRadians(5)}; // Meters, Meters, Radians/Second
-        public static final double minVelocityMps = 0.01;
-        public static final double minRotationRadPSec = 0.01;
 
         //#endregion
 

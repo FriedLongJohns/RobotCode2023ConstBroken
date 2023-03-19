@@ -85,11 +85,6 @@ public class TeleopDrive extends CommandBase {
 
     // If the above math works, no velocity should be greater than the max velocity, so we don't need to limit it.
 
-    // Quick-Stop
-    if (Math.abs(forward) <= minVelocityMps) currentForwardVel = 0;
-    if (Math.abs(strafe) <= minVelocityMps) currentStrafeVel = 0;
-    if (Math.abs(rotateClockwise) <= minRotationRadPSec) rotateClockwise = 0;
-
     double driveMultiplier = slow.getAsBoolean() ? kSlowDriveSpeed : kNormalDriveSpeed;
     double rotationMultiplier = slow.getAsBoolean() ? kSlowDriveRotation : kNormalDriveRotation;
 
