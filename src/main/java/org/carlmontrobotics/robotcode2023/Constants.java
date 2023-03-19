@@ -52,8 +52,6 @@ public final class Constants {
         public static double[] posToleranceRad = { .05, .05 }; // rad
         public static double[] velToleranceRadPSec = { 0.5, 0.5 }; // rad/s
 
-        // rad, rad/s
-        public static TrapezoidProfile.State[] goalState = { new TrapezoidProfile.State(-Math.PI / 2, 0), new TrapezoidProfile.State(0, 0) }; // rad
         public static double[] offsetRad = { 4.02, -0.7 + Math.PI / 2 }; // rad
 
         // needed to calculate feedforward values dynamically

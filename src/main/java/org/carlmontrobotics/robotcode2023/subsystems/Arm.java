@@ -44,8 +44,8 @@ public class Arm extends SubsystemBase {
     private Timer armProfileTimer = new Timer();
     private Timer wristProfileTimer = new Timer();
 
-    public int object = CUBE;
-    public int side = BACK;
+    // rad, rad/s
+    public static TrapezoidProfile.State[] goalState = { new TrapezoidProfile.State(-Math.PI / 2, 0), new TrapezoidProfile.State(0, 0) };
 
     public Arm() {
         armMotor.setInverted(inverted[ARM]);
@@ -221,20 +221,12 @@ public class Arm extends SubsystemBase {
         goalState[WRIST].velocity = targetVel;
     }
 
-    public double getArmGoal(GoalPos[][] pos) {
-        return pos[side][object].armPos;
+    public TrapezoidProfile.State getCurrentArmGoal() {
+        return goalState[ARM];
     }
 
-    public double getWristGoal(GoalPos[][] pos) {
-        return pos[side][object].wristPos;
-    }
-
-    public double getCurrentArmGoal() {
-        return goalState[ARM].position;
-    }
-
-    public double getCurrentWristGoal() {
-        return goalState[WRIST].position;
+    public TrapezoidProfile.State getCurrentWristGoal() {
+        return goalState[WRIST];
     }
 
     @Override

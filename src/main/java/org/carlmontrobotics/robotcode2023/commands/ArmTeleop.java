@@ -42,16 +42,16 @@ public class ArmTeleop extends CommandBase {
     double currTime = Timer.getFPGATimestamp();
     double deltaT = currTime - lastTime;
 
-    double goalArmRad = goalState[ARM].position + speeds[ARM] * deltaT;
-    double goalWristRad = goalState[WRIST].position + speeds[WRIST] * deltaT;
+    double goalArmRad = armSubsystem.getCurrentArmGoal().position + speeds[ARM] * deltaT;
+    double goalWristRad = armSubsystem.getCurrentWristGoal().position + speeds[WRIST] * deltaT;
 
     // Clamp the goal to the limits of the arm and wrist
     // setArm/WristTarget will also do a modulus, so clamp first to avoid wrapping
     goalArmRad = MathUtil.clamp(goalArmRad, ARM_LOWER_LIMIT_RAD, ARM_UPPER_LIMIT_RAD);
     goalWristRad = MathUtil.clamp(goalWristRad, WRIST_LOWER_LIMIT_RAD, WRIST_UPPER_LIMIT_RAD);
-  
-    armSubsystem.setArmTarget(goalArmRad, goalState[ARM].velocity);
-    armSubsystem.setWristTarget(goalWristRad, goalState[WRIST].velocity);
+
+    armSubsystem.setArmTarget(goalArmRad, armSubsystem.getCurrentArmGoal().velocity);
+    armSubsystem.setWristTarget(goalWristRad, armSubsystem.getCurrentWristGoal().velocity);
 
     lastTime = currTime;
   }
