@@ -229,6 +229,11 @@ public class Arm extends SubsystemBase {
         return goalState[WRIST];
     }
 
+    public void resetGoal() {
+        setArmTarget(getArmPos(), 0);
+        setArmTarget(getWristPos(), 0);
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
