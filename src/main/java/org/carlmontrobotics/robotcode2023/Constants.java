@@ -54,7 +54,7 @@ public final class Constants {
 
         // rad, rad/s
         public static TrapezoidProfile.State[] goalState = { new TrapezoidProfile.State(-Math.PI / 2, 0), new TrapezoidProfile.State(0, 0) }; // rad
-        public static double[] offsetRad = { 4.02, 3.50 + Math.PI / 2 }; // rad
+        public static double[] offsetRad = { 4.02, -0.7 + Math.PI / 2 }; // rad
 
         // needed to calculate feedforward values dynamically
         public static final double ARM_MASS_KG = Units.lbsToKilograms(6.57);
