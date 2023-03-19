@@ -7,7 +7,7 @@ package org.carlmontrobotics.robotcode2023;
 import org.carlmontrobotics.robotcode2023.Constants.GoalPos;
 import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
-import org.carlmontrobotics.robotcode2023.commands.ArmPeriodic;
+import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
 import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.commands.SetArmWristPosition;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
@@ -39,7 +39,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindingsDriver();
     configureButtonBindingsManipulator();
-    arm.setDefaultCommand(new ArmPeriodic(
+    arm.setDefaultCommand(new ArmTeleop(
       arm, 
       () -> inputProcessing(getStickValue(manipulatorController, Axis.kLeftY)),
       () -> inputProcessing(getStickValue(manipulatorController, Axis.kRightY))

@@ -15,14 +15,14 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class ArmPeriodic extends CommandBase {
+public class ArmTeleop extends CommandBase {
   /** Creates a new ArmPeriodic. */
   private Arm armSubsystem;
   private DoubleSupplier arm;
   private DoubleSupplier wrist;
   private double lastTime = 0;
 
-  public ArmPeriodic(Arm armSubsystem, DoubleSupplier arm, DoubleSupplier wrist) {
+  public ArmTeleop(Arm armSubsystem, DoubleSupplier arm, DoubleSupplier wrist) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(this.armSubsystem = armSubsystem);
     this.arm = arm;
@@ -42,8 +42,8 @@ public class ArmPeriodic extends CommandBase {
     double currTime = Timer.getFPGATimestamp();
     double deltaT = currTime - lastTime;
 
-    double goalArmRad = armSubsystem.getArmPos() + speeds[ARM] * deltaT;
-    double goalWristRad = armSubsystem.getWristPos() + speeds[WRIST] * deltaT;
+    double goalArmRad = goalState[ARM].position + speeds[ARM] * deltaT;
+    double goalWristRad = goalState[WRIST].position + speeds[WRIST] * deltaT;
 
     // Clamp the goal to the limits of the arm and wrist
     // setArm/WristTarget will also do a modulus, so clamp first to avoid wrapping
