@@ -4,13 +4,14 @@
 
 package org.carlmontrobotics.robotcode2023.commands;
 
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.*;
+
 import java.util.function.DoubleSupplier;
 
 import org.carlmontrobotics.robotcode2023.Constants;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.*;
-
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -44,12 +45,13 @@ public class ArmPeriodic extends CommandBase {
     double goalArmRad = armSubsystem.getArmPos() + speeds[ARM] * deltaT;
     double goalWristRad = armSubsystem.getWristPos() + speeds[WRIST] * deltaT;
 
-    // Retrieve the profiled setpoint for the next timestep. This setpoint moves
-    // toward the goal while obeying the constraints.
-    goalArmRad = armSubsystem.getArmClampedGoal(goalArmRad);
-    goalWristRad = armSubsystem.getWristClampedGoal(goalWristRad);
-    armSubsystem.setArmTarget(goalArmRad, speeds[ARM]);
-    armSubsystem.setWristTarget(goalWristRad, speeds[WRIST]);
+    // Clamp the goal to the limits of the arm and wrist
+    // setArm/WristTarget will also do a modulus, so clamp first to avoid wrapping
+    goalArmRad = MathUtil.clamp(goalArmRad, ARM_LOWER_LIMIT_RAD, ARM_UPPER_LIMIT_RAD);
+    goalWristRad = MathUtil.clamp(goalWristRad, WRIST_LOWER_LIMIT_RAD, WRIST_UPPER_LIMIT_RAD);
+  
+    armSubsystem.setArmTarget(goalArmRad, goalState[ARM].velocity);
+    armSubsystem.setWristTarget(goalWristRad, goalState[WRIST].velocity);
 
     lastTime = currTime;
   }
@@ -68,7 +70,7 @@ public class ArmPeriodic extends CommandBase {
       rawWristVel = 0.0;
     else
       rawWristVel = MAX_FF_VEL[WRIST] * wrist.getAsDouble();
-    
+
     return new double[] {rawArmVel, rawWristVel};
   }
 

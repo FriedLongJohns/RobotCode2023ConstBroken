@@ -209,6 +209,14 @@ public class Arm extends SubsystemBase {
         return pos[side][object].wristPos;
     }
 
+    public double getCurrentArmGoal() {
+        return goalState[ARM].position;
+    }
+
+    public double getCurrentWristGoal() {
+        return goalState[WRIST].position;
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
