@@ -86,8 +86,6 @@ public final class Constants {
 
         //#endregion
 
-        //#region Motor Details
-
         //#region Ports
 
         public static final int armMotorPort = 17;

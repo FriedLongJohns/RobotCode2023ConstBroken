@@ -36,15 +36,16 @@ public class Arm extends SubsystemBase {
     private final SimpleMotorFeedforward armFeed = new SimpleMotorFeedforward(kS[ARM], kV[ARM], kA[ARM]);
     private ArmFeedforward wristFeed = new ArmFeedforward(kS[WRIST], kG[WRIST], kV[WRIST], kA[WRIST]);
 
-    public PIDController armPID = new PIDController(kP[ARM], kI[ARM], kD[ARM]);
-    public PIDController wristPID = new PIDController(kP[WRIST], kI[WRIST], kD[WRIST]);
+    private final PIDController armPID = new PIDController(kP[ARM], kI[ARM], kD[ARM]);
+    private final PIDController wristPID = new PIDController(kP[WRIST], kI[WRIST], kD[WRIST]);
 
-    private SendableBuilder senb;
+    private TrapezoidProfile armProfile = new TrapezoidProfile(armConstraints, goalState[ARM], getCurrentArmState());
+    private TrapezoidProfile wristProfile = new TrapezoidProfile(wristConstraints, goalState[WRIST], getCurrentWristState());
+    private Timer armProfileTimer = new Timer();
+    private Timer wristProfileTimer = new Timer();
 
     public int object = CUBE;
     public int side = BACK;
-
-    private double lastTime = 0;
 
     public Arm() {
         armMotor.setInverted(inverted[ARM]);
@@ -55,8 +56,8 @@ public class Arm extends SubsystemBase {
         armEncoder.setVelocityConversionFactor(rotationToRad);
         wristEncoder.setVelocityConversionFactor(rotationToRad);
 
-        wristEncoder.setZeroOffset(offsetRad[ARM]);
-        armEncoder.setZeroOffset(offsetRad[WRIST]);
+        armEncoder.setZeroOffset(offsetRad[ARM]);
+        wristEncoder.setZeroOffset(offsetRad[WRIST]);
 
         armPID.setTolerance(posToleranceRad[ARM], velToleranceRadPSec[ARM]);
         wristPID.setTolerance(posToleranceRad[WRIST], velToleranceRadPSec[WRIST]);
@@ -64,26 +65,19 @@ public class Arm extends SubsystemBase {
         // SmartDashboard.putBoolean("Toggle", false);
         // senb.update();
         SmartDashboard.putData("Arm", this);
-        lastTime = Timer.getFPGATimestamp();
 
+        armProfileTimer.start();
+        wristProfileTimer.start();
+
+        setArmTarget(goalState[ARM].position, 0);
+        setWristTarget(goalState[WRIST].position, 0);
     }
 
     @Override
     public void periodic() {
-        double currTime = Timer.getFPGATimestamp();
-        double deltaT = currTime - lastTime;
+        wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
+        armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
 
-        wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
-        armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
-        armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
-        var armProfile = new TrapezoidProfile(armConstraints,
-            goalState[ARM],
-            new TrapezoidProfile.State(getArmPos(), getArmVel()));
-    
-        wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
-        var wristProfile = new TrapezoidProfile(wristConstraints,
-            goalState[WRIST],
-            new TrapezoidProfile.State(getWristPos(), getWristVel()));
         // TODO: REMOVE THIS WHEN PID CONSTANTS ARE DONE
         armPID.setP(kP[ARM]);
         armPID.setI(kI[ARM]);
@@ -91,12 +85,10 @@ public class Arm extends SubsystemBase {
         wristPID.setP(kP[WRIST]);
         wristPID.setI(kI[WRIST]);
         wristPID.setD(kD[WRIST]);
-        if (SmartDashboard.getBoolean("Toggle", false)) {
-            senb.update();
-        }
 
-        TrapezoidProfile.State armSetpoint = armProfile.calculate(deltaT);
-        TrapezoidProfile.State wristSetpoint = wristProfile.calculate(deltaT);
+        TrapezoidProfile.State armSetpoint = armProfile.calculate(armProfileTimer.get());
+        TrapezoidProfile.State wristSetpoint = wristProfile.calculate(wristProfileTimer.get());
+
         driveArm(armSetpoint);
         driveWrist(wristSetpoint);
     }
@@ -104,7 +96,7 @@ public class Arm extends SubsystemBase {
     private void driveArm(TrapezoidProfile.State state) {
         double kgv = getKg();
         double armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(state.velocity, 0);
-        double armPIDVolts = armPID.calculate(armEncoder.getPosition(), state.position);
+        double armPIDVolts = armPID.calculate(getArmPos(), state.position);
         if ((getArmPos() > ARM_UPPER_LIMIT_RAD && state.velocity > 0) || 
             (getArmPos() < ARM_LOWER_LIMIT_RAD && state.velocity < 0)) {
             armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
@@ -138,7 +130,7 @@ public class Arm extends SubsystemBase {
     public double getArmClampedGoal(double goal) {
         return MathUtil.clamp(MathUtil.inputModulus(goal, ARM_DISCONTINUITY_RAD, ARM_DISCONTINUITY_RAD + 2 * Math.PI), ARM_LOWER_LIMIT_RAD, ARM_UPPER_LIMIT_RAD);
     }
-    
+
     public double getWristClampedGoal(double goal) {
         return MathUtil.clamp(MathUtil.inputModulus(goal, WRIST_DISCONTINUITY_RAD, WRIST_DISCONTINUITY_RAD + 2 * Math.PI), WRIST_LOWER_LIMIT_RAD, WRIST_UPPER_LIMIT_RAD);
     }
@@ -180,17 +172,31 @@ public class Arm extends SubsystemBase {
         return wristEncoder.getVelocity();
     }
 
+    public TrapezoidProfile.State getCurrentArmState() {
+        return new TrapezoidProfile.State(getArmPos(), getArmVel());
+    }
+
+    public TrapezoidProfile.State getCurrentWristState() {
+        return new TrapezoidProfile.State(getWristPos(), getWristVel());
+    }
+
     // Unbounded wrist position relative to ground
     public double getWristPosRelativeToGround() {
         return getArmPos() + wristEncoder.getPosition();
     }
 
     public void setArmTarget(double targetPos, double targetVel) {
+        armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(targetPos, targetVel), getCurrentArmState());
+        armProfileTimer.reset();
+
         goalState[ARM].position = getArmClampedGoal(targetPos);
         goalState[ARM].velocity = targetVel;
     }
 
     public void setWristTarget(double targetPos, double targetVel) {
+        wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(targetPos, targetVel), getCurrentWristState());
+        wristProfileTimer.reset();
+
         goalState[WRIST].position = getWristClampedGoal(targetPos);
         goalState[WRIST].velocity = targetVel;
     }
@@ -206,7 +212,6 @@ public class Arm extends SubsystemBase {
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-        senb=builder;
         builder.addDoubleProperty("WristGoalPos", () -> goalState[WRIST].position, goal -> goalState[WRIST].position = goal);
         builder.addDoubleProperty("ArmGoalPos",   () -> goalState[ARM].position, goal -> goalState[ARM].position = goal);
         builder.addDoubleProperty("ArmPos",       () -> getArmPos(), null);
