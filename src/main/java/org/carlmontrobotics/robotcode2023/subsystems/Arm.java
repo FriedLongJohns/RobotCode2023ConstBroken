@@ -231,7 +231,7 @@ public class Arm extends SubsystemBase {
 
     public void resetGoal() {
         setArmTarget(getArmPos(), 0);
-        setArmTarget(getWristPos(), 0);
+        setWristTarget(getWristPos(), 0);
     }
 
     @Override
