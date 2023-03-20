@@ -93,7 +93,6 @@ public class RobotContainer {
   private void configureButtonBindingsManipulator() {
     axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
       .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
-    new JoystickButton(manipulatorController, Manipulator.rollerIntakeCubeButton)
     BooleanSupplier isCube = () -> new JoystickButton(manipulatorController, Manipulator.toggleCubeButton).getAsBoolean();
     BooleanSupplier isFront = () -> new JoystickButton(manipulatorController, Manipulator.toggleFrontButton).getAsBoolean();
 
