@@ -44,9 +44,9 @@ public final class Constants {
         // PID
         // FIXME BOTH WRIST AND ARM NEED TO TEST PID (Wrist PID never tested)
         // Arm, Wrist
-        public static double[] kP = {6.7868, 4.7391}; // 4.2736 for arm from sysid was tested and it worked fine (V / rad)
+        public static double[] kP = {4.2736, 4.7391}; // 4.2736 for arm from sysid was tested and it worked fine (V / rad)
         public static double[] kI = {0, 0}; // (V / (rad * s) )
-        public static double[] kD = {4.4327, 0.69517}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
+        public static double[] kD = {0, 0.69517}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
 
         // Arm, Wrist
         public static double[] posToleranceRad = { .05, .05 }; // rad
@@ -69,11 +69,13 @@ public final class Constants {
         public static final double V_PER_NM = 0.01423;
 
         // TODO: Replace these values with Design's actual values
-        public static final double ARM_LOWER_LIMIT_RAD = -3 * Math.PI / 2;
-        public static final double ARM_UPPER_LIMIT_RAD = Math.PI / 2;
+        private static final double fiveDeg = Math.toRadians(5);
+        public static final double ARM_LOWER_LIMIT_RAD = -3.569 + fiveDeg;
+        public static final double ARM_UPPER_LIMIT_RAD = .36 - fiveDeg;
         public static final double ARM_DISCONTINUITY_RAD = (ARM_LOWER_LIMIT_RAD + ARM_UPPER_LIMIT_RAD) / 2 - Math.PI;
-        public static final double WRIST_LOWER_LIMIT_RAD = -Math.PI;
-        public static final double WRIST_UPPER_LIMIT_RAD = Math.PI;
+        public static final double WRIST_LOWER_LIMIT_RAD = -2.933 + fiveDeg;
+        public static final double WRIST_UPPER_LIMIT_RAD = 2.605
+         - fiveDeg;
         public static final double WRIST_DISCONTINUITY_RAD = (WRIST_LOWER_LIMIT_RAD + WRIST_UPPER_LIMIT_RAD) / 2 - Math.PI;
 
         // TODO: Determine actual max vel/accel
@@ -95,6 +97,8 @@ public final class Constants {
         //#region Command Constants
 
         public static final double wristStowPos = Units.degreesToRadians(135);
+        public static final double ARM_VERTICAL_POS = -Math.PI/2;
+        public static final double MIN_WRIST_FOLD_POS = Math.PI/4;
 
         //#endregion
     }
@@ -199,7 +203,7 @@ public final class Constants {
         public static final Color cubePickupColor = new Color(50, 0, 200);
 
         public static final double distSensorDepthMM = 16;
-        public static final double gamePieceDetectDistanceIn = 20;
+        public static final double gamePieceDetectDistanceIn = 30;
 
         //#endregion
 
