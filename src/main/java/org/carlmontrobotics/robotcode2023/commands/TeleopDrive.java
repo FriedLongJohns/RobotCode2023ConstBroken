@@ -16,17 +16,20 @@ import org.carlmontrobotics.robotcode2023.Constants;
 import org.carlmontrobotics.robotcode2023.Robot;
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class TeleopDrive extends CommandBase {
 
+  private static final double robotPeriod = Robot.robot.getPeriod();
   private final Drivetrain drivetrain;
   private DoubleSupplier fwd;
   private DoubleSupplier str;
   private DoubleSupplier rcw;
   private BooleanSupplier slow;
-  private double currentForward = 0;
-  private double currentStrafe = 0;
+  private double currentForwardVel = 0;
+  private double currentStrafeVel = 0;
 
   /**
    * Creates a new TeleopDrive.
@@ -52,34 +55,40 @@ public class TeleopDrive extends CommandBase {
   }
 
   public double[] getRequestedSpeeds() {
-    double rawForward, rawStrafe, rotateClockwise, deltaT;
-    deltaT = Robot.robot.getPeriod();
     // Sets all values less than or equal to a very small value (determined by the idle joystick state) to zero.
     // Used to make sure that the robot does not try to change its angle unless it is moving,
-    if (Math.abs(fwd.getAsDouble()) <= Constants.OI.JOY_THRESH) rawForward = 0.0;
-    else rawForward = maxForward * fwd.getAsDouble();
-    if (Math.abs(str.getAsDouble()) <= Constants.OI.JOY_THRESH) rawStrafe = 0.0;
-    else rawStrafe = maxStrafe * str.getAsDouble();
-
-    rotateClockwise = rcw.getAsDouble();
+    double forward = fwd.getAsDouble();
+    double strafe = str.getAsDouble();
+    double rotateClockwise = rcw.getAsDouble();
+    if (Math.abs(forward) <= Constants.OI.JOY_THRESH) forward = 0.0;
+    else forward *= maxForward;
+    if (Math.abs(strafe) <= Constants.OI.JOY_THRESH) strafe = 0.0;
+    else strafe *= maxStrafe;
     if (Math.abs(rotateClockwise) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;
-    else rotateClockwise = maxRCW * rotateClockwise;
-    double targetAccelerationX = (rawForward - currentForward)/deltaT;
-    double targetAccelerationY = (rawStrafe - currentStrafe)/deltaT;
-    double accelerationMagnitude = Math.hypot(targetAccelerationX, targetAccelerationY);
-    if (accelerationMagnitude >= autoMaxAccelMps2) {
-      targetAccelerationX *= autoMaxAccelMps2/accelerationMagnitude;
-      targetAccelerationY *= autoMaxAccelMps2/accelerationMagnitude;
+    else rotateClockwise *= maxRCW;
+
+    // Limit acceleration of the robot
+    double accelerationX = (forward - currentForwardVel) / robotPeriod;
+    double accelerationY = (strafe - currentStrafeVel) / robotPeriod;
+    double translationalAcceleration = Math.hypot(accelerationX, accelerationY);
+    if(translationalAcceleration > autoMaxAccelMps2) {
+      Translation2d limitedAccelerationVector = new Translation2d(autoMaxAccelMps2, Rotation2d.fromRadians(Math.atan2(accelerationY, accelerationX)));
+      Translation2d limitedVelocityVector = limitedAccelerationVector.times(robotPeriod);
+      currentForwardVel += limitedVelocityVector.getX();
+      currentStrafeVel += limitedVelocityVector.getY();
+    } else {
+      currentForwardVel = forward;
+      currentStrafeVel = strafe;
     }
-    currentForward += targetAccelerationX*deltaT;
-    currentStrafe += targetAccelerationY*deltaT;
-    if (Math.abs(currentForward) <= minVelocityMps)
-      currentForward = 0;
-    if (Math.abs(currentStrafe) <= minVelocityMps)
-      currentStrafe = 0;
-    double driveMultiplier = slow.getAsBoolean() ? kSlowDriveSpeed : 1;
-    double rotationMultiplier = slow.getAsBoolean() ? kSlowDriveRotation : 0.55;
-    return new double[] {currentForward * driveMultiplier, currentStrafe * driveMultiplier, -rotateClockwise * rotationMultiplier};
+
+    // ATM, there is no rotational acceleration limit
+
+    // If the above math works, no velocity should be greater than the max velocity, so we don't need to limit it.
+
+    double driveMultiplier = slow.getAsBoolean() ? kSlowDriveSpeed : kNormalDriveSpeed;
+    double rotationMultiplier = slow.getAsBoolean() ? kSlowDriveRotation : kNormalDriveRotation;
+
+    return new double[] {currentForwardVel * driveMultiplier, currentStrafeVel * driveMultiplier, -rotateClockwise * rotationMultiplier};
   }
 
   // Called once the command ends or is interrupted.
