@@ -13,7 +13,7 @@ public class RotateToFieldRelativeAngle extends CommandBase {
     public final TeleopDrive teleopDrive;
     public final Drivetrain drivetrain;
 
-    public static final PIDController rotationPID = new PIDController(thetaPIDController[0], thetaPIDController[1], thetaPIDController[2]);
+    public final PIDController rotationPID = new PIDController(thetaPIDController[0], thetaPIDController[1], thetaPIDController[2]);
 
     public RotateToFieldRelativeAngle(Rotation2d angle, Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
