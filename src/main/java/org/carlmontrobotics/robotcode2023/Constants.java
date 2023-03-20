@@ -44,7 +44,7 @@ public final class Constants {
 
         public static final double NEOFreeSpeed = 5676 * (2 * Math.PI) / 60;    // radians/s
         // Angular speed to translational speed --> v = omega * r / gearing
-        public static final double maxSpeed = NEOFreeSpeed * (wheelDiameterMeters / 2.0) / driveGearing * 0.7;
+        public static final double maxSpeed = NEOFreeSpeed * (wheelDiameterMeters / 2.0) / driveGearing;
         public static final double maxForward = maxSpeed;
         public static final double maxStrafe = maxSpeed;
         // maxRCW is the angular velocity of the robot.
@@ -101,7 +101,7 @@ public final class Constants {
         // PID values are listed in the order kP, kI, and kD
         public static final double[] xPIDController = {4, 0.0, 0.0};
         public static final double[] yPIDController = {4, 0.0, 0.0};
-        public static final double[] thetaPIDController = {0.08, 0.0, 0.0};
+        public static final double[] thetaPIDController = {0.10, 0.0, 0.001};
 
         public static final SwerveConfig swerveConfig = new SwerveConfig(wheelDiameterMeters, driveGearing, mu, autoCentripetalAccel, kForwardVolts, kForwardVels, kForwardAccels, kBackwardVolts, kBackwardVels, kBackwardAccels, drivekP, drivekI, drivekD, turnkP, turnkI, turnkD, turnkS, turnkV, turnkA, turnZero, driveInversion, reversed, driveModifier, turnInversion);
 
@@ -130,6 +130,8 @@ public final class Constants {
 
         //#region Command Constants
 
+        public static final double kNormalDriveSpeed = 1; // Percent Multiplier
+        public static final double kNormalDriveRotation = 0.55; // Percent Multiplier
         public static final double kSlowDriveSpeed = 0.25; // Percent Multiplier
         public static final double kSlowDriveRotation = 0.30; // Percent Multiplier
         public static final double kAlignMultiplier = 1D/3D;
@@ -142,8 +144,7 @@ public final class Constants {
         public static final double wheelTurnDriveSpeed = 0.0001; // Meters / Second ; A non-zero speed just used to orient the wheels to the correct angle. This should be very small to avoid actually moving the robot.
 
         public static final double[] positionTolerance = {Units.inchesToMeters(.5), Units.inchesToMeters(.5), 5}; // Meters, Meters, Degrees
-        public static final double[] velocityTolerance = {Units.inchesToMeters(1), Units.inchesToMeters(1), 5}; // Meters, Meters, Degrees/Second
-        public static final double minVelocityMps = 0.01;
+        public static final double[] velocityTolerance = {Units.inchesToMeters(1), Units.inchesToMeters(1), 25}; // Meters, Meters, Degrees/Second
 
         //#endregion
 
