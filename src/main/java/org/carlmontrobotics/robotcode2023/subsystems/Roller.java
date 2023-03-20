@@ -29,14 +29,11 @@ public class Roller extends SubsystemBase {
     private TimeOfFlight distSensor = new TimeOfFlight(10);
     private final AddressableLED led = new AddressableLED(ledPort);
     private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(ledLength);
-    public double time = 1.5;
-
     private boolean hadGamePiece = false;
 
     private Command resetColorCommand = new SequentialCommandGroup(
-        new WaitCommand(ledDefaultColorRestoreTime),
-        new InstantCommand(() -> setLedColor(defaultColor)))
-    {
+            new WaitCommand(ledDefaultColorRestoreTime),
+            new InstantCommand(() -> setLedColor(defaultColor))) {
         public boolean runsWhenDisabled() {
             return true;
         };
@@ -45,17 +42,11 @@ public class Roller extends SubsystemBase {
     public Roller() {
         led.setLength(ledBuffer.getLength());
         setLedColor(defaultColor);
-        SmartDashboard.putData(this);
+        //SmartDashboard.putData(this);
 
-        // TODO: Get proper values for the speeds and timings. For future pull requests, do not merge if this is not deleted
-        SmartDashboard.putNumber("Intake Cone Speed", RollerMode.INTAKE_CONE.speed);
-        SmartDashboard.putNumber("Outtake Cone Speed", RollerMode.OUTTAKE_CONE.speed);
-        SmartDashboard.putNumber("Intake Cube Speed", RollerMode.INTAKE_CUBE.speed);
-        SmartDashboard.putNumber("Outtake Cube Speed", RollerMode.OUTTAKE_CUBE.speed);
-        SmartDashboard.putNumber("Intake Cone Time", RollerMode.INTAKE_CONE.time);
-        SmartDashboard.putNumber("Outtake Cone Time", RollerMode.OUTTAKE_CONE.time);
-        SmartDashboard.putNumber("Intake Cube Time", RollerMode.INTAKE_CUBE.time);
-        SmartDashboard.putNumber("Outtake Cube Time", RollerMode.OUTTAKE_CUBE.time);
+        // TODO: Get proper values for the speeds and timings. For future pull requests,
+        // do not merge if this is not deleted or speeds/timings have not been determined
+        
         led.start();
     }
 
@@ -63,17 +54,7 @@ public class Roller extends SubsystemBase {
     public void periodic() {
 
         SmartDashboard.putBoolean("Has Game Piece", hasGamePiece());
-        RollerMode.INTAKE_CONE.speed = SmartDashboard.getNumber("Intake Cone Speed", RollerMode.INTAKE_CONE.speed);
-        RollerMode.OUTTAKE_CONE.speed = SmartDashboard.getNumber("Outtake Cone Speed", RollerMode.OUTTAKE_CONE.speed);
-        RollerMode.INTAKE_CUBE.speed = SmartDashboard.getNumber("Intake Cube Speed", RollerMode.INTAKE_CUBE.speed);
-        RollerMode.OUTTAKE_CUBE.speed = SmartDashboard.getNumber("Outtake Cube Speed", RollerMode.OUTTAKE_CUBE.speed);
-        RollerMode.INTAKE_CONE.time = SmartDashboard.getNumber("Intake Cone Time", RollerMode.INTAKE_CONE.time);
-        RollerMode.OUTTAKE_CONE.time = SmartDashboard.getNumber("Outtake Cone Time", RollerMode.OUTTAKE_CONE.time);
-        RollerMode.INTAKE_CUBE.time = SmartDashboard.getNumber("Intake Cube Time", RollerMode.INTAKE_CUBE.time);
-        RollerMode.OUTTAKE_CUBE.time = SmartDashboard.getNumber("Outtake Cube Time", RollerMode.OUTTAKE_CUBE.time);
-
         SmartDashboard.putNumber("Roller Game Piece Distance", getGamePieceDistanceIn());
-
 
         // LED Update
         {
@@ -91,37 +72,44 @@ public class Roller extends SubsystemBase {
     }
 
     public void setLedColor(Color color) {
-        for(int i = 0; i < ledBuffer.getLength(); i++)
+        for (int i = 0; i < ledBuffer.getLength(); i++)
             ledBuffer.setRGB(i, color.getRed(), color.getGreen(), color.getBlue());
         led.setData(ledBuffer);
     }
 
     public boolean hasGamePiece() {
-        return getGamePieceDistanceIn() < gamePieceDetectDistanceIn;
+        return false;
+        // return getGamePieceDistanceIn() < gamePieceDetectDistanceIn;
     }
 
     public double getGamePieceDistanceIn() {
-        return Units.metersToInches((distSensor.getRange() - distSensorDepthMM /* The sensor measures from the back of the sensor */) /1000 /* Convert mm to m */);
+        return Units.metersToInches((distSensor.getRange() - distSensorDepthMM /*
+                                                                                * The sensor measures from the back of
+                                                                                * the sensor
+                                                                                */) / 1000 /* Convert mm to m */);
     }
 
-    public static class RollerMode {
-        public static RollerMode INTAKE_CONE = new RollerMode(-0.5, .5, true);
-        public static RollerMode INTAKE_CUBE = new RollerMode(0.3, .25, true);
-        public static RollerMode OUTTAKE_CONE = new RollerMode(0.5, .5, false);
-        public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5, false);
-        public double speed, time;
-        public boolean intake;
+    
 
-        /**
-         * @param speed A number between -1 and 1
-         * @param time Amount of time in seconds to keep the motor running after
-         * distance sensor has detected an object
-         * @param intake Whether the roller is outtaking or intaking
-         */
-        public RollerMode(double speed, double time, boolean intake) {
-            this.speed = speed;
-            this.time = time;
-            this.intake = intake;
-        }
+    public void putRollerConstsOnSmartDashboard() {
+        SmartDashboard.putNumber("Intake Cone Speed", RollerMode.INTAKE_CONE.speed);
+        SmartDashboard.putNumber("Outtake Cone Speed", RollerMode.OUTTAKE_CONE.speed);
+        SmartDashboard.putNumber("Intake Cube Speed", RollerMode.INTAKE_CUBE.speed);
+        SmartDashboard.putNumber("Outtake Cube Speed", RollerMode.OUTTAKE_CUBE.speed);
+        SmartDashboard.putNumber("Intake Cone Time", RollerMode.INTAKE_CONE.time);
+        SmartDashboard.putNumber("Outtake Cone Time", RollerMode.OUTTAKE_CONE.time);
+        SmartDashboard.putNumber("Intake Cube Time", RollerMode.INTAKE_CUBE.time);
+        SmartDashboard.putNumber("Outtake Cube Time", RollerMode.OUTTAKE_CUBE.time);
+    }
+
+    public void getRollerConstsOnSmartDashboard() {
+        RollerMode.INTAKE_CONE.speed = SmartDashboard.getNumber("Intake Cone Speed", RollerMode.INTAKE_CONE.speed);
+        RollerMode.OUTTAKE_CONE.speed = SmartDashboard.getNumber("Outtake Cone Speed", RollerMode.OUTTAKE_CONE.speed);
+        RollerMode.INTAKE_CUBE.speed = SmartDashboard.getNumber("Intake Cube Speed", RollerMode.INTAKE_CUBE.speed);
+        RollerMode.OUTTAKE_CUBE.speed = SmartDashboard.getNumber("Outtake Cube Speed", RollerMode.OUTTAKE_CUBE.speed);
+        RollerMode.INTAKE_CONE.time = SmartDashboard.getNumber("Intake Cone Time", RollerMode.INTAKE_CONE.time);
+        RollerMode.OUTTAKE_CONE.time = SmartDashboard.getNumber("Outtake Cone Time", RollerMode.OUTTAKE_CONE.time);
+        RollerMode.INTAKE_CUBE.time = SmartDashboard.getNumber("Intake Cube Time", RollerMode.INTAKE_CUBE.time);
+        RollerMode.OUTTAKE_CUBE.time = SmartDashboard.getNumber("Outtake Cube Time", RollerMode.OUTTAKE_CUBE.time);
     }
 }
