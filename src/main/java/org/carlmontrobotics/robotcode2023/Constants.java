@@ -199,12 +199,12 @@ public final class Constants {
         public static final double V_PER_NM = 0.01423;
 
         // TODO: Replace these values with Design's actual values
-        private static final double softlimitZone = Math.toRadians(10);
-        public static final double ARM_LOWER_LIMIT_RAD = -3.569 + softlimitZone;
-        public static final double ARM_UPPER_LIMIT_RAD = .36 - softlimitZone;
+        private static final double softLimitZone = Math.toRadians(10);
+        public static final double ARM_LOWER_LIMIT_RAD = -3.569 + softLimitZone;
+        public static final double ARM_UPPER_LIMIT_RAD = .36 - softLimitZone;
         public static final double ARM_DISCONTINUITY_RAD = (ARM_LOWER_LIMIT_RAD + ARM_UPPER_LIMIT_RAD) / 2 - Math.PI;
-        public static final double WRIST_LOWER_LIMIT_RAD = -2.933 + softlimitZone;
-        public static final double WRIST_UPPER_LIMIT_RAD = 2.605 - softlimitZone;
+        public static final double WRIST_LOWER_LIMIT_RAD = -2.933 + softLimitZone;
+        public static final double WRIST_UPPER_LIMIT_RAD = 2.605 - softLimitZone;
         public static final double WRIST_DISCONTINUITY_RAD = (WRIST_LOWER_LIMIT_RAD + WRIST_UPPER_LIMIT_RAD) / 2 - Math.PI;
 
         // TODO: Determine actual max vel/accel
