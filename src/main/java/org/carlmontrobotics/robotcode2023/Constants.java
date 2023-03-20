@@ -153,7 +153,7 @@ public final class Constants {
 
     public static final class Arm {
 
-        //#region Command Constants
+        //#region Subsystem Constants
 
         // Array Indexes (Just to make things easier to read)
         public static final int ARM = 0;
