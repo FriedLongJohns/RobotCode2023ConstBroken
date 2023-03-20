@@ -173,13 +173,6 @@ public class Arm extends SubsystemBase {
         return c;
     }
 
-    public boolean armAtSetpoint() {
-        return armPID.atSetpoint();
-    }
-    public boolean wristAtSetpoint() {
-        return wristPID.atSetpoint();
-    }
-
     public double getKg() {
         return V_PER_NM * maxHoldingTorqueNM();
     }
