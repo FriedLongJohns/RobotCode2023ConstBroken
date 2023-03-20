@@ -89,8 +89,6 @@ public class Roller extends SubsystemBase {
                                                                                 */) / 1000 /* Convert mm to m */);
     }
 
-    
-
     public void putRollerConstsOnSmartDashboard() {
         SmartDashboard.putNumber("Intake Cone Speed", RollerMode.INTAKE_CONE.speed);
         SmartDashboard.putNumber("Outtake Cone Speed", RollerMode.OUTTAKE_CONE.speed);

@@ -41,11 +41,12 @@ public class RobotContainer {
 
   public final Joystick driverController = new Joystick(Driver.port);
   public final Joystick manipulatorController = new Joystick(Manipulator.port);
+
   public final PowerDistribution pd = new PowerDistribution();
 
-  public final Arm arm = new Arm();
   public final Limelight lime = new Limelight();
   public final Drivetrain drivetrain = new Drivetrain(lime);
+  public final Arm arm = new Arm();
   public final Roller roller = new Roller();
 
   public final PPRobotPath[] autoPaths;
@@ -91,8 +92,6 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsManipulator() {
-    axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
-      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
     BooleanSupplier isCube = () -> new JoystickButton(manipulatorController, Manipulator.toggleCubeButton).getAsBoolean();
     BooleanSupplier isFront = () -> new JoystickButton(manipulatorController, Manipulator.toggleFrontButton).getAsBoolean();
 
@@ -106,10 +105,12 @@ public class RobotContainer {
     new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, () -> true, isFront, arm));
 
     axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
+      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
+    axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
       .onTrue(new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.conePickupColor));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeCubeButton)
       .onTrue(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor));
-    new JoystickButton(manipulatorController, 7).onTrue(new InstantCommand(() -> roller.setSpeed(0), roller));
+    new JoystickButton(manipulatorController, Manipulator.stopRollerButton).onTrue(new InstantCommand(() -> roller.setSpeed(0), roller));
   }
 
   public Command getAutonomousCommand() {
@@ -145,6 +146,16 @@ public class RobotContainer {
     return processedInput;
   }
 
+  /**
+   * Returns a new instance of Trigger based on the given Joystick and Axis objects.
+   * The Trigger is triggered when the absolute value of the stick value on the specified axis
+   * exceeds a minimum threshold value.
+   * 
+   * @param stick The Joystick object to retrieve stick value from.
+   * @param axis The Axis object to retrieve value from the Joystick.
+   * @return A new instance of Trigger based on the given Joystick and Axis objects.
+   * @throws NullPointerException if either stick or axis is null.
+   */
   private Trigger axisTrigger(Joystick stick, Axis axis) {
     return new Trigger(() -> Math.abs(getStickValue(stick, axis)) > MIN_AXIS_TRIGGER_VALUE);
   }

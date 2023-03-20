@@ -6,15 +6,14 @@ package org.carlmontrobotics.robotcode2023;
 
 import java.awt.Color;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.XboxController.Axis;
 import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.Limelight.Transform;
 import org.carlmontrobotics.lib199.swerve.SwerveConfig;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
 
 /**
@@ -26,83 +25,6 @@ import edu.wpi.first.wpilibj.XboxController.Button;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-
-    public static final class Arm {
-
-
-        // Array Indexes (Just to make things easier to read)
-        public static final int ARM = 0;
-        public static final int WRIST = 1;
-        public static final int CUBE = 0;
-        public static final int CONE = 1;
-        public static final int FRONT = 0;
-        public static final int BACK = 1;
-
-        // Feedforward
-        // Arm, Wrist
-        public static final double[] kS = {0.20642, .074798};
-        public static final double[] kG = {0.6697, 0.36214};
-        public static final double[] kV = {4.3735, 1.6743};
-        public static final double[] kA = {0.24914, 0.032177};
-        public static final double kG_WRIST = .36214; // (V)
-
-        // PID
-        // FIXME BOTH WRIST AND ARM NEED TO TEST PID (Wrist PID never tested)
-        // Arm, Wrist
-        public static double[] kP = {4.2736, 4.7391}; // 4.2736 for arm from sysid was tested and it worked fine (V / rad)
-        public static double[] kI = {0, 0}; // (V / (rad * s) )
-        public static double[] kD = {0, 0.69517}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
-
-        // Arm, Wrist
-        public static double[] posToleranceRad = { .05, .05 }; // rad
-        public static double[] velToleranceRadPSec = { 0.5, 0.5 }; // rad/s
-
-        public static double[] offsetRad = { 4.02, -0.7 + Math.PI / 2 }; // rad
-
-        // needed to calculate feedforward values dynamically
-        public static final double ARM_MASS_KG = Units.lbsToKilograms(8.1);
-        public static final double ARM_LENGTH_METERS = Units.inchesToMeters(38.25);
-
-        // Distance from the arm motor to the center of mass of the  arm
-        public static final double COM_ARM_LENGTH_METERS = Units.inchesToMeters(13.23);
-        public static final double ROLLER_MASS_KG = Units.lbsToKilograms(14.04);
-
-        // distance of center of mass of roller to the WRIST motor
-        public static final double COM_ROLLER_LENGTH_METERS = Units.inchesToMeters(9.47);
-        public static final double g = 9.81;
-
-        public static final double V_PER_NM = 0.01423;
-
-        // TODO: Replace these values with Design's actual values
-        private static final double fiveDeg = Math.toRadians(5);
-        public static final double ARM_LOWER_LIMIT_RAD = -3.569 + fiveDeg;
-        public static final double ARM_UPPER_LIMIT_RAD = .36 - fiveDeg;
-        public static final double ARM_DISCONTINUITY_RAD = (ARM_LOWER_LIMIT_RAD + ARM_UPPER_LIMIT_RAD) / 2 - Math.PI;
-        public static final double WRIST_LOWER_LIMIT_RAD = -2.933 + fiveDeg;
-        public static final double WRIST_UPPER_LIMIT_RAD = 2.605
-         - fiveDeg;
-        public static final double WRIST_DISCONTINUITY_RAD = (WRIST_LOWER_LIMIT_RAD + WRIST_UPPER_LIMIT_RAD) / 2 - Math.PI;
-
-        // TODO: Determine actual max vel/accel
-        public static double[] MAX_FF_VEL = {1, 1}; // rad / s
-        public static double[] MAX_FF_ACCEL = {1, 1}; // rad / s^2
-        public static TrapezoidProfile.Constraints armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
-        public static TrapezoidProfile.Constraints wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
-
-        public static final int armMotorPort = 17;
-        public static final int wristMotorPort = 19;
-        public static final boolean[] inverted = { true, false };
-        public static final double rotationToRad = 2 * Math.PI;
-
-        //#region Command Constants
-
-        public static final double wristStowPos = Units.degreesToRadians(135);
-        public static final double ARM_VERTICAL_POS = -Math.PI / 2;
-        public static final double MIN_WRIST_FOLD_POS = Math.PI / 4;
-
-        //#endregion
-
-    }
 
     public static final double g = 9.81; //meters per second squared
 
@@ -208,6 +130,8 @@ public final class Constants {
 
         //#endregion
 
+        //#region Command Constants
+
         public static final double kNormalDriveSpeed = 1; // Percent Multiplier
         public static final double kNormalDriveRotation = 0.55; // Percent Multiplier
         public static final double kSlowDriveSpeed = 0.25; // Percent Multiplier
@@ -227,6 +151,91 @@ public final class Constants {
         //#endregion
     }
 
+    public static final class Arm {
+
+        //#region Command Constants
+
+        // Array Indexes (Just to make things easier to read)
+        public static final int ARM = 0;
+        public static final int WRIST = 1;
+        public static final int CUBE = 0;
+        public static final int CONE = 1;
+        public static final int FRONT = 0;
+        public static final int BACK = 1;
+
+        // Feedforward
+        // Arm, Wrist
+        public static final double[] kS = {0.20642, .074798};
+        public static final double[] kG = {0.6697, 0.36214};
+        public static final double[] kV = {4.3735, 1.6743};
+        public static final double[] kA = {0.24914, 0.032177};
+        public static final double kG_WRIST = .36214; // (V)
+
+        // PID
+        // FIXME BOTH WRIST AND ARM NEED TO TEST PID (Wrist PID never tested)
+        // Arm, Wrist
+        public static double[] kP = {4.2736, 4.7391}; // 4.2736 for arm from sysid was tested and it worked fine (V / rad)
+        public static double[] kI = {0, 0}; // (V / (rad * s) )
+        public static double[] kD = {0, 0.69517}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
+
+        // Arm, Wrist
+        public static double[] posToleranceRad = { .05, .05 }; // rad
+        public static double[] velToleranceRadPSec = { 0.5, 0.5 }; // rad/s
+
+        public static double[] offsetRad = { 4.02, -0.7 + Math.PI / 2 }; // rad
+
+        // needed to calculate feedforward values dynamically
+        public static final double ARM_MASS_KG = Units.lbsToKilograms(8.1);
+        public static final double ARM_LENGTH_METERS = Units.inchesToMeters(38.25);
+
+        // Distance from the arm motor to the center of mass of the  arm
+        public static final double COM_ARM_LENGTH_METERS = Units.inchesToMeters(13.23);
+        public static final double ROLLER_MASS_KG = Units.lbsToKilograms(14.04);
+
+        // distance of center of mass of roller to the WRIST motor
+        public static final double COM_ROLLER_LENGTH_METERS = Units.inchesToMeters(9.47);
+        public static final double g = 9.81;
+
+        public static final double V_PER_NM = 0.01423;
+
+        // TODO: Replace these values with Design's actual values
+        private static final double fiveDeg = Math.toRadians(5);
+        public static final double ARM_LOWER_LIMIT_RAD = -3.569 + fiveDeg;
+        public static final double ARM_UPPER_LIMIT_RAD = .36 - fiveDeg;
+        public static final double ARM_DISCONTINUITY_RAD = (ARM_LOWER_LIMIT_RAD + ARM_UPPER_LIMIT_RAD) / 2 - Math.PI;
+        public static final double WRIST_LOWER_LIMIT_RAD = -2.933 + fiveDeg;
+        public static final double WRIST_UPPER_LIMIT_RAD = 2.605
+         - fiveDeg;
+        public static final double WRIST_DISCONTINUITY_RAD = (WRIST_LOWER_LIMIT_RAD + WRIST_UPPER_LIMIT_RAD) / 2 - Math.PI;
+
+        // TODO: Determine actual max vel/accel
+        public static double[] MAX_FF_VEL = {1, 1}; // rad / s
+        public static double[] MAX_FF_ACCEL = {1, 1}; // rad / s^2
+        public static TrapezoidProfile.Constraints armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
+        public static TrapezoidProfile.Constraints wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
+
+        //#endregion
+
+        //#region Ports
+
+        public static final boolean[] inverted = { true, false };
+        public static final double rotationToRad = 2 * Math.PI;
+
+        public static final int armMotorPort = 17;
+        public static final int wristMotorPort = 19;
+
+        //#endregion
+
+        //#region Command Constants
+
+        public static final double wristStowPos = Units.degreesToRadians(135);
+        public static final double ARM_VERTICAL_POS = -Math.PI / 2;
+        public static final double MIN_WRIST_FOLD_POS = Math.PI / 4;
+
+        //#endregion
+
+    }
+
     public static final class GoalPos {
 
         //#region Goal Positions
@@ -234,7 +243,7 @@ public final class Constants {
         // 0 = "Front", 1 = "Back" (i.e. front refers to the side with the battery)
         // 0 = CUBE, 1 = CONE
         // GoalPos(arm, wrist)
-        
+
         // TODO : Get angles for front
         public static GoalPos[][] LOW = {
             { // front
@@ -329,11 +338,12 @@ public final class Constants {
         public static final Color cubePickupColor = new Color(50, 0, 200);
 
         public static final double distSensorDepthMM = 16;
-        public static final double gamePieceDetectDistanceIn = 30;
+        public static final double gamePieceDetectDistanceIn = 21;
 
         //#endregion
 
         //#region Ports
+
         public static final int rollerPort = 18;
         public static final int ledPort = 0;
 
@@ -366,8 +376,10 @@ public final class Constants {
     }
 
     public static final class OI {
+
         public static final double JOY_THRESH = 0.01;
         public static final double MIN_AXIS_TRIGGER_VALUE = 0.25;
+
         public static final class Driver {
             public static final int port = 0;
 
@@ -397,6 +409,8 @@ public final class Constants {
             public static final int intakeConePOV = 90;
             public static final int substationPickupPOV = 180;
             public static final int intakeCubePOV = 270;
+
+            public static final int stopRollerButton = Button.kBack.value;
 
             public static final Axis rollerIntakeCubeButton = Axis.kRightTrigger;
             public static final Axis rollerIntakeConeButton = Axis.kLeftTrigger;

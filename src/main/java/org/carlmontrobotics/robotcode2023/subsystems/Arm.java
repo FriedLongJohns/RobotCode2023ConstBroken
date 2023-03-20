@@ -64,8 +64,6 @@ public class Arm extends SubsystemBase {
         armPID.setTolerance(posToleranceRad[ARM], velToleranceRadPSec[ARM]);
         wristPID.setTolerance(posToleranceRad[WRIST], velToleranceRadPSec[WRIST]);
 
-        // SmartDashboard.putBoolean("Toggle", false);
-        // senb.update();
         SmartDashboard.putData("Arm", this);
 
         armProfileTimer.start();
@@ -79,10 +77,10 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
-        armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
 
         // TODO: REMOVE THIS WHEN PID CONSTANTS ARE DONE
+        wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
+        armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
         armPID.setP(kP[ARM]);
         armPID.setI(kI[ARM]);
         armPID.setD(kD[ARM]);
@@ -91,16 +89,15 @@ public class Arm extends SubsystemBase {
         wristPID.setD(kD[WRIST]);
 
         SmartDashboard.putNumber("MaxHoldingTorque", maxHoldingTorqueNM());
-
-        TrapezoidProfile.State armSetpoint = armProfile.calculate(armProfileTimer.get());
-        TrapezoidProfile.State wristSetpoint = wristProfile.calculate(wristProfileTimer.get());
-
-        driveArm(armSetpoint);
-        driveWrist(wristSetpoint);
         SmartDashboard.putNumber("V_PER_NM", getV_PER_NM());
         SmartDashboard.putNumber("COMDistance", getCoM().getNorm());
         SmartDashboard.putNumber("InternalArmVelocity", armRelEncoder.getVelocity());
+
+        driveArm(armProfile.calculate(armProfileTimer.get()));
+        driveWrist(wristProfile.calculate(wristProfileTimer.get()));
     }
+
+    //#region Drive Methods
 
     private void driveArm(TrapezoidProfile.State state) {
         double kgv = getKg();
@@ -136,6 +133,84 @@ public class Arm extends SubsystemBase {
         wristMotor.setVoltage(volts);
     }
 
+    public void setArmTarget(double targetPos, double targetVel) {
+        armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(targetPos, targetVel), armProfile.calculate(armProfileTimer.get()));
+        armProfileTimer.reset();
+
+        goalState[ARM].position = getArmClampedGoal(targetPos);
+        goalState[ARM].velocity = targetVel;
+    }
+
+    public void setWristTarget(double targetPos, double targetVel) {
+        wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(targetPos, targetVel), wristProfile.calculate(wristProfileTimer.get()));
+        wristProfileTimer.reset();
+
+        goalState[WRIST].position = getWristClampedGoal(targetPos);
+        goalState[WRIST].velocity = targetVel;
+    }
+
+    public void resetGoal() {
+        setArmTarget(getArmPos(), 0);
+        setWristTarget(getWristPos(), 0);
+        armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(getArmPos(), 0), new TrapezoidProfile.State(getArmPos(), 0));
+        wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(getWristPos(), 0), new TrapezoidProfile.State(getWristPos(), 0));
+    }
+
+    //#endregion
+
+    //#region Getters
+
+    public double getArmPos() {
+        return MathUtil.inputModulus(armEncoder.getPosition(), ARM_DISCONTINUITY_RAD,
+                ARM_DISCONTINUITY_RAD + 2 * Math.PI);
+    }
+
+    public double getArmVel() {
+        return armEncoder.getVelocity();
+    }
+
+    public double getWristPos() {
+        return MathUtil.inputModulus(wristEncoder.getPosition(), WRIST_DISCONTINUITY_RAD,
+                WRIST_DISCONTINUITY_RAD + 2 * Math.PI);
+    }
+
+    // Unbounded wrist position relative to ground
+    public double getWristPosRelativeToGround() {
+        return getArmPos() + wristEncoder.getPosition();
+    }
+
+    public double getWristVel() {
+        return wristEncoder.getVelocity();
+    }
+
+    public TrapezoidProfile.State getCurrentArmState() {
+        return new TrapezoidProfile.State(getArmPos(), getArmVel());
+    }
+
+    public TrapezoidProfile.State getCurrentWristState() {
+        return new TrapezoidProfile.State(getWristPos(), getWristVel());
+    }
+
+    public TrapezoidProfile.State getCurrentArmGoal() {
+        return goalState[ARM];
+    }
+
+    public TrapezoidProfile.State getCurrentWristGoal() {
+        return goalState[WRIST];
+    }
+
+    public boolean armAtSetpoint() {
+        return armPID.atSetpoint();
+    }
+
+    public boolean wristAtSetpoint() {
+        return wristPID.atSetpoint();
+    }
+
+    //#endregion
+
+    //#region Util Methods
+
     public double getArmClampedGoal(double goal) {
         return MathUtil.clamp(MathUtil.inputModulus(goal, ARM_DISCONTINUITY_RAD, ARM_DISCONTINUITY_RAD + 2 * Math.PI), ARM_LOWER_LIMIT_RAD, ARM_UPPER_LIMIT_RAD);
     }
@@ -144,7 +219,6 @@ public class Arm extends SubsystemBase {
         return MathUtil.clamp(MathUtil.inputModulus(goal, WRIST_DISCONTINUITY_RAD, WRIST_DISCONTINUITY_RAD + 2 * Math.PI), WRIST_LOWER_LIMIT_RAD, WRIST_UPPER_LIMIT_RAD);
     }
 
-    // distance from center of mass relative to joint holding arm
     public Translation2d getCoM() {
         Translation2d comOfArm = new Translation2d(COM_ARM_LENGTH_METERS, Rotation2d.fromRadians(getArmPos()))
                 .times(ARM_MASS_KG);
@@ -174,78 +248,12 @@ public class Arm extends SubsystemBase {
     }
 
     public double getKg() {
-        return V_PER_NM * maxHoldingTorqueNM();
+        return getV_PER_NM() * maxHoldingTorqueNM();
     }
 
-    public double getArmPos() {
-        return MathUtil.inputModulus(armEncoder.getPosition(), ARM_DISCONTINUITY_RAD,
-                ARM_DISCONTINUITY_RAD + 2 * Math.PI);
-    }
+    //#endregion
 
-    public double getArmVel() {
-        return armEncoder.getVelocity();
-    }
-
-    public double getWristPos() {
-        return MathUtil.inputModulus(wristEncoder.getPosition(), WRIST_DISCONTINUITY_RAD,
-                WRIST_DISCONTINUITY_RAD + 2 * Math.PI);
-    }
-
-    public double getWristVel() {
-        return wristEncoder.getVelocity();
-    }
-
-    public TrapezoidProfile.State getCurrentArmState() {
-        return new TrapezoidProfile.State(getArmPos(), getArmVel());
-    }
-
-    public TrapezoidProfile.State getCurrentWristState() {
-        return new TrapezoidProfile.State(getWristPos(), getWristVel());
-    }
-
-    // Unbounded wrist position relative to ground
-    public double getWristPosRelativeToGround() {
-        return getArmPos() + wristEncoder.getPosition();
-    }
-
-    public void setArmTarget(double targetPos, double targetVel) {
-        armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(targetPos, targetVel), armProfile.calculate(armProfileTimer.get()));
-        armProfileTimer.reset();
-
-        goalState[ARM].position = getArmClampedGoal(targetPos);
-        goalState[ARM].velocity = targetVel;
-    }
-
-    public void setWristTarget(double targetPos, double targetVel) {
-        wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(targetPos, targetVel), wristProfile.calculate(wristProfileTimer.get()));
-        wristProfileTimer.reset();
-
-        goalState[WRIST].position = getWristClampedGoal(targetPos);
-        goalState[WRIST].velocity = targetVel;
-    }
-
-    public TrapezoidProfile.State getCurrentArmGoal() {
-        return goalState[ARM];
-    }
-
-    public TrapezoidProfile.State getCurrentWristGoal() {
-        return goalState[WRIST];
-    }
-
-    public boolean armAtSetpoint() {
-        return armPID.atSetpoint();
-    }
-
-    public boolean wristAtSetpoint() {
-        return wristPID.atSetpoint();
-    }
-
-    public void resetGoal() {
-        setArmTarget(getArmPos(), 0);
-        setWristTarget(getWristPos(), 0);
-        armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(getArmPos(), 0), new TrapezoidProfile.State(getArmPos(), 0));
-        wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(getWristPos(), 0), new TrapezoidProfile.State(getWristPos(), 0));
-    }
+    //#region SmartDashboard Methods
 
     @Override
     public void initSendable(SendableBuilder builder) {
@@ -390,4 +398,7 @@ public class Arm extends SubsystemBase {
         kI[ARM] = SmartDashboard.getNumber("kI: Arm", kI[ARM]);
         kD[ARM] = SmartDashboard.getNumber("kD: Arm", kD[ARM]);
     }
+
+    //#endregion
+
 }
