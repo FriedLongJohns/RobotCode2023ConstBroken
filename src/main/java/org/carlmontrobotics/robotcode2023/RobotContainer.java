@@ -20,8 +20,10 @@ import org.carlmontrobotics.robotcode2023.subsystems.Roller;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController.Axis;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -39,7 +41,7 @@ public class RobotContainer {
     configureButtonBindingsDriver();
     configureButtonBindingsManipulator();
     arm.setDefaultCommand(new ArmTeleop(
-      arm, 
+      arm,
       () -> inputProcessing(getStickValue(manipulatorController, Axis.kLeftY)),
       () -> inputProcessing(getStickValue(manipulatorController, Axis.kRightY))
     ));
@@ -64,6 +66,7 @@ public class RobotContainer {
       .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeCubeButton)
       .onTrue(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor));
+    new JoystickButton(manipulatorController, 7).onTrue(new InstantCommand(() -> roller.setSpeed(0), roller));
   }
 
   public Command getAutonomousCommand() {

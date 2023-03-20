@@ -78,7 +78,8 @@ public class Roller extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
-        return getGamePieceDistanceIn() < gamePieceDetectDistanceIn;
+        return false;
+        // return getGamePieceDistanceIn() < gamePieceDetectDistanceIn;
     }
 
     public double getGamePieceDistanceIn() {

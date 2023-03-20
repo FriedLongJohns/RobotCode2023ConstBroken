@@ -7,6 +7,7 @@ import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.robotcode2023.Constants.GoalPos;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 
 import edu.wpi.first.math.MathUtil;
@@ -28,6 +29,7 @@ public class Arm extends SubsystemBase {
 
     private final CANSparkMax armMotor = MotorControllerFactory.createSparkMax(armMotorPort, MotorConfig.NEO);
     private final CANSparkMax wristMotor = MotorControllerFactory.createSparkMax(wristMotorPort, MotorConfig.NEO);
+    private final RelativeEncoder armRelEncoder = armMotor.getEncoder();
     private final SparkMaxAbsoluteEncoder armEncoder = armMotor
             .getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
     private final SparkMaxAbsoluteEncoder wristEncoder = wristMotor
@@ -97,6 +99,7 @@ public class Arm extends SubsystemBase {
         driveWrist(wristSetpoint);
         SmartDashboard.putNumber("V_PER_NM", getV_PER_NM());
         SmartDashboard.putNumber("COMDistance", getCoM().getNorm());
+        SmartDashboard.putNumber("InternalArmVelocity", armRelEncoder.getVelocity());
     }
 
     private void driveArm(TrapezoidProfile.State state) {
@@ -213,7 +216,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmTarget(double targetPos, double targetVel) {
-        armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(targetPos, targetVel), getCurrentArmState());
+        armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(targetPos, targetVel), armProfile.calculate(armProfileTimer.get()));
         armProfileTimer.reset();
 
         goalState[ARM].position = getArmClampedGoal(targetPos);
@@ -221,7 +224,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void setWristTarget(double targetPos, double targetVel) {
-        wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(targetPos, targetVel), getCurrentWristState());
+        wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(targetPos, targetVel), wristProfile.calculate(wristProfileTimer.get()));
         wristProfileTimer.reset();
 
         goalState[WRIST].position = getWristClampedGoal(targetPos);
@@ -236,9 +239,19 @@ public class Arm extends SubsystemBase {
         return goalState[WRIST];
     }
 
+    public boolean armAtSetpoint() {
+        return armPID.atSetpoint();
+    }
+
+    public boolean wristAtSetpoint() {
+        return wristPID.atSetpoint();
+    }
+
     public void resetGoal() {
         setArmTarget(getArmPos(), 0);
         setWristTarget(getWristPos(), 0);
+        armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(getArmPos(), 0), new TrapezoidProfile.State(getArmPos(), 0));
+        wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(getWristPos(), 0), new TrapezoidProfile.State(getWristPos(), 0));
     }
 
     @Override
