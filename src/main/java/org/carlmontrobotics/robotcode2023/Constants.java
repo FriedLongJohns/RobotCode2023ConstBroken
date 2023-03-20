@@ -95,6 +95,8 @@ public final class Constants {
         //#region Command Constants
 
         public static final double wristStowPos = Units.degreesToRadians(135);
+        public static final double ARM_VERTICAL_POS = -Math.PI / 2;
+        public static final double MIN_WRIST_FOLD_POS = Math.PI / 4;
 
         //#endregion
     }
