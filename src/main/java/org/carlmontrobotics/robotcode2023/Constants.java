@@ -174,9 +174,9 @@ public final class Constants {
         // PID
         // FIXME BOTH WRIST AND ARM NEED TO TEST PID (Wrist PID never tested)
         // Arm, Wrist
-        public static double[] kP = {4.2736, 4.7391}; // 4.2736 for arm from sysid was tested and it worked fine (V / rad)
+        public static double[] kP = {4.2736, 6}; // 4.2736 for arm from sysid was tested and it worked fine (V / rad)
         public static double[] kI = {0, 0}; // (V / (rad * s) )
-        public static double[] kD = {0, 0.69517}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
+        public static double[] kD = {0, 0}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
 
         // Arm, Wrist
         public static double[] posToleranceRad = { .05, .05 }; // rad
@@ -199,13 +199,12 @@ public final class Constants {
         public static final double V_PER_NM = 0.01423;
 
         // TODO: Replace these values with Design's actual values
-        private static final double fiveDeg = Math.toRadians(5);
-        public static final double ARM_LOWER_LIMIT_RAD = -3.569 + fiveDeg;
-        public static final double ARM_UPPER_LIMIT_RAD = .36 - fiveDeg;
+        private static final double softlimitZone = Math.toRadians(10);
+        public static final double ARM_LOWER_LIMIT_RAD = -3.569 + softlimitZone;
+        public static final double ARM_UPPER_LIMIT_RAD = .36 - softlimitZone;
         public static final double ARM_DISCONTINUITY_RAD = (ARM_LOWER_LIMIT_RAD + ARM_UPPER_LIMIT_RAD) / 2 - Math.PI;
-        public static final double WRIST_LOWER_LIMIT_RAD = -2.933 + fiveDeg;
-        public static final double WRIST_UPPER_LIMIT_RAD = 2.605
-         - fiveDeg;
+        public static final double WRIST_LOWER_LIMIT_RAD = -2.933 + softlimitZone;
+        public static final double WRIST_UPPER_LIMIT_RAD = 2.605 - softlimitZone;
         public static final double WRIST_DISCONTINUITY_RAD = (WRIST_LOWER_LIMIT_RAD + WRIST_UPPER_LIMIT_RAD) / 2 - Math.PI;
 
         // TODO: Determine actual max vel/accel
