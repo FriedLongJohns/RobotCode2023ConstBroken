@@ -403,6 +403,7 @@ public final class Constants {
             public static final int resetFieldOrientationButton = Button.kRightBumper.value;
             public static final int toggleFieldOrientedButton = Button.kStart.value;
             public static final Axis driveToPointButton = Axis.kRightTrigger;
+            public static final Axis alignForScoringButton = Axis.kLeftTrigger;
 
             public static final int rotateToFieldRelativeAngle0Deg = Button.kY.value;
             public static final int rotateToFieldRelativeAngle90Deg = Button.kB.value;

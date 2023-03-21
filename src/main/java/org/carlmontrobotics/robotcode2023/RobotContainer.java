@@ -87,7 +87,7 @@ public class RobotContainer {
     new JoystickButton(driverController, Driver.resetFieldOrientationButton).onTrue(new InstantCommand(drivetrain::resetFieldOrientation));
     new JoystickButton(driverController, Driver.toggleFieldOrientedButton).onTrue(new InstantCommand(() -> drivetrain.setFieldOriented(!drivetrain.getFieldOriented())));
     axisTrigger(driverController, Driver.driveToPointButton).onTrue(new InstantCommand(() -> drivetrain.testDriveToPoint()));
-    axisTrigger(driverController, Driver.driveToPointButton).onTrue(new DriveToPoint(roller::correctPosition, drivetrain));
+    axisTrigger(driverController, Driver.alignForScoringButton).onTrue(new DriveToPoint(roller::correctPosition, drivetrain));
 
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle0Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(0), drivetrain));
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle90Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(-90), drivetrain));
