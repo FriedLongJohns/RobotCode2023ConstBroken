@@ -138,10 +138,8 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
                 Timer.getFPGATimestamp() - lime.getNTEntry(limelightTransformForPoseEstimation.name().toLowerCase()).getDoubleArray(new double[7])[6] / 1000);
         }
 
-        // SmartDashboard.putNumber("Odometry X",
-        // odometry.getPoseMeters().getTranslation().getX());
-        // SmartDashboard.putNumber("Odometry Y",
-        // odometry.getPoseMeters().getTranslation().getY());;
+        SmartDashboard.putNumber("Odometry X", getPose().getTranslation().getX());
+        SmartDashboard.putNumber("Odometry Y", getPose().getTranslation().getY());;
         // SmartDashboard.putNumber("Pitch", gyro.getPitch());
         // SmartDashboard.putNumber("Roll", gyro.getRoll());
        // SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());

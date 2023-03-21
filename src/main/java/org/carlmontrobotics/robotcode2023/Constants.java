@@ -204,12 +204,12 @@ public final class Constants {
         public static final double ARM_JOINT_TOTAL_HEIGHT = Units.inchesToMeters(46.725);
 
         // TODO: Replace these values with Design's actual values
-        private static final double softLimitZone = Math.toRadians(10);
-        public static final double ARM_LOWER_LIMIT_RAD = -3.569 + softLimitZone;
-        public static final double ARM_UPPER_LIMIT_RAD = .36 - softLimitZone;
+        public static final double MARGIN_OF_ERROR = Math.toRadians(10);
+        public static final double ARM_LOWER_LIMIT_RAD = -3.569 + MARGIN_OF_ERROR;
+        public static final double ARM_UPPER_LIMIT_RAD = .36 - MARGIN_OF_ERROR;
         public static final double ARM_DISCONTINUITY_RAD = (ARM_LOWER_LIMIT_RAD + ARM_UPPER_LIMIT_RAD) / 2 - Math.PI;
-        public static final double WRIST_LOWER_LIMIT_RAD = -2.933 + softLimitZone;
-        public static final double WRIST_UPPER_LIMIT_RAD = 2.605 - softLimitZone;
+        public static final double WRIST_LOWER_LIMIT_RAD = -2.933 + MARGIN_OF_ERROR;
+        public static final double WRIST_UPPER_LIMIT_RAD = 2.605 - MARGIN_OF_ERROR;
         public static final double WRIST_DISCONTINUITY_RAD = (WRIST_LOWER_LIMIT_RAD + WRIST_UPPER_LIMIT_RAD) / 2 - Math.PI;
 
         // TODO: Determine actual max vel/accel

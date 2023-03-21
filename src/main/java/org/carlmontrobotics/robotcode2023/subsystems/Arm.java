@@ -135,18 +135,26 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmTarget(double targetPos, double targetVel) {
+        targetPos = getArmClampedGoal(targetPos);
+
+        if(positionForbidden(targetPos, getWristPos())) return;
+
         armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(targetPos, targetVel), armProfile.calculate(armProfileTimer.get()));
         armProfileTimer.reset();
 
-        goalState[ARM].position = getArmClampedGoal(targetPos);
+        goalState[ARM].position = targetPos;
         goalState[ARM].velocity = targetVel;
     }
 
     public void setWristTarget(double targetPos, double targetVel) {
+        targetPos = getWristClampedGoal(targetPos);
+
+        if(positionForbidden(getArmPos(), targetPos)) return;
+
         wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(targetPos, targetVel), wristProfile.calculate(wristProfileTimer.get()));
         wristProfileTimer.reset();
 
-        goalState[WRIST].position = getWristClampedGoal(targetPos);
+        goalState[WRIST].position = targetPos;
         goalState[WRIST].velocity = targetVel;
     }
 
@@ -201,11 +209,11 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean armAtSetpoint() {
-        return armPID.atSetpoint();
+        return armPID.atSetpoint() && armProfile.isFinished(armProfileTimer.get());
     }
 
     public boolean wristAtSetpoint() {
-        return wristPID.atSetpoint();
+        return wristPID.atSetpoint() && wristProfile.isFinished(wristProfileTimer.get());
     }
 
     //#endregion
@@ -255,7 +263,7 @@ public class Arm extends SubsystemBase {
     public boolean positionForbidden(double armPos, double wristPos) {
         Translation2d arm = new Translation2d(ARM_LENGTH_METERS, Rotation2d.fromRadians(armPos));
         Translation2d roller = new Translation2d(ROLLER_LENGTH_METERS, Rotation2d.fromRadians(armPos + wristPos));
-        
+
         Translation2d tip = arm.plus(roller);
 
         boolean horizontal = tip.getX() < DT_TOTAL_WIDTH / 2 && tip.getX() > -DT_TOTAL_WIDTH / 2;
