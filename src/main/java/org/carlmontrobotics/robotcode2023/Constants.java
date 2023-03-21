@@ -232,12 +232,12 @@ public final class Constants {
 
         //#region Command Constants
 
-        public static final double WRIST_STOW_POS = WRIST_UPPER_LIMIT_RAD;
-        public static final double WRIST_NEG_STOW_POS = WRIST_LOWER_LIMIT_RAD;
-        public static final double ARM_VERTICAL_POS = -Math.PI / 2;
-        public static final double MIN_WRIST_FOLD_POS = Math.PI / 4;
-        public static final int WRIST_CURRENT_LIMIT = 15; // amps
-        public static final double ROLLER_COM_CORRECTION = 14.48;
+        public static final double WRIST_STOW_POS_RAD = WRIST_UPPER_LIMIT_RAD;
+        public static final double WRIST_NEG_STOW_POS_RAD = WRIST_LOWER_LIMIT_RAD;
+        public static final double ARM_VERTICAL_POS_RAD = -Math.PI / 2;
+        public static final double MIN_WRIST_FOLD_POS_RAD = Math.PI / 4;
+        public static final int WRIST_CURRENT_LIMIT_AMP = 15;
+        public static final double ROLLER_COM_CORRECTION_RAD = Units.degreesToRadians(14.48);
 
         //#endregion
 

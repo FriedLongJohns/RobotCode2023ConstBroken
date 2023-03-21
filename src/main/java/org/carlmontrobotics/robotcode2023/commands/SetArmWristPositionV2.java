@@ -17,7 +17,7 @@ public class SetArmWristPositionV2 extends SequentialCommandGroup {
         super(
             new ConditionalCommand(
                 new SequentialCommandGroup(//Is wrist startpoint inside of the vertical drivetrain bounds? If yes, move arm to stow pos
-                    new InstantCommand(() -> arm.setArmTarget(ARM_VERTICAL_POS + Math.copySign(MIN_WRIST_FOLD_POS, arm.getArmPos() - ARM_VERTICAL_POS), 0)),
+                    new InstantCommand(() -> arm.setArmTarget(ARM_VERTICAL_POS_RAD + Math.copySign(MIN_WRIST_FOLD_POS_RAD, arm.getArmPos() - ARM_VERTICAL_POS_RAD), 0)),
                     new WaitUntilCommand(arm::armAtSetpoint)
                 ),
                 new InstantCommand(),//when false
@@ -25,19 +25,19 @@ public class SetArmWristPositionV2 extends SequentialCommandGroup {
             ),
 
             new ConditionalCommand(//move wrist to closest stow position
-                new InstantCommand(() -> arm.setWristTarget(WRIST_STOW_POS, 0)),//normal stow pos is closer
-                new InstantCommand(() -> arm.setWristTarget(WRIST_NEG_STOW_POS, 0)),//neg stow pos is closer
-                () -> arm.getWristPos() + ROLLER_COM_CORRECTION >= 0
+                new InstantCommand(() -> arm.setWristTarget(WRIST_STOW_POS_RAD, 0)),//normal stow pos is closer
+                new InstantCommand(() -> arm.setWristTarget(WRIST_NEG_STOW_POS_RAD, 0)),//neg stow pos is closer
+                () -> arm.getWristPos() + ROLLER_COM_CORRECTION_RAD >= 0
             ),
             new WaitUntilCommand(arm::wristAtSetpoint),
 
-            new InstantCommand(() -> arm.setArmTarget(ARM_VERTICAL_POS + Math.copySign(MIN_WRIST_FOLD_POS, armPos - ARM_VERTICAL_POS), 0)),
+            new InstantCommand(() -> arm.setArmTarget(ARM_VERTICAL_POS_RAD + Math.copySign(MIN_WRIST_FOLD_POS_RAD, armPos - ARM_VERTICAL_POS_RAD), 0)),
             new WaitUntilCommand(arm::armAtSetpoint),
 
             new ConditionalCommand(//move wrist to closest stow position
-                new InstantCommand(() -> arm.setWristTarget(WRIST_STOW_POS, 0)),//normal stow pos is closer
-                new InstantCommand(() -> arm.setWristTarget(WRIST_NEG_STOW_POS, 0)),//neg stow pos is closer
-                () -> wristPos + ROLLER_COM_CORRECTION >= 0
+                new InstantCommand(() -> arm.setWristTarget(WRIST_STOW_POS_RAD, 0)),//normal stow pos is closer
+                new InstantCommand(() -> arm.setWristTarget(WRIST_NEG_STOW_POS_RAD, 0)),//neg stow pos is closer
+                () -> wristPos + ROLLER_COM_CORRECTION_RAD >= 0
             ),
             new WaitUntilCommand(arm::wristAtSetpoint),
 
