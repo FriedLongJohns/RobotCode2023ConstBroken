@@ -194,6 +194,7 @@ public final class Constants {
 
         // distance of center of mass of roller to the WRIST motor
         public static final double COM_ROLLER_LENGTH_METERS = Units.inchesToMeters(9.47);
+        public static final double ROLLER_LENGTH_METERS = 19.14;
         public static final double g = 9.81;
 
         public static final double V_PER_NM = 0.01423;
@@ -227,10 +228,12 @@ public final class Constants {
 
         //#region Command Constants
 
-        public static final double wristStowPos = Units.degreesToRadians(135);
+        public static final double WRIST_STOW_POS = WRIST_UPPER_LIMIT_RAD;
+        public static final double WRIST_NEG_STOW_POS = WRIST_LOWER_LIMIT_RAD;
         public static final double ARM_VERTICAL_POS = -Math.PI / 2;
         public static final double MIN_WRIST_FOLD_POS = Math.PI / 4;
         public static final int WRIST_CURRENT_LIMIT = 15; // amps
+        public static final double ROLLER_COM_CORRECTION = 14.48;
 
         //#endregion
 
