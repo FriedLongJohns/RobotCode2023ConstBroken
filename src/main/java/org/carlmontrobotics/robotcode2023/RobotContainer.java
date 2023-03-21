@@ -5,6 +5,8 @@
 package org.carlmontrobotics.robotcode2023;
 
 import static org.carlmontrobotics.robotcode2023.Constants.OI.MIN_AXIS_TRIGGER_VALUE;
+import static org.carlmontrobotics.robotcode2023.Constants.Roller.CUBE;
+import static org.carlmontrobotics.robotcode2023.Constants.Roller.CONE;
 
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
@@ -35,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -83,11 +86,25 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsDriver() {
+    BooleanSupplier isCube = () -> axisTrigger(driverController, Driver.toggleCubeButton).getAsBoolean();
+
     new JoystickButton(driverController, Driver.chargeStationAlignButton).onTrue(new AlignChargingStation(drivetrain));
     new JoystickButton(driverController, Driver.resetFieldOrientationButton).onTrue(new InstantCommand(drivetrain::resetFieldOrientation));
     new JoystickButton(driverController, Driver.toggleFieldOrientedButton).onTrue(new InstantCommand(() -> drivetrain.setFieldOriented(!drivetrain.getFieldOriented())));
     axisTrigger(driverController, Driver.driveToPointButton).onTrue(new InstantCommand(() -> drivetrain.testDriveToPoint()));
-    axisTrigger(driverController, Driver.alignForScoringButton).onTrue(new DriveToPoint(roller::correctPosition, drivetrain));
+    axisTrigger(driverController, Driver.alignForScoringButton).onTrue(
+      new ConditionalCommand(
+        new SequentialCommandGroup(
+          new DriveToPoint(() -> roller.getNearestGoal(CUBE), drivetrain),
+          new DriveToPoint(roller::correctPosition, drivetrain)
+        ),
+        new SequentialCommandGroup(
+          new DriveToPoint(() -> roller.getNearestGoal(CONE), drivetrain),
+          new DriveToPoint(roller::correctPosition, drivetrain)
+        ),
+        isCube
+      )
+    );
 
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle0Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(0), drivetrain));
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle90Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(-90), drivetrain));
@@ -98,7 +115,6 @@ public class RobotContainer {
   private void configureButtonBindingsManipulator() {
     BooleanSupplier isCube = () -> new JoystickButton(manipulatorController, Manipulator.toggleCubeButton).getAsBoolean();
     BooleanSupplier isFront = () -> new JoystickButton(manipulatorController, Manipulator.toggleFrontButton).getAsBoolean();
-    //BooleanSupplier isStopped = () -> new JoystickButton(manipulatorController, Manipulator.stopRollerButton).getAsBoolean();
 
     new JoystickButton(manipulatorController, Manipulator.storePosButton).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
     new JoystickButton(manipulatorController, Manipulator.lowPosButton).onTrue(new SetArmWristGoalPreset(GoalPos.LOW, isCube, isFront, arm));

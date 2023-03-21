@@ -10,6 +10,8 @@ import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.Limelight.Transform;
 import org.carlmontrobotics.lib199.swerve.SwerveConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -388,6 +390,34 @@ public final class Constants {
         public static final double RIGHT_LIMIT = 14;
 
         //#endregion
+
+        //#region Scoring Positions
+        public static final boolean CUBE = false;
+        public static final boolean CONE = true;
+
+        public static Pose2d[] coneScoringPos = {
+            new Pose2d(1.85, 4.95, new Rotation2d(0)),
+            new Pose2d(1.85, 3.85, new Rotation2d(0)),
+            new Pose2d(1.85, 3.3, new Rotation2d(0)),
+            new Pose2d(1.85, 2.15, new Rotation2d(0)),
+            new Pose2d(1.85, 1.6, new Rotation2d(0)),
+            new Pose2d(1.85, 0.5, new Rotation2d(0)),
+            new Pose2d(14.70, 4.95, new Rotation2d(0)),
+            new Pose2d(14.70, 3.85, new Rotation2d(0)),
+            new Pose2d(14.70, 3.3, new Rotation2d(0)),
+            new Pose2d(14.70, 2.15, new Rotation2d(0)),
+            new Pose2d(14.70, 1.6, new Rotation2d(0)),
+            new Pose2d(14.70, 0.5, new Rotation2d(0))
+        };
+        public static Pose2d[] cubeScoringPos = {
+            new Pose2d(1.85, 1.05, new Rotation2d(0)),
+            new Pose2d(1.85, 2.75, new Rotation2d(0)),
+            new Pose2d(1.85, 4.4, new Rotation2d(0)),
+            new Pose2d(14.70, 1.05, new Rotation2d(0)),
+            new Pose2d(14.70, 2.75, new Rotation2d(0)),
+            new Pose2d(14.70, 4.4, new Rotation2d(0)),
+        };
+        //#endregion
     }
 
     public static final class OI {
@@ -403,6 +433,8 @@ public final class Constants {
             public static final int resetFieldOrientationButton = Button.kRightBumper.value;
             public static final int toggleFieldOrientedButton = Button.kStart.value;
             public static final Axis driveToPointButton = Axis.kRightTrigger;
+            // will comment out above once testing done
+            public static final Axis toggleCubeButton = Axis.kRightTrigger;
             public static final Axis alignForScoringButton = Axis.kLeftTrigger;
 
             public static final int rotateToFieldRelativeAngle0Deg = Button.kY.value;
