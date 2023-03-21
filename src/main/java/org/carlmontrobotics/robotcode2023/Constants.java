@@ -34,8 +34,8 @@ public final class Constants {
 
         //#region Subsystem Constants
 
-        public static final double wheelBase = Units.inchesToMeters(20);
-        public static final double trackWidth = Units.inchesToMeters(21);
+        public static final double wheelBase = Units.inchesToMeters(19.75);
+        public static final double trackWidth = Units.inchesToMeters(28.75);
         // "swerveRadius" is the distance from the center of the robot to one of the modules
         public static final double swerveRadius = Math.sqrt(Math.pow(wheelBase / 2, 2) + Math.pow(trackWidth / 2, 2));
         // The gearing reduction from the drive motor controller to the wheels
@@ -62,7 +62,7 @@ public final class Constants {
         // Determine correct turnZero constants (FL, FR, BL, BR)
         public static final double[] turnZero = RobotBase.isSimulation() ?
             new double[] {0, 0, 0, 0} :
-            new double[] {135.616, -7.822, 25.137, -39.199};
+            new double[] {85.7812, 85.0782 , -96.9433, -162.9492};
 
         // kP, kI, and kD constants for turn motor controllers in the order of front-left, front-right, back-left, back-right.
         // Determine correct turn PID constants
@@ -82,8 +82,8 @@ public final class Constants {
         public static final double[] drivekP = {1.82, 1.815, 2.015, 1.915};
         public static final double[] drivekI = {0, 0, 0, 0};
         public static final double[] drivekD = {0, 0, 0, 0};
-        public static final boolean[] driveInversion = {true, true, true, true};
-        public static final boolean[] turnInversion = {false, false, false, false};
+        public static final boolean[] driveInversion = {false, false, false, false};
+        public static final boolean[] turnInversion = {true, true, true, true};
 
         public static final double[] kForwardVolts = {0.129, 0.108, 0.14, 0.125};
         public static final double[] kBackwardVolts = {0.115, 0.169, 0.13, 0.148};
@@ -118,15 +118,15 @@ public final class Constants {
 
         //#region Ports
 
-        public static final int driveFrontLeftPort = 1;
-        public static final int driveFrontRightPort = 16;
-        public static final int driveBackLeftPort = 3;
-        public static final int driveBackRightPort = 14;
+        public static final int driveFrontLeftPort = 8;
+        public static final int driveFrontRightPort = 13;
+        public static final int driveBackLeftPort = 5;
+        public static final int driveBackRightPort = 11;
 
-        public static final int turnFrontLeftPort = 2;
-        public static final int turnFrontRightPort = 15;
-        public static final int turnBackLeftPort = 4;
-        public static final int turnBackRightPort = 13;
+        public static final int turnFrontLeftPort = 7;
+        public static final int turnFrontRightPort = 14;
+        public static final int turnBackLeftPort = 6;
+        public static final int turnBackRightPort = 12;
 
         public static final int canCoderPortFL = 1;
         public static final int canCoderPortFR = 2;
