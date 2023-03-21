@@ -230,6 +230,7 @@ public final class Constants {
         public static final double wristStowPos = Units.degreesToRadians(135);
         public static final double ARM_VERTICAL_POS = -Math.PI / 2;
         public static final double MIN_WRIST_FOLD_POS = Math.PI / 4;
+        public static final int WRIST_CURRENT_LIMIT = 15; // amps
 
         //#endregion
 

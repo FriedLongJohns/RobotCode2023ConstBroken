@@ -71,6 +71,7 @@ public class Arm extends SubsystemBase {
 
         setArmTarget(goalState[ARM].position, 0);
         setWristTarget(goalState[WRIST].position, 0);
+        wristMotor.setSmartCurrentLimit(WRIST_CURRENT_LIMIT);
     }
 
     @Override

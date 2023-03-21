@@ -110,13 +110,13 @@ public class RobotContainer {
     axisTrigger(manipulatorController, Manipulator.rollerIntakeCubeButton)
       .onTrue(new ConditionalCommand(
         new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor), 
-        new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.conePickupColor), 
+        new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor), 
         isCube
       ));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
       .onTrue(new ConditionalCommand(
-        new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.cubePickupColor), 
-        new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.conePickupColor), 
+        new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor), 
+        new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor), 
         isCube
       ));
       new JoystickButton(manipulatorController, Manipulator.stopRollerButton).onTrue(new InstantCommand(() -> roller.setSpeed(0), roller));
