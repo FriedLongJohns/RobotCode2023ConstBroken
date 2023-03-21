@@ -32,7 +32,7 @@ public class DriveToPoint extends SequentialCommandGroup {
                         ),
                         PathPoint.fromCurrentHolonomicState(
                             targetPose,
-                            new ChassisSpeeds(0, 0, 0)
+                            new ChassisSpeeds()
                         )
                     ),
                     drivetrain,
@@ -40,7 +40,6 @@ public class DriveToPoint extends SequentialCommandGroup {
                 ).getPathCommand(true, true)
             ),
             new CorrectToPoint(targetPose, drivetrain)
-
         );
         addRequirements(drivetrain);
     }

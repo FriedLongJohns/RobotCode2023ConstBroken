@@ -6,17 +6,20 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 import org.carlmontrobotics.MotorConfig;
+import com.kauailabs.navx.frc.AHRS;
+
 import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.path.SwerveDriveInterface;
 import org.carlmontrobotics.lib199.swerve.SwerveModule;
 
-import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import org.carlmontrobotics.robotcode2023.commands.DriveToPoint;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -27,6 +30,7 @@ import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
@@ -39,12 +43,15 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     private boolean fieldOriented = true;
     private double fieldOffset = 0;
 
+    private double testDistX = 0;
+    private double testDistY = 0;
+    private double testRadTheta = 0;
+
     public final float initPitch;
     public final float initRoll;
 
     public Drivetrain(Limelight lime) {
         this.lime = lime;
-
         // Calibrate Gyro
         {
             gyro.calibrate();
@@ -120,9 +127,9 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
             for(CANSparkMax driveMotor : driveMotors) driveMotor.setSmartCurrentLimit(80);
         }
 
-        SmartDashboard.putNumber("Target X", 0);
-        SmartDashboard.putNumber("Target Y", 0); 
-        SmartDashboard.putNumber("Target Deg", 0);
+        SmartDashboard.putNumber("testDistX", testDistX);
+        SmartDashboard.putNumber("testDistY", testDistY); 
+        SmartDashboard.putNumber("testRadTheta", testRadTheta);
         SmartDashboard.putNumber("kpTheta", thetaPIDController[0]);
         odometry = new SwerveDrivePoseEstimator(kinematics, Rotation2d.fromDegrees(getHeading()), getModulePositions(), new Pose2d());
     }
@@ -345,6 +352,34 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
             yPIDController,
             thetaPIDController
         };
+    }
+
+    public void testDriveToPoint(){
+        //using smartDashboard determined values, robot first drives X poseX determined meters, then drives Y poseY determined meters
+        Pose2d position = getPose();
+        //goes DistY 0 degrees from original angle
+        Translation2d xTrans = new Translation2d(testDistX, position.getRotation());
+        Transform2d transformX = new Transform2d(xTrans, new Rotation2d(0));
+        Pose2d poseX = position.plus(transformX);
+        CommandScheduler.getInstance().schedule(new DriveToPoint(poseX, this));
+
+        Pose2d position2 = getPose();
+        //goes DistY 90 degrees from original angle
+        Translation2d yTrans = new Translation2d(testDistY, position2.getRotation());
+        Transform2d transformY = new Transform2d(yTrans, new Rotation2d(Math.PI/2));
+        Pose2d poseY = position2.plus(transformY);
+        CommandScheduler.getInstance().schedule(new DriveToPoint(poseY, this));
+
+        // using smartDashboard, robot drive directly to (x, y)
+        // Pose2d position = getPose();
+        // Translation2d xTrans = new Translation2d(testDistX, position.getRotation());
+        // Transform2d transformX = new Transform2d(xTrans, new Rotation2d(0));
+        // Pose2d pose = position.plus(transformX);
+        // Translation2d yTrans = new Translation2d(testDistY, position.getRotation());
+        // Transform2d transformY = new Transform2d(yTrans, new Rotation2d(Math.PI/2));
+        // pose = position.plus(transformY);
+        // CommandScheduler.getInstance().schedule(new DriveToPoint(pose, this));
+
     }
 
     //#endregion

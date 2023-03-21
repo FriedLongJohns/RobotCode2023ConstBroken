@@ -8,11 +8,16 @@ import java.awt.Color;
 
 import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
+
 import static org.carlmontrobotics.robotcode2023.Constants.Roller.*;
 
 import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -30,6 +35,7 @@ public class Roller extends SubsystemBase {
     private final AddressableLED led = new AddressableLED(ledPort);
     private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(ledLength);
     private boolean hadGamePiece = false;
+    private Drivetrain dt;
 
     private Command resetColorCommand = new SequentialCommandGroup(
             new WaitCommand(ledDefaultColorRestoreTime),
@@ -39,14 +45,11 @@ public class Roller extends SubsystemBase {
         };
     };
 
-    public Roller() {
+    public Roller(Drivetrain dt) {
         led.setLength(ledBuffer.getLength());
         setLedColor(defaultColor);
-        //SmartDashboard.putData(this);
-
-        // TODO: Get proper values for the speeds and timings. For future pull requests,
-        // do not merge if this is not deleted or speeds/timings have not been determined
-        
+        // SmartDashboard.putData(this);
+        this.dt = dt;
         led.start();
     }
 
@@ -78,7 +81,7 @@ public class Roller extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
-        //return false;
+        // return false;
         return getGamePieceDistanceIn() < gamePieceDetectDistanceIn;
     }
 
@@ -87,6 +90,30 @@ public class Roller extends SubsystemBase {
                                                                                 * The sensor measures from the back of
                                                                                 * the sensor
                                                                                 */) / 1000 /* Convert mm to m */);
+    }
+
+    // This assumes robot's middle is exactly in line with the poles where you place
+    // the cones
+    // outtake side is the same side as the limelight
+    public Pose2d correctPosition() {
+        Pose2d initialPose = dt.getPose();
+        double distanceToMove = 0;
+        double dist = getGamePieceDistanceIn();
+        Translation2d translation = new Translation2d(0, 0);
+        if (dist < LEFT_LIMIT) {
+            // need to shift robot right
+            distanceToMove = ROLLER_WIDTH / 2 - dist;
+            translation = new Translation2d(distanceToMove,
+                    initialPose.getRotation().plus(new Rotation2d(Math.PI / 2)));
+
+        } else if (dist > RIGHT_LIMIT) {
+            // need to shift robot left
+            distanceToMove = dist - ROLLER_WIDTH / 2;
+            translation = new Translation2d(distanceToMove,
+                    initialPose.getRotation().plus(new Rotation2d(-Math.PI / 2)));
+        }
+        Transform2d transform = new Transform2d(translation, new Rotation2d(0));
+        return initialPose.plus(transform);
     }
 
     public void putRollerConstsOnSmartDashboard() {
