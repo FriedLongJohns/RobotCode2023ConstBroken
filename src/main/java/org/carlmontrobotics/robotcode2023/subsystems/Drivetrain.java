@@ -133,9 +133,12 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
         // Update the odometry with limelight
         if(lime != null && lime.hasTarget()) {
-            odometry.addVisionMeasurement(
-                lime.getTransform(limelightTransformForPoseEstimation).toPose2d(),
-                Timer.getFPGATimestamp() - lime.getNTEntry(limelightTransformForPoseEstimation.name().toLowerCase()).getDoubleArray(new double[7])[6] / 1000);
+            Pose2d visionPose = lime.getTransform(limelightTransformForPoseEstimation).toPose2d();
+            if(visionPose.getTranslation().getDistance(odometry.getEstimatedPosition().getTranslation()) <= 1) {
+                odometry.addVisionMeasurement(
+                    visionPose,
+                    Timer.getFPGATimestamp() - lime.getNTEntry(limelightTransformForPoseEstimation.name().toLowerCase()).getDoubleArray(new double[7])[6] / 1000);
+            }
         }
 
         SmartDashboard.putNumber("Odometry X", getPose().getTranslation().getX());
