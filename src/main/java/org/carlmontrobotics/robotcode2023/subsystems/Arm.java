@@ -242,7 +242,7 @@ public class Arm extends SubsystemBase {
         return (ARM_MASS_KG + ROLLER_MASS_KG) * g * getCoM().getNorm();
     }
 
-    public double getV_PER_NM() {
+    public static double getV_PER_NM() {
         double kg = kG[ARM];
         double phi = 2.638;
         double Ma = ARM_MASS_KG;
@@ -260,11 +260,16 @@ public class Arm extends SubsystemBase {
         return getV_PER_NM() * maxHoldingTorqueNM();
     }
 
-    public boolean positionForbidden(double armPos, double wristPos) {
+    public static Translation2d getWristTipPosition(double armPos, double wristPos) {
         Translation2d arm = new Translation2d(ARM_LENGTH_METERS, Rotation2d.fromRadians(armPos));
-        Translation2d roller = new Translation2d(ROLLER_LENGTH_METERS, Rotation2d.fromRadians(armPos + wristPos));
+        Translation2d roller = new Translation2d(ROLLER_LENGTH_METERS, Rotation2d.fromRadians(armPos + wristPos + ROLLER_COM_CORRECTION_RAD));
 
-        Translation2d tip = arm.plus(roller);
+        return arm.plus(roller);
+    }
+
+    public static boolean positionForbidden(double armPos, double wristPos) {
+
+        Translation2d tip = getWristTipPosition(armPos, wristPos);
 
         boolean horizontal = tip.getX() < DT_TOTAL_WIDTH / 2 && tip.getX() > -DT_TOTAL_WIDTH / 2;
         boolean vertical = tip.getY() > -ARM_JOINT_TOTAL_HEIGHT && tip.getY() < (-ARM_JOINT_TOTAL_HEIGHT + SAFE_HEIGHT);
