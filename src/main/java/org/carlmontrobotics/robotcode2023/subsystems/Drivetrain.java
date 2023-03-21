@@ -120,6 +120,9 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
             for(CANSparkMax driveMotor : driveMotors) driveMotor.setSmartCurrentLimit(80);
         }
 
+        SmartDashboard.putNumber("Target X", 0);
+        SmartDashboard.putNumber("Target Y", 0); 
+        SmartDashboard.putNumber("Target Deg", 0);
         SmartDashboard.putNumber("kpTheta", thetaPIDController[0]);
         odometry = new SwerveDrivePoseEstimator(kinematics, Rotation2d.fromDegrees(getHeading()), getModulePositions(), new Pose2d());
     }
@@ -138,13 +141,13 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
                 Timer.getFPGATimestamp() - lime.getNTEntry(limelightTransformForPoseEstimation.name().toLowerCase()).getDoubleArray(new double[7])[6] / 1000);
         }
 
-        // SmartDashboard.putNumber("Odometry X",
-        // odometry.getPoseMeters().getTranslation().getX());
-        // SmartDashboard.putNumber("Odometry Y",
-        // odometry.getPoseMeters().getTranslation().getY());;
+         SmartDashboard.putNumber("Odometry X",
+         odometry.getEstimatedPosition().getTranslation().getX());
+         SmartDashboard.putNumber("Odometry Y",
+         odometry.getEstimatedPosition().getTranslation().getY());
         // SmartDashboard.putNumber("Pitch", gyro.getPitch());
         // SmartDashboard.putNumber("Roll", gyro.getRoll());
-       // SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
+       SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
         SmartDashboard.putNumber("Robot Heading", getHeading());
         // SmartDashboard.putNumber("AdjRoll", gyro.getPitch() - initPitch);
         // SmartDashboard.putNumber("AdjPitch", gyro.getRoll() - initRoll);
