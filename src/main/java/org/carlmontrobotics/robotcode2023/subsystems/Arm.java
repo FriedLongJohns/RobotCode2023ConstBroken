@@ -252,6 +252,19 @@ public class Arm extends SubsystemBase {
         return getV_PER_NM() * maxHoldingTorqueNM();
     }
 
+    public boolean positionForbidden(double armPos, double wristPos) {
+        Translation2d arm = new Translation2d(ARM_LENGTH_METERS, Rotation2d.fromRadians(armPos));
+        Translation2d roller = new Translation2d(ROLLER_LENGTH_METERS, Rotation2d.fromRadians(armPos + wristPos));
+        
+        Translation2d tip = arm.plus(roller);
+
+        boolean horizontal = tip.getX() < DT_TOTAL_WIDTH / 2 && tip.getX() > -DT_TOTAL_WIDTH / 2;
+        boolean vertical = tip.getY() > -ARM_JOINT_TOTAL_HEIGHT && tip.getY() < (-ARM_JOINT_TOTAL_HEIGHT + SAFE_HEIGHT);
+        boolean ground = tip.getY() < -ARM_JOINT_TOTAL_HEIGHT;
+
+        return horizontal && vertical || ground;
+    }
+
     //#endregion
 
     //#region SmartDashboard Methods

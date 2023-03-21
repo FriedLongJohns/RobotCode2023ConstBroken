@@ -194,10 +194,14 @@ public final class Constants {
 
         // distance of center of mass of roller to the WRIST motor
         public static final double COM_ROLLER_LENGTH_METERS = Units.inchesToMeters(9.47);
-        public static final double ROLLER_LENGTH_METERS = 19.14;
+        public static final double ROLLER_LENGTH_METERS = Units.inchesToMeters(19.14);
         public static final double g = 9.81;
 
         public static final double V_PER_NM = 0.01423;
+
+        public static final double DT_TOTAL_WIDTH = 0.7874;
+        public static final double SAFE_HEIGHT = 0.585;
+        public static final double ARM_JOINT_TOTAL_HEIGHT = Units.inchesToMeters(46.725);
 
         // TODO: Replace these values with Design's actual values
         private static final double softLimitZone = Math.toRadians(10);
