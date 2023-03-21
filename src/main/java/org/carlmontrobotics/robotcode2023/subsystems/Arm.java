@@ -262,7 +262,7 @@ public class Arm extends SubsystemBase {
 
     public static Translation2d getWristTipPosition(double armPos, double wristPos) {
         Translation2d arm = new Translation2d(ARM_LENGTH_METERS, Rotation2d.fromRadians(armPos));
-        Translation2d roller = new Translation2d(ROLLER_LENGTH_METERS, Rotation2d.fromRadians(armPos + wristPos + ROLLER_COM_CORRECTION));
+        Translation2d roller = new Translation2d(ROLLER_LENGTH_METERS, Rotation2d.fromRadians(armPos + wristPos + ROLLER_COM_CORRECTION_RAD));
 
         return arm.plus(roller);
     }
