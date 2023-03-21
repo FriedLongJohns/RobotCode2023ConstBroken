@@ -42,6 +42,7 @@ public class RunRoller extends CommandBase {
 
     @Override
     public boolean isFinished() {
+        
         double time = timer.get();
 
         if (roller.hasGamePiece() == mode.intake) {
@@ -50,6 +51,8 @@ public class RunRoller extends CommandBase {
         SmartDashboard.putNumber("Time Target", mode.time);
         SmartDashboard.putNumber("SetRoller Time Elapsed (s)", time);
 
+        // if (true)
+        //     return false;
         return roller.hasGamePiece() == mode.intake && time > mode.time;
     }
 }

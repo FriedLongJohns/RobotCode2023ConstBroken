@@ -90,6 +90,8 @@ public class Arm extends SubsystemBase {
         SmartDashboard.putNumber("V_PER_NM", getV_PER_NM());
         SmartDashboard.putNumber("COMDistance", getCoM().getNorm());
         SmartDashboard.putNumber("InternalArmVelocity", armRelEncoder.getVelocity());
+        SmartDashboard.putNumber("Arm Current", armMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Wrist Current", wristMotor.getOutputCurrent());
 
         driveArm(armProfile.calculate(armProfileTimer.get()));
         driveWrist(wristProfile.calculate(wristProfileTimer.get()));

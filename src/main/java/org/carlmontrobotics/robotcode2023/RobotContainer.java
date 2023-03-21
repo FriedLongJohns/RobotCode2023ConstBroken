@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -94,6 +95,7 @@ public class RobotContainer {
   private void configureButtonBindingsManipulator() {
     BooleanSupplier isCube = () -> new JoystickButton(manipulatorController, Manipulator.toggleCubeButton).getAsBoolean();
     BooleanSupplier isFront = () -> new JoystickButton(manipulatorController, Manipulator.toggleFrontButton).getAsBoolean();
+    //BooleanSupplier isStopped = () -> new JoystickButton(manipulatorController, Manipulator.stopRollerButton).getAsBoolean();
 
     new JoystickButton(manipulatorController, Manipulator.storePosButton).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
     new JoystickButton(manipulatorController, Manipulator.lowPosButton).onTrue(new SetArmWristGoalPreset(GoalPos.LOW, isCube, isFront, arm));
@@ -103,14 +105,21 @@ public class RobotContainer {
     new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm));
     new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
     new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, () -> true, isFront, arm));
-
-    axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
-      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
-    axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
-      .onTrue(new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.conePickupColor));
+    // axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
+    //   .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeCubeButton)
-      .onTrue(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor));
-    new JoystickButton(manipulatorController, Manipulator.stopRollerButton).onTrue(new InstantCommand(() -> roller.setSpeed(0), roller));
+      .onTrue(new ConditionalCommand(
+        new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor), 
+        new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.conePickupColor), 
+        isCube
+      ));
+    axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
+      .onTrue(new ConditionalCommand(
+        new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.cubePickupColor), 
+        new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.conePickupColor), 
+        isCube
+      ));
+      new JoystickButton(manipulatorController, Manipulator.stopRollerButton).onTrue(new InstantCommand(() -> roller.setSpeed(0), roller));
   }
 
   public Command getAutonomousCommand() {
