@@ -21,7 +21,7 @@ public class SetArmWristPositionV2 extends SequentialCommandGroup {
                     new WaitUntilCommand(arm::armAtSetpoint)
                 ),
                 new InstantCommand(),//when false
-                () -> isWristOutsideRobot(arm.getArmPos(), arm.getWristPosRelativeToGround())
+                () -> isWristOutsideRobot(arm.getArmPos(), arm.getWristPos())
             ),
 
             new ConditionalCommand(//move wrist to closest stow position
@@ -61,15 +61,13 @@ public class SetArmWristPositionV2 extends SequentialCommandGroup {
                     new InstantCommand(() -> arm.setWristTarget(wristPos, 0)),
                     new WaitUntilCommand(arm::wristAtSetpoint)
                 ),
-                () -> isWristOutsideRobot(armPos, armPos + wristPos)
+                () -> isWristOutsideRobot(armPos, wristPos)
             )
         );
     }
 
-    public static boolean isWristOutsideRobot(double armPos, double wristPosRelativeToGround) {
-        Translation2d armTPos = new Translation2d(ARM_LENGTH_METERS, armPos);
-        Translation2d wristTPos = new Translation2d(ROLLER_LENGTH_METERS, wristPosRelativeToGround);
-        Translation2d wristTip = armTPos.plus(wristTPos);
+    public static boolean isWristOutsideRobot(double armPos, double wristPos) {
+        Translation2d wristTip = Arm.getWristTipPosition(armPos, wristPos);
         double driveTrainHalfLen = Units.inchesToMeters(31)/2;
 
         return Math.abs(wristTip.getX())>driveTrainHalfLen;
