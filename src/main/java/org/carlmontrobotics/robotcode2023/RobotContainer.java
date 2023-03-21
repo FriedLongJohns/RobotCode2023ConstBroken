@@ -17,6 +17,7 @@ import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.commands.AlignChargingStation;
 import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
+import org.carlmontrobotics.robotcode2023.commands.DriveToPoint;
 import org.carlmontrobotics.robotcode2023.commands.RotateToFieldRelativeAngle;
 import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.commands.SetArmWristGoalPreset;
@@ -86,6 +87,7 @@ public class RobotContainer {
     new JoystickButton(driverController, Driver.resetFieldOrientationButton).onTrue(new InstantCommand(drivetrain::resetFieldOrientation));
     new JoystickButton(driverController, Driver.toggleFieldOrientedButton).onTrue(new InstantCommand(() -> drivetrain.setFieldOriented(!drivetrain.getFieldOriented())));
     axisTrigger(driverController, Driver.driveToPointButton).onTrue(new InstantCommand(() -> drivetrain.testDriveToPoint()));
+    axisTrigger(driverController, Driver.driveToPointButton).onTrue(new DriveToPoint(roller::correctPosition, drivetrain));
 
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle0Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(0), drivetrain));
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle90Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(-90), drivetrain));

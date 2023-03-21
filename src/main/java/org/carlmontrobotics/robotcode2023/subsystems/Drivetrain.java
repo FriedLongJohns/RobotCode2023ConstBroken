@@ -354,6 +354,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         };
     }
 
+    // REMOVE THIS WHEN MERGING TO MASTER, ONLY USED TO TEST DRIVE TO POINT
     public void testDriveToPoint(){
         //using smartDashboard determined values, robot first drives X poseX determined meters, then drives Y poseY determined meters
         Pose2d position = getPose();
@@ -361,14 +362,14 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         Translation2d xTrans = new Translation2d(testDistX, position.getRotation());
         Transform2d transformX = new Transform2d(xTrans, new Rotation2d(0));
         Pose2d poseX = position.plus(transformX);
-        CommandScheduler.getInstance().schedule(new DriveToPoint(poseX, this));
+        CommandScheduler.getInstance().schedule(new DriveToPoint(()->poseX, this));
 
         Pose2d position2 = getPose();
         //goes DistY 90 degrees from original angle
         Translation2d yTrans = new Translation2d(testDistY, position2.getRotation());
         Transform2d transformY = new Transform2d(yTrans, new Rotation2d(Math.PI/2));
         Pose2d poseY = position2.plus(transformY);
-        CommandScheduler.getInstance().schedule(new DriveToPoint(poseY, this));
+        CommandScheduler.getInstance().schedule(new DriveToPoint(()->poseY, this));
 
         // using smartDashboard, robot drive directly to (x, y)
         // Pose2d position = getPose();
@@ -378,7 +379,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // Translation2d yTrans = new Translation2d(testDistY, position.getRotation());
         // Transform2d transformY = new Transform2d(yTrans, new Rotation2d(Math.PI/2));
         // pose = position.plus(transformY);
-        // CommandScheduler.getInstance().schedule(new DriveToPoint(pose, this));
+        // CommandScheduler.getInstance().schedule(new DriveToPoint(()->pose, this));
 
     }
 
