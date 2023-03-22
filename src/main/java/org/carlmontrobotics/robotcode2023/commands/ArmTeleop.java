@@ -50,8 +50,14 @@ public class ArmTeleop extends CommandBase {
     goalArmRad = MathUtil.clamp(goalArmRad, ARM_LOWER_LIMIT_RAD, ARM_UPPER_LIMIT_RAD);
     goalWristRad = MathUtil.clamp(goalWristRad, WRIST_LOWER_LIMIT_RAD, WRIST_UPPER_LIMIT_RAD);
 
-    armSubsystem.setArmTarget(goalArmRad, armSubsystem.getCurrentArmGoal().velocity);
-    armSubsystem.setWristTarget(goalWristRad, armSubsystem.getCurrentWristGoal().velocity);
+    // Clamp the goal to within a certain range of the current position to prevent "lag"
+    goalArmRad = MathUtil.clamp(goalArmRad, armSubsystem.getArmPos() - ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD, armSubsystem.getArmPos() + ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD);
+    goalWristRad = MathUtil.clamp(goalWristRad, armSubsystem.getWristPos() - ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD, armSubsystem.getWristPos() + ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD);
+
+    if(speeds[0] != 0 || speeds[1] != 0) {
+      armSubsystem.setArmTarget(goalArmRad, armSubsystem.getCurrentArmGoal().velocity);
+      armSubsystem.setWristTarget(goalWristRad, armSubsystem.getCurrentWristGoal().velocity);
+    }
 
     lastTime = currTime;
   }
