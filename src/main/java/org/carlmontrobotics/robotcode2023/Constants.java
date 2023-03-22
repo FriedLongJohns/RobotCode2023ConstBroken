@@ -213,7 +213,7 @@ public final class Constants {
         public static final double WRIST_DISCONTINUITY_RAD = (WRIST_LOWER_LIMIT_RAD + WRIST_UPPER_LIMIT_RAD) / 2 - Math.PI;
 
         // TODO: Determine actual max vel/accel
-        public static double[] MAX_FF_VEL = {1, 1}; // rad / s
+        public static double[] MAX_FF_VEL = {1.5, 1.5}; // rad / s
         public static double[] MAX_FF_ACCEL = {1, 1}; // rad / s^2
         public static TrapezoidProfile.Constraints armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
         public static TrapezoidProfile.Constraints wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
@@ -238,7 +238,7 @@ public final class Constants {
         public static final double MIN_WRIST_FOLD_POS_RAD = Math.PI / 4;
         public static final int WRIST_CURRENT_LIMIT_AMP = 15;
         public static final double ROLLER_COM_CORRECTION_RAD = Units.degreesToRadians(14.48);
-        public static final double ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD = Units.degreesToRadians(5);
+        public static final double ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD = Units.degreesToRadians(10);
 
         //#endregion
 
