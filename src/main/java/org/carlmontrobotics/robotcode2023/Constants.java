@@ -238,6 +238,7 @@ public final class Constants {
         public static final double MIN_WRIST_FOLD_POS_RAD = Math.PI / 4;
         public static final int WRIST_CURRENT_LIMIT_AMP = 15;
         public static final double ROLLER_COM_CORRECTION_RAD = Units.degreesToRadians(14.48);
+        public static final double ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD = Units.degreesToRadians(5);
 
         //#endregion
 

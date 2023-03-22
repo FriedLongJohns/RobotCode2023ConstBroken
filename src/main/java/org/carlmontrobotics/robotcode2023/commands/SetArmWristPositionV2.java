@@ -64,6 +64,8 @@ public class SetArmWristPositionV2 extends SequentialCommandGroup {
                 () -> isWristOutsideRobot(armPos, wristPos)
             )
         );
+
+        addRequirements(arm);
     }
 
     public static boolean isWristOutsideRobot(double armPos, double wristPos) {
