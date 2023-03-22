@@ -200,8 +200,9 @@ public final class Constants {
         public static final double V_PER_NM = 0.01423;
 
         public static final double DT_TOTAL_WIDTH = 0.7874;
-        public static final double SAFE_HEIGHT = 0.585;
+        public static final double SAFE_HEIGHT = Units.inchesToMeters(23);
         public static final double ARM_JOINT_TOTAL_HEIGHT = Units.inchesToMeters(46.725);
+        public static final double DT_EXTENSION_FOR_ROLLER = Units.inchesToMeters(14);
 
         // TODO: Replace these values with Design's actual values
         public static final double MARGIN_OF_ERROR = Math.toRadians(10);
