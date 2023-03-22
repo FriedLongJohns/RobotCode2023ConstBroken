@@ -32,6 +32,8 @@ public class ArmTeleop extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    armSubsystem.setArmTarget(armSubsystem.getArmPos(), 0);
+    armSubsystem.setWristTarget(armSubsystem.getWristPos(), 0);
     lastTime = Timer.getFPGATimestamp();
   }
 

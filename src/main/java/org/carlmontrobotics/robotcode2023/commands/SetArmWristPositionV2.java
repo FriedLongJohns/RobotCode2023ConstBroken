@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class SetArmWristPositionV2 extends SequentialCommandGroup {
 
+    public String name;
+
     public SetArmWristPositionV2(double armPos, double wristPos, Arm arm) {
         super(
             new ConditionalCommand(
@@ -65,6 +67,8 @@ public class SetArmWristPositionV2 extends SequentialCommandGroup {
             )
         );
 
+        name = "SetArmWristPositionV2(" + armPos + ", " + wristPos + ")";
+
         addRequirements(arm);
     }
 
@@ -74,6 +78,11 @@ public class SetArmWristPositionV2 extends SequentialCommandGroup {
 
         return Math.abs(wristTip.getX())>driveTrainHalfLen;
         //returns true if wristTip is outside of robot vertical bounds.
-}
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
 
 }

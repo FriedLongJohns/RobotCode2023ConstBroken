@@ -5,6 +5,7 @@ import static org.carlmontrobotics.robotcode2023.Constants.Arm.*;
 import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.robotcode2023.Constants.GoalPos;
+import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -21,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // Arm angle is measured from horizontal on the intake side of the robot and bounded between -3π/2 and π/2
@@ -72,12 +74,23 @@ public class Arm extends SubsystemBase {
         setArmTarget(goalState[ARM].position, 0);
         setWristTarget(goalState[WRIST].position, 0);
         wristMotor.setSmartCurrentLimit(WRIST_CURRENT_LIMIT_AMP);
+
+        SmartDashboard.putNumber("Arm Max Vel", MAX_FF_VEL[ARM]);
+        SmartDashboard.putNumber("Wrist Max Vel", MAX_FF_VEL[WRIST]);
+        SmartDashboard.putNumber("ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD", ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD);
+        SmartDashboard.putNumber("Arm Tolerance Pos", posToleranceRad[ARM]);
+        SmartDashboard.putNumber("Wrist Tolerance Pos", posToleranceRad[WRIST]);
+        SmartDashboard.putNumber("Arm Tolerance Vel", velToleranceRadPSec[ARM]);
+        SmartDashboard.putNumber("Wrist Tolerance Vel", velToleranceRadPSec[WRIST]);
     }
 
     @Override
     public void periodic() {
 
         // TODO: REMOVE THIS WHEN PID CONSTANTS ARE DONE
+        MAX_FF_VEL[ARM] = SmartDashboard.getNumber("Arm Max Vel", MAX_FF_VEL[ARM]);
+        MAX_FF_VEL[WRIST] = SmartDashboard.getNumber("Wrist Max Vel", MAX_FF_VEL[WRIST]);
+        ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD = SmartDashboard.getNumber("ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD", ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD);
         wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
         armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
         armPID.setP(kP[ARM]);
@@ -86,6 +99,14 @@ public class Arm extends SubsystemBase {
         wristPID.setP(kP[WRIST]);
         wristPID.setI(kI[WRIST]);
         wristPID.setD(kD[WRIST]);
+        SmartDashboard.putBoolean("ArmPIDAtSetpoint", armPID.atSetpoint());
+        SmartDashboard.putBoolean("ArmProfileFinished", armProfile.isFinished(armProfileTimer.get()));
+        SmartDashboard.putBoolean("WristPIDAtSetpoint", wristPID.atSetpoint());
+        SmartDashboard.putBoolean("WristProfileFinished", wristProfile.isFinished(wristProfileTimer.get()));
+        posToleranceRad[ARM] = SmartDashboard.getNumber("Arm Tolerance Pos", posToleranceRad[ARM]);
+        posToleranceRad[WRIST] = SmartDashboard.getNumber("Wrist Tolerance Pos", posToleranceRad[WRIST]);
+        velToleranceRadPSec[ARM] = SmartDashboard.getNumber("Arm Tolerance Vel", velToleranceRadPSec[ARM]);
+        velToleranceRadPSec[WRIST] = SmartDashboard.getNumber("Wrist Tolerance Vel", velToleranceRadPSec[WRIST]);
 
         SmartDashboard.putNumber("MaxHoldingTorque", maxHoldingTorqueNM());
         SmartDashboard.putNumber("V_PER_NM", getV_PER_NM());
@@ -94,8 +115,24 @@ public class Arm extends SubsystemBase {
         SmartDashboard.putNumber("Arm Current", armMotor.getOutputCurrent());
         SmartDashboard.putNumber("Wrist Current", wristMotor.getOutputCurrent());
 
+        SmartDashboard.putNumber("ArmPos", getArmPos());
+        SmartDashboard.putNumber("WristPos", getWristPos());
+
         driveArm(armProfile.calculate(armProfileTimer.get()));
         driveWrist(wristProfile.calculate(wristProfileTimer.get()));
+
+        autoCancelArmCommand();
+    }
+
+    public void autoCancelArmCommand() {
+        double[] requestedSpeeds = ((ArmTeleop) getDefaultCommand()).getRequestedSpeeds();
+
+        if(requestedSpeeds[0] != 0 || requestedSpeeds[1] != 0) {
+            Command currentArmCommand = getCurrentCommand();
+            if(currentArmCommand != getDefaultCommand() && currentArmCommand != null) {
+                currentArmCommand.cancel();
+            }
+        }
     }
 
     //#region Drive Methods
