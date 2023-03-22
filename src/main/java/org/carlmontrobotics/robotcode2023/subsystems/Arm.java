@@ -149,7 +149,7 @@ public class Arm extends SubsystemBase {
     public void setWristTarget(double targetPos, double targetVel) {
         targetPos = getWristClampedGoal(targetPos);
 
-        if(positionForbidden(getArmPos(), targetPos)) return;
+        if(wristMovementForbidden(getArmPos(), targetPos, targetPos - getWristPos())) return;
 
         wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(targetPos, targetVel), wristProfile.calculate(wristProfileTimer.get()));
         wristProfileTimer.reset();
@@ -265,6 +265,26 @@ public class Arm extends SubsystemBase {
         Translation2d roller = new Translation2d(ROLLER_LENGTH_METERS, Rotation2d.fromRadians(armPos + wristPos + ROLLER_COM_CORRECTION_RAD));
 
         return arm.plus(roller);
+    }
+
+    public boolean wristMovementForbidden(double armPos, double wristPos, double wristVelSign) {
+        // If the position is not forbidden, then the movement is not forbidden
+        if(!positionForbidden(armPos, wristPos)) return false;
+
+        Translation2d tip = getWristTipPosition(armPos, wristPos);
+
+        // Copied from positionForbidden
+        boolean horizontal = tip.getX() < DT_TOTAL_WIDTH / 2 && tip.getX() > -DT_TOTAL_WIDTH / 2;
+        boolean vertical = tip.getY() > -ARM_JOINT_TOTAL_HEIGHT && tip.getY() < (-ARM_JOINT_TOTAL_HEIGHT + SAFE_HEIGHT);
+
+        // If the wrist is inside the drivetrain, fold towards the
+        if(horizontal && vertical) {
+            return Math.signum(getWristPos() + ROLLER_COM_CORRECTION_RAD) != Math.signum(wristVelSign);
+        }
+
+        // Otherwise, fold away from vertical
+        double tipAngle = MathUtil.inputModulus(armPos + wristPos + ROLLER_COM_CORRECTION_RAD, -3 * Math.PI / 2, Math.PI / 2);
+        return Math.signum(tipAngle + Math.PI / 2) != Math.signum(wristVelSign);
     }
 
     public static boolean positionForbidden(double armPos, double wristPos) {
