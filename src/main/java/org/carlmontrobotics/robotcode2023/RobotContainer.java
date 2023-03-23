@@ -5,8 +5,7 @@
 package org.carlmontrobotics.robotcode2023;
 
 import static org.carlmontrobotics.robotcode2023.Constants.OI.MIN_AXIS_TRIGGER_VALUE;
-import static org.carlmontrobotics.robotcode2023.Constants.Roller.CUBE;
-import static org.carlmontrobotics.robotcode2023.Constants.Roller.CONE;
+
 
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
@@ -18,12 +17,13 @@ import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
 import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.commands.AlignChargingStation;
+import org.carlmontrobotics.robotcode2023.commands.AlignToScoringPosition;
 import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
-import org.carlmontrobotics.robotcode2023.commands.DriveToPoint;
 import org.carlmontrobotics.robotcode2023.commands.RotateToFieldRelativeAngle;
 import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.commands.SetArmWristGoalPreset;
 import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
+import org.carlmontrobotics.robotcode2023.commands.TestDriveToPoint;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller;
@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -91,20 +90,8 @@ public class RobotContainer {
     new JoystickButton(driverController, Driver.chargeStationAlignButton).onTrue(new AlignChargingStation(drivetrain));
     new JoystickButton(driverController, Driver.resetFieldOrientationButton).onTrue(new InstantCommand(drivetrain::resetFieldOrientation));
     new JoystickButton(driverController, Driver.toggleFieldOrientedButton).onTrue(new InstantCommand(() -> drivetrain.setFieldOriented(!drivetrain.getFieldOriented())));
-    axisTrigger(driverController, Driver.driveToPointButton).onTrue(new InstantCommand(() -> drivetrain.testDriveToPoint()));
-    axisTrigger(driverController, Driver.alignForScoringButton).onTrue(
-      new ConditionalCommand(
-        new SequentialCommandGroup(
-          new DriveToPoint(() -> roller.getNearestGoal(CUBE), drivetrain),
-          new DriveToPoint(roller::correctPosition, drivetrain)
-        ),
-        new SequentialCommandGroup(
-          new DriveToPoint(() -> roller.getNearestGoal(CONE), drivetrain),
-          new DriveToPoint(roller::correctPosition, drivetrain)
-        ),
-        isCube
-      )
-    );
+    axisTrigger(driverController, Driver.driveToPointButton).onTrue(new TestDriveToPoint(drivetrain)); // Can switch with TestDriveToPoint2 command
+    axisTrigger(driverController, Driver.alignForScoringButton).onTrue(new AlignToScoringPosition(isCube, roller, drivetrain));
 
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle0Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(0), drivetrain));
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle90Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(-90), drivetrain));

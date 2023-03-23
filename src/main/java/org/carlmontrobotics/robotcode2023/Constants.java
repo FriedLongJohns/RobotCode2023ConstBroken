@@ -107,9 +107,6 @@ public final class Constants {
         public static final double[] yPIDController = {4, 0.0, 0.0};
         public static final double[] thetaPIDController = {0.10, 0.0, 0.001};
 
-        //public static final double[] tolerance = {Units.inchesToMeters(1), Units.inchesToMeters(1), 5};
-
-
         public static final SwerveConfig swerveConfig = new SwerveConfig(wheelDiameterMeters, driveGearing, mu, autoCentripetalAccel, kForwardVolts, kForwardVels, kForwardAccels, kBackwardVolts, kBackwardVels, kBackwardAccels, drivekP, drivekI, drivekD, turnkP, turnkI, turnkD, turnkS, turnkV, turnkA, turnZero, driveInversion, reversed, driveModifier, turnInversion);
 
         public static final Limelight.Transform limelightTransformForPoseEstimation = Transform.BOTPOSE_WPIBLUE;
@@ -153,6 +150,48 @@ public final class Constants {
         public static final double[] positionTolerance = {Units.inchesToMeters(.5), Units.inchesToMeters(.5), 5}; // Meters, Meters, Degrees
         public static final double[] velocityTolerance = {Units.inchesToMeters(1), Units.inchesToMeters(1), 25}; // Meters, Meters, Degrees/Second
 
+        //#endregion
+
+        //#region Scoring Positions
+        public static final boolean CUBE = false;
+        public static final boolean CONE = true;
+        public static final int BLUE = 0;
+        public static final int RED = 1;
+
+        // x, y positions are in meters, relative to the bottom-left field 
+        // with the blue grid corner
+        // (Values obtained from PathPlanner)
+        // {blue, red}
+        public static Pose2d[][] coneScoringPos = {
+            { // Blue side
+                new Pose2d(1.85, 4.95, new Rotation2d(0)),
+                new Pose2d(1.85, 3.85, new Rotation2d(0)),
+                new Pose2d(1.85, 3.3, new Rotation2d(0)),
+                new Pose2d(1.85, 2.15, new Rotation2d(0)),
+                new Pose2d(1.85, 1.6, new Rotation2d(0)),
+                new Pose2d(1.85, 0.5, new Rotation2d(0)),
+            },
+            { // Red side
+                new Pose2d(14.70, 4.95, new Rotation2d(0)),
+                new Pose2d(14.70, 3.85, new Rotation2d(0)),
+                new Pose2d(14.70, 3.3, new Rotation2d(0)),
+                new Pose2d(14.70, 2.15, new Rotation2d(0)),
+                new Pose2d(14.70, 1.6, new Rotation2d(0)),
+                new Pose2d(14.70, 0.5, new Rotation2d(0))
+            }
+        };
+        public static Pose2d[][] cubeScoringPos = {
+            { // Blue side
+                new Pose2d(1.85, 1.05, new Rotation2d(0)),
+                new Pose2d(1.85, 2.75, new Rotation2d(0)),
+                new Pose2d(1.85, 4.4, new Rotation2d(0)),
+            },
+            { // Red side
+                new Pose2d(14.70, 1.05, new Rotation2d(0)),
+                new Pose2d(14.70, 2.75, new Rotation2d(0)),
+                new Pose2d(14.70, 4.4, new Rotation2d(0))
+            }
+        };
         //#endregion
     }
 
@@ -391,33 +430,7 @@ public final class Constants {
 
         //#endregion
 
-        //#region Scoring Positions
-        public static final boolean CUBE = false;
-        public static final boolean CONE = true;
-
-        public static Pose2d[] coneScoringPos = {
-            new Pose2d(1.85, 4.95, new Rotation2d(0)),
-            new Pose2d(1.85, 3.85, new Rotation2d(0)),
-            new Pose2d(1.85, 3.3, new Rotation2d(0)),
-            new Pose2d(1.85, 2.15, new Rotation2d(0)),
-            new Pose2d(1.85, 1.6, new Rotation2d(0)),
-            new Pose2d(1.85, 0.5, new Rotation2d(0)),
-            new Pose2d(14.70, 4.95, new Rotation2d(0)),
-            new Pose2d(14.70, 3.85, new Rotation2d(0)),
-            new Pose2d(14.70, 3.3, new Rotation2d(0)),
-            new Pose2d(14.70, 2.15, new Rotation2d(0)),
-            new Pose2d(14.70, 1.6, new Rotation2d(0)),
-            new Pose2d(14.70, 0.5, new Rotation2d(0))
-        };
-        public static Pose2d[] cubeScoringPos = {
-            new Pose2d(1.85, 1.05, new Rotation2d(0)),
-            new Pose2d(1.85, 2.75, new Rotation2d(0)),
-            new Pose2d(1.85, 4.4, new Rotation2d(0)),
-            new Pose2d(14.70, 1.05, new Rotation2d(0)),
-            new Pose2d(14.70, 2.75, new Rotation2d(0)),
-            new Pose2d(14.70, 4.4, new Rotation2d(0)),
-        };
-        //#endregion
+        
     }
 
     public static final class OI {

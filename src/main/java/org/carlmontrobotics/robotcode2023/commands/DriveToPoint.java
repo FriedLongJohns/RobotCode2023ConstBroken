@@ -40,7 +40,7 @@ public class DriveToPoint extends SequentialCommandGroup {
                     new HashMap<>()
                 ).getPathCommand(true, true)
             ),
-            new CorrectToPoint(targetPose.get(), drivetrain)
+            new CorrectToPoint(targetPose, drivetrain)
         );
         addRequirements(drivetrain);
     }

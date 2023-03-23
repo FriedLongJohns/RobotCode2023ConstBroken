@@ -5,7 +5,6 @@
 package org.carlmontrobotics.robotcode2023.subsystems;
 
 import java.awt.Color;
-import java.util.Arrays;
 
 import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
@@ -117,16 +116,7 @@ public class Roller extends SubsystemBase {
         return initialPose.plus(transform);
     }
 
-    public Pose2d getNearestGoal(boolean mode)
-    {
-        Pose2d goal = dt.getPose();
-        if (mode) {
-            goal = goal.nearest(Arrays.asList(cubeScoringPos));
-        } else {
-            goal = goal.nearest(Arrays.asList(coneScoringPos));
-        }
-        return goal;
-    }
+    
 
     public void putRollerConstsOnSmartDashboard() {
         SmartDashboard.putNumber("Intake Cone Speed", RollerMode.INTAKE_CONE.speed);
