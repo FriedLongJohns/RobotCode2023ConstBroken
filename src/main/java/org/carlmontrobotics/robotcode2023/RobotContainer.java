@@ -5,6 +5,7 @@
 package org.carlmontrobotics.robotcode2023;
 
 import static org.carlmontrobotics.robotcode2023.Constants.OI.MIN_AXIS_TRIGGER_VALUE;
+import static org.mockito.Answers.values;
 
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
@@ -27,8 +28,11 @@ import org.carlmontrobotics.robotcode2023.subsystems.Roller;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -38,10 +42,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-public class RobotContainer {
 
+
+public class RobotContainer {
+  
   public final Joystick driverController = new Joystick(Driver.port);
-  public final Joystick manipulatorController = new Joystick(Manipulator.port);
+  public final XboxController manipulatorController = new XboxController(Manipulator.port);
 
   public final PowerDistribution pd = new PowerDistribution();
 
@@ -54,6 +60,8 @@ public class RobotContainer {
   public final DigitalInput[] autoSelectors;
 
   public RobotContainer() {
+    
+    
 
     autoPaths = new PPRobotPath[] {
       null,
@@ -80,6 +88,7 @@ public class RobotContainer {
       () -> inputProcessing(getStickValue(manipulatorController, Axis.kRightY))
     ));
   }
+  
 
   private void configureButtonBindingsDriver() {
     new JoystickButton(driverController, Driver.chargeStationAlignButton).onTrue(new AlignChargingStation(drivetrain));
@@ -105,6 +114,9 @@ public class RobotContainer {
     new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm));
     new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
     new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, () -> true, isFront, arm));
+    new Trigger(getForbFlag).onTrue(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,1);}));
+    new Trigger(getForbFlag).onFalse(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,0);}));
+   
     // axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
     //   .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeCubeButton)
@@ -140,6 +152,10 @@ public class RobotContainer {
     return stick.getRawAxis(axis.value) * (axis == Axis.kLeftY || axis == Axis.kRightY ? -1 : 1);
   }
 
+  private double getStickValue(XboxController xbox, Axis axis) {
+    return xbox.getRawAxis(axis.value) * (axis == Axis.kLeftY || axis == Axis.kRightY ? -1 : 1);
+  }
+
   /**
    * Processes an input from the joystick into a value between -1 and 1
    * 
@@ -166,6 +182,9 @@ public class RobotContainer {
    * @throws NullPointerException if either stick or axis is null.
    */
   private Trigger axisTrigger(Joystick stick, Axis axis) {
+    return new Trigger(() -> Math.abs(getStickValue(stick, axis)) > MIN_AXIS_TRIGGER_VALUE);
+  }
+  private Trigger axisTrigger(XboxController stick, Axis axis) {
     return new Trigger(() -> Math.abs(getStickValue(stick, axis)) > MIN_AXIS_TRIGGER_VALUE);
   }
 }
