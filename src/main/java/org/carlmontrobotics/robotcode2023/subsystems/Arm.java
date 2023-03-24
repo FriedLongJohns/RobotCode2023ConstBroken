@@ -332,8 +332,19 @@ public class Arm extends SubsystemBase {
         boolean vertical = tip.getY() > -ARM_JOINT_TOTAL_HEIGHT && tip.getY() < (-ARM_JOINT_TOTAL_HEIGHT + SAFE_HEIGHT);
         boolean ground = tip.getY() < -ARM_JOINT_TOTAL_HEIGHT;
 
-        //return horizontal && vertical || ground;
-        return false;
+        return horizontal && vertical || ground;
+    }
+
+    public static boolean isWristOutsideRobot(double armPos, double wristPos) {
+        Translation2d wristTip = Arm.getWristTipPosition(armPos, wristPos);
+        double driveTrainHalfLen = Units.inchesToMeters(31)/2;
+
+        return Math.abs(wristTip.getX())>driveTrainHalfLen;
+        //returns true if wristTip is outside of robot vertical bounds.
+    }
+
+    public static boolean canSafelyMoveWrist(double armPos) {
+        return Math.abs(armPos - ARM_VERTICAL_POS_RAD) >= MIN_WRIST_FOLD_POS_RAD;
     }
 
     //#endregion
