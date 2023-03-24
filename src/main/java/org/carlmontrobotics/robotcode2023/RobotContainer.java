@@ -27,8 +27,10 @@ import org.carlmontrobotics.robotcode2023.subsystems.Roller;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -150,6 +152,10 @@ public class RobotContainer {
     }
     return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoPath.getPathCommand(true, true);
     // return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
+  }
+
+  public void onEnable() {
+    lime.getNTEntry("pipeline").setDouble(DriverStation.getAlliance() == Alliance.Red ? 1 : 0);
   }
 
   private double getStickValue(Joystick stick, Axis axis) {
