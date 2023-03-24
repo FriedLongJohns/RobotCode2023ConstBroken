@@ -288,8 +288,8 @@ public final class Constants {
         // TODO: Get positions for STORED, SHELF, and SUBSTATION
         public static GoalPos[][] STORED = {
             {
-                new GoalPos(Units.degreesToRadians(-90), 0),
-                new GoalPos(40, -1.8861790155)
+                new GoalPos(-1.559094, 2.424171),
+                new GoalPos(-1.559094, 2.424171)
             },
             {
                 new GoalPos(-1.559094, 2.424171),
