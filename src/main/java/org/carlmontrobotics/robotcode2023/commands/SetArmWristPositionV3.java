@@ -21,13 +21,13 @@ public class SetArmWristPositionV3 extends ProxyCommand {
 
             if(Arm.isWristOutsideRobot(currentArmPos, currentWristPos)) {
                 if(Arm.isWristOutsideRobot(targetArmPos, targetWristPos)) {
-                    return moveSidePosIntoRobot(currentArmPos, currentWristPos, targetArmPos, targetWristPos, arm);
-                } else {
                     if(Math.signum(currentArmPos - ARM_VERTICAL_POS_RAD) == Math.signum(targetArmPos - ARM_VERTICAL_POS_RAD)) {
                         return moveSidePosToSameSide(currentArmPos, currentWristPos, targetArmPos, targetWristPos, arm);
                     } else {
                         return moveSidePosToOtherSide(currentArmPos, currentWristPos, targetArmPos, targetWristPos, arm);
                     }
+                } else {
+                    return moveSidePosIntoRobot(currentArmPos, currentWristPos, targetArmPos, targetWristPos, arm);
                 }
             } else {
                 if(Arm.isWristOutsideRobot(targetArmPos, targetWristPos)) {
