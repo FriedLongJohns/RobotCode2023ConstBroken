@@ -179,7 +179,7 @@ public final class Constants {
         public static double[] kD = {0, 0}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
 
         // Arm, Wrist
-        public static double[] posToleranceRad = { .05, .05 }; // rad
+        public static double[] posToleranceRad = { .1, .05 }; // rad
         public static double[] velToleranceRadPSec = { 0.5, 0.5 }; // rad/s
 
         public static double[] offsetRad = { 4.02, -0.7 + Math.PI / 2 }; // rad
@@ -214,7 +214,8 @@ public final class Constants {
         public static final double WRIST_DISCONTINUITY_RAD = (WRIST_LOWER_LIMIT_RAD + WRIST_UPPER_LIMIT_RAD) / 2 - Math.PI;
 
         // TODO: Determine actual max vel/accel
-        public static double[] MAX_FF_VEL = {1.5, 1.5}; // rad / s
+        // public static double[] MAX_FF_VEL = {.25, .25}; // rad / s
+        public static double[] MAX_FF_VEL = {1, 3}; // rad / s
         public static double[] MAX_FF_ACCEL = {1, 1}; // rad / s^2
         public static TrapezoidProfile.Constraints armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
         public static TrapezoidProfile.Constraints wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
@@ -236,10 +237,10 @@ public final class Constants {
         public static final double WRIST_STOW_POS_RAD = WRIST_UPPER_LIMIT_RAD;
         public static final double WRIST_NEG_STOW_POS_RAD = WRIST_LOWER_LIMIT_RAD;
         public static final double ARM_VERTICAL_POS_RAD = -Math.PI / 2;
-        public static final double MIN_WRIST_FOLD_POS_RAD = Math.PI / 4;
+        public static final double MIN_WRIST_FOLD_POS_RAD = Units.degreesToRadians(70);
         public static final int WRIST_CURRENT_LIMIT_AMP = 15;
         public static final double ROLLER_COM_CORRECTION_RAD = Units.degreesToRadians(14.48);
-        public static final double ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD = Units.degreesToRadians(10);
+        public static double ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD = .5;
 
         //#endregion
 
@@ -256,73 +257,73 @@ public final class Constants {
         // TODO : Get angles for front
         public static GoalPos[][] LOW = {
             { // front
-                new GoalPos(Units.degreesToRadians(-44.46), Units.degreesToRadians(117.17)), // cube
-                new GoalPos(Units.degreesToRadians(0), Units.degreesToRadians(-100.78))             // cone
+                new GoalPos(-1.507131, 2.327210), // cube
+                new GoalPos(-1.437940, 2.123031)             // cone
             },
             { // back
-                new GoalPos(Units.degreesToRadians(-80.2), Units.degreesToRadians(61.37)), 
-                new GoalPos(Units.degreesToRadians(-90), Units.degreesToRadians(133.24))
+                new GoalPos(-2.387175, 1.494942),
+                new GoalPos(-1.657286, -2.410204)
             }
         };
         public static GoalPos[][] MID = {
             {
-                new GoalPos(Units.degreesToRadians(-85.98), Units.degreesToRadians(132.01)), 
-                new GoalPos(Units.degreesToRadians(-106.85), Units.degreesToRadians(65.47)) 
+                new GoalPos(-0.596292, 1.513329),
+                new GoalPos(0.208573, -1.690364)
             },
             {
-                new GoalPos(Units.degreesToRadians(15.24), Units.degreesToRadians(-109.64)), 
-                new GoalPos(Units.degreesToRadians(-47.63), Units.degreesToRadians(141.7)) 
+                new GoalPos(-3.055642, 1.916546),
+                new GoalPos(-3.417581, 1.683445)
             }
         };
         public static GoalPos[][] HIGH = {
             {
-                new GoalPos(Units.degreesToRadians(-102.02), Units.degreesToRadians(-149.079)), 
-                new GoalPos(Units.degreesToRadians(-104.18), Units.degreesToRadians(54.24)) 
+                new GoalPos(-0.156905, 0.901323),
+                new GoalPos(0.205366, -0.769676)
             },
             {
-                new GoalPos(Units.degreesToRadians(20.76), Units.degreesToRadians(-52.06)), 
-                new GoalPos(Units.degreesToRadians(-14.07), Units.degreesToRadians(58.12)) 
+                new GoalPos(-3.415958, 1.700500),
+                new GoalPos(-3.414373, 0.644038)
             }
         };
         // TODO: Get positions for STORED, SHELF, and SUBSTATION
         public static GoalPos[][] STORED = {
             {
-                new GoalPos(Units.degreesToRadians(-90), 0), 
-                new GoalPos(40, -1.8861790155)
+                new GoalPos(-1.559094, 2.424171),
+                new GoalPos(-1.559094, 2.424171)
             },
             {
-                new GoalPos(Units.degreesToRadians(-90), 0), 
-                new GoalPos(40, -1.8861790155)
+                new GoalPos(-1.559094, 2.424171),
+                new GoalPos(-1.559094, 2.424171)
             }
         };
         public static GoalPos[][] SHELF = {
             {
-                new GoalPos(Units.degreesToRadians(-90), 0), 
+                new GoalPos(Units.degreesToRadians(-90), 0),
                 new GoalPos(0, 0)
             },
             {
-                new GoalPos(Units.degreesToRadians(-90), 0), 
+                new GoalPos(Units.degreesToRadians(-90), 0),
                 new GoalPos(0, 0)
             }
         };
         public static GoalPos[][] SUBSTATION = {
             {
-                new GoalPos(Units.degreesToRadians(-90), 0), 
+                new GoalPos(Units.degreesToRadians(-90), 0),
                 new GoalPos(0, 0)
             },
             {
-                new GoalPos(Units.degreesToRadians(-90), 0), 
+                new GoalPos(Units.degreesToRadians(-90), 0),
                 new GoalPos(0, 0)
             }
         };
         public static GoalPos[][] INTAKE = {
             {
-                new GoalPos(Units.degreesToRadians(-72.5), Units.degreesToRadians(73.37)),
-                new GoalPos(Units.degreesToRadians(-66.6), Units.degreesToRadians(29.94)) 
+                new GoalPos(-1.271106, 1.303141),
+                new GoalPos(-1.208155, 0.646987)
             },
             {
-                new GoalPos(Units.degreesToRadians(-72.5), Units.degreesToRadians(73.37)),
-                new GoalPos(Units.degreesToRadians(-66.6), Units.degreesToRadians(29.94)) 
+                new GoalPos(-1.271106, 1.303141),
+                new GoalPos(-1.208155, 0.646987)
             }
         };
         public double armPos, wristPos;

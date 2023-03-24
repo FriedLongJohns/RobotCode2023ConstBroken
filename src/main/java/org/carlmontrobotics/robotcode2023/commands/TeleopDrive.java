@@ -67,6 +67,13 @@ public class TeleopDrive extends CommandBase {
     if (Math.abs(rotateClockwise) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;
     else rotateClockwise *= maxRCW;
 
+    double driveMultiplier = slow.getAsBoolean() ? kSlowDriveSpeed : kNormalDriveSpeed;
+    double rotationMultiplier = slow.getAsBoolean() ? kSlowDriveRotation : kNormalDriveRotation;
+
+    forward *= driveMultiplier;
+    strafe *= driveMultiplier;
+    rotateClockwise *= rotationMultiplier;
+
     // Limit acceleration of the robot
     double accelerationX = (forward - currentForwardVel) / robotPeriod;
     double accelerationY = (strafe - currentStrafeVel) / robotPeriod;
@@ -85,10 +92,7 @@ public class TeleopDrive extends CommandBase {
 
     // If the above math works, no velocity should be greater than the max velocity, so we don't need to limit it.
 
-    double driveMultiplier = slow.getAsBoolean() ? kSlowDriveSpeed : kNormalDriveSpeed;
-    double rotationMultiplier = slow.getAsBoolean() ? kSlowDriveRotation : kNormalDriveRotation;
-
-    return new double[] {currentForwardVel * driveMultiplier, currentStrafeVel * driveMultiplier, -rotateClockwise * rotationMultiplier};
+    return new double[] {currentForwardVel, currentStrafeVel, -rotateClockwise};
   }
 
   // Called once the command ends or is interrupted.

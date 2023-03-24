@@ -11,7 +11,7 @@ public class SetArmWristGoalPreset extends ProxyCommand {
 
     public SetArmWristGoalPreset(GoalPos[][] preset, BooleanSupplier isCube, BooleanSupplier isFront, Arm arm) {
         super(() -> {
-            GoalPos pos = preset[isFront.getAsBoolean() ? 0 : 1][isCube.getAsBoolean() ? 1 : 0];
+            GoalPos pos = preset[isFront.getAsBoolean() ? 0 : 1][isCube.getAsBoolean() ? 0 : 1];
             return new SetArmWristPositionV2(pos.armPos, pos.wristPos, arm);
         });
         addRequirements(arm);
