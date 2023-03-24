@@ -10,6 +10,8 @@ import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.path.SwerveDriveInterface;
 import org.carlmontrobotics.lib199.swerve.SwerveModule;
+import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
+import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -24,9 +26,11 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
@@ -141,6 +145,8 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
             }
         }
 
+        autoCancelDtCommand();
+
         SmartDashboard.putNumber("Odometry X", getPose().getTranslation().getX());
         SmartDashboard.putNumber("Odometry Y", getPose().getTranslation().getY());;
         // SmartDashboard.putNumber("Pitch", gyro.getPitch());
@@ -154,6 +160,18 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // SmartDashboard.putNumber("Compass Offset", compassOffset);
         // SmartDashboard.putBoolean("Current Magnetic Field Disturbance",
         // gyro.isMagneticDisturbance());
+    }
+
+    public void autoCancelDtCommand() {
+        if(!(getDefaultCommand() instanceof TeleopDrive) || DriverStation.isAutonomous()) return;
+
+        // Use hasDriverInput to get around acceleration limiting on slowdown
+        if(((TeleopDrive) getDefaultCommand()).hasDriverInput()) {
+            Command currentDtCommand = getCurrentCommand();
+            if(currentDtCommand != getDefaultCommand() && currentDtCommand != null) {
+                currentDtCommand.cancel();
+            }
+        }
     }
 
     @Override
