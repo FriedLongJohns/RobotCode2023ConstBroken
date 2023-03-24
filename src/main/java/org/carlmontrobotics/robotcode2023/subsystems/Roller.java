@@ -14,9 +14,7 @@ import static org.carlmontrobotics.robotcode2023.Constants.Roller.*;
 import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
@@ -34,8 +32,8 @@ public class Roller extends SubsystemBase {
     private TimeOfFlight distSensor = new TimeOfFlight(10);
     private final AddressableLED led = new AddressableLED(ledPort);
     private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(ledLength);
-    private boolean hadGamePiece = false;
-    private Drivetrain dt;
+    private GameObject hasGamePiece = GameObject.NONE;
+    private GameObject nextGamePiece = GameObject.NONE;
 
     private Command resetColorCommand = new SequentialCommandGroup(
             new WaitCommand(ledDefaultColorRestoreTime),
@@ -45,33 +43,38 @@ public class Roller extends SubsystemBase {
         };
     };
 
-    public Roller(Drivetrain dt) {
+    public Roller() {
         led.setLength(ledBuffer.getLength());
         setLedColor(defaultColor);
         // SmartDashboard.putData(this);
-        this.dt = dt;
         led.start();
     }
 
     @Override
     public void periodic() {
 
-        SmartDashboard.putBoolean("Has Game Piece", hasGamePiece());
+        SmartDashboard.putBoolean("Has Game Piece", getGamePiece() != GameObject.NONE);
         SmartDashboard.putNumber("Roller Game Piece Distance", getGamePieceDistanceIn());
 
         // LED Update
         {
-            boolean hasGamePiece = hasGamePiece();
-            if (hasGamePiece && !hadGamePiece) {
+            GameObject gamePiece = getGamePiece();
+            if (gamePiece != GameObject.NONE && hasGamePiece == GameObject.NONE) {
                 setLedColor(pickupSuccessColor);
                 resetColorCommand.schedule();
             }
-            hadGamePiece = hasGamePiece;
+            hasGamePiece = gamePiece;
         }
     }
 
     public void setSpeed(double speed) {
         motor.set(speed);
+    }
+
+    public void setRollerMode(RollerMode mode) {
+        setSpeed(mode.speed);
+        nextGamePiece = mode.obj;
+        setLedColor(mode.ledColor);
     }
 
     public void setLedColor(Color color) {
@@ -80,9 +83,15 @@ public class Roller extends SubsystemBase {
         led.setData(ledBuffer);
     }
 
-    public boolean hasGamePiece() {
+    public GameObject getGamePiece() {
         // return false;
-        return getGamePieceDistanceIn() < gamePieceDetectDistanceIn;
+        if (getGamePieceDistanceIn() > gamePieceDetectDistanceIn)
+            return GameObject.NONE;
+        return (nextGamePiece != GameObject.NONE) ? nextGamePiece : hasGamePiece;
+    }
+
+    public boolean hasGamePiece() {
+        return getGamePiece() != GameObject.NONE;
     }
 
     public double getGamePieceDistanceIn() {
@@ -92,31 +101,28 @@ public class Roller extends SubsystemBase {
                                                                                 */) / 1000 /* Convert mm to m */);
     }
 
-    // This assumes robot's middle is exactly in line with the poles where you place
-    // the cones
-    // outtake side is the same side as the limelight
-    public Pose2d correctPosition() {
-        Pose2d initialPose = dt.getPose();
+    // The robot-relative translation to correct the off-centering of the game object in the roller
+    // Measured in meters
+    public Translation2d correctPosition() {
         double distanceToMove = 0;
         double dist = getGamePieceDistanceIn();
+        double offset = 0;
+        if (hasGamePiece == GameObject.CUBE) offset = Units.inchesToMeters(CUBE_RADIUS_IN) / 2;
+        else if (hasGamePiece == GameObject.CONE) offset = Units.inchesToMeters(CONE_RADIUS_IN) / 2;
+
         Translation2d translation = new Translation2d(0, 0);
-        if (dist < LEFT_LIMIT) {
+        if (dist < ROLLER_WIDTH / 2) {
             // need to shift robot right
-            distanceToMove = ROLLER_WIDTH / 2 - dist;
-            translation = new Translation2d(distanceToMove,
-                    initialPose.getRotation().plus(new Rotation2d(Math.PI / 2)));
+            distanceToMove = ROLLER_WIDTH / 2 - dist - offset;
+            translation = new Translation2d(distanceToMove, new Rotation2d(-Math.PI / 2));
 
-        } else if (dist > RIGHT_LIMIT) {
+        } else if (dist > ROLLER_WIDTH / 2) {
             // need to shift robot left
-            distanceToMove = dist - ROLLER_WIDTH / 2;
-            translation = new Translation2d(distanceToMove,
-                    initialPose.getRotation().plus(new Rotation2d(-Math.PI / 2)));
+            distanceToMove = dist + offset - ROLLER_WIDTH / 2;
+            translation = new Translation2d(distanceToMove, new Rotation2d(Math.PI / 2));
         }
-        Transform2d transform = new Transform2d(translation, new Rotation2d(0));
-        return initialPose.plus(transform);
+        return translation;
     }
-
-    
 
     public void putRollerConstsOnSmartDashboard() {
         SmartDashboard.putNumber("Intake Cone Speed", RollerMode.INTAKE_CONE.speed);

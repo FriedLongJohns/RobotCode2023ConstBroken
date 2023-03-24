@@ -24,6 +24,7 @@ import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.commands.SetArmWristGoalPreset;
 import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
 import org.carlmontrobotics.robotcode2023.commands.TestDriveToPoint;
+import org.carlmontrobotics.robotcode2023.commands.TestDriveToPoint2;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller;
@@ -51,7 +52,7 @@ public class RobotContainer {
   public final Limelight lime = new Limelight();
   public final Drivetrain drivetrain = new Drivetrain(lime);
   public final Arm arm = new Arm();
-  public final Roller roller = new Roller(drivetrain);
+  public final Roller roller = new Roller();
 
   public final PPRobotPath[] autoPaths;
   public final DigitalInput[] autoSelectors;
@@ -90,7 +91,8 @@ public class RobotContainer {
     new JoystickButton(driverController, Driver.chargeStationAlignButton).onTrue(new AlignChargingStation(drivetrain));
     new JoystickButton(driverController, Driver.resetFieldOrientationButton).onTrue(new InstantCommand(drivetrain::resetFieldOrientation));
     new JoystickButton(driverController, Driver.toggleFieldOrientedButton).onTrue(new InstantCommand(() -> drivetrain.setFieldOriented(!drivetrain.getFieldOriented())));
-    axisTrigger(driverController, Driver.driveToPointButton).onTrue(new TestDriveToPoint(drivetrain)); // Can switch with TestDriveToPoint2 command
+    new POVButton(driverController, Driver.driveToPointPOV).onTrue(new TestDriveToPoint(drivetrain)); // Remove these when done testing
+    new POVButton(driverController, Driver.driveToPoint2POV).onTrue(new TestDriveToPoint2(drivetrain)); 
     axisTrigger(driverController, Driver.alignForScoringButton).onTrue(new AlignToScoringPosition(isCube, roller, drivetrain));
 
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle0Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(0), drivetrain));
@@ -115,14 +117,14 @@ public class RobotContainer {
     //   .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeCubeButton)
       .onTrue(new ConditionalCommand(
-        new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor), 
-        new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor), 
+        new RunRoller(roller, RollerMode.INTAKE_CUBE), 
+        new RunRoller(roller, RollerMode.OUTTAKE_CUBE), 
         isCube
       ));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
       .onTrue(new ConditionalCommand(
-        new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor), 
-        new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor), 
+        new RunRoller(roller, RollerMode.INTAKE_CONE), 
+        new RunRoller(roller, RollerMode.OUTTAKE_CONE), 
         isCube
       ));
       new JoystickButton(manipulatorController, Manipulator.stopRollerButton).onTrue(new InstantCommand(() -> roller.setSpeed(0), roller));

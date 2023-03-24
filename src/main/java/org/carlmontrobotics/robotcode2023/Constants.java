@@ -10,8 +10,7 @@ import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.Limelight.Transform;
 import org.carlmontrobotics.lib199.swerve.SwerveConfig;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -162,34 +161,35 @@ public final class Constants {
         // with the blue grid corner
         // (Values obtained from PathPlanner)
         // {blue, red}
-        public static Pose2d[][] coneScoringPos = {
+        // TODO: Waiting on Design for values
+        public static Translation2d[][] coneScoringPos = {
             { // Blue side
-                new Pose2d(1.85, 4.95, new Rotation2d(0)),
-                new Pose2d(1.85, 3.85, new Rotation2d(0)),
-                new Pose2d(1.85, 3.3, new Rotation2d(0)),
-                new Pose2d(1.85, 2.15, new Rotation2d(0)),
-                new Pose2d(1.85, 1.6, new Rotation2d(0)),
-                new Pose2d(1.85, 0.5, new Rotation2d(0)),
+                new Translation2d(1.85, 4.95),
+                new Translation2d(1.85, 3.85),
+                new Translation2d(1.85, 3.3),
+                new Translation2d(1.85, 2.15),
+                new Translation2d(1.85, 1.6),
+                new Translation2d(1.85, 0.5),
             },
             { // Red side
-                new Pose2d(14.70, 4.95, new Rotation2d(0)),
-                new Pose2d(14.70, 3.85, new Rotation2d(0)),
-                new Pose2d(14.70, 3.3, new Rotation2d(0)),
-                new Pose2d(14.70, 2.15, new Rotation2d(0)),
-                new Pose2d(14.70, 1.6, new Rotation2d(0)),
-                new Pose2d(14.70, 0.5, new Rotation2d(0))
+                new Translation2d(14.70, 4.95),
+                new Translation2d(14.70, 3.85),
+                new Translation2d(14.70, 3.3),
+                new Translation2d(14.70, 2.15),
+                new Translation2d(14.70, 1.6),
+                new Translation2d(14.70, 0.5)
             }
         };
-        public static Pose2d[][] cubeScoringPos = {
+        public static Translation2d[][] cubeScoringPos = {
             { // Blue side
-                new Pose2d(1.85, 1.05, new Rotation2d(0)),
-                new Pose2d(1.85, 2.75, new Rotation2d(0)),
-                new Pose2d(1.85, 4.4, new Rotation2d(0)),
+                new Translation2d(1.85, 1.05),
+                new Translation2d(1.85, 2.75),
+                new Translation2d(1.85, 4.4),
             },
             { // Red side
-                new Pose2d(14.70, 1.05, new Rotation2d(0)),
-                new Pose2d(14.70, 2.75, new Rotation2d(0)),
-                new Pose2d(14.70, 4.4, new Rotation2d(0))
+                new Translation2d(14.70, 1.05),
+                new Translation2d(14.70, 2.75),
+                new Translation2d(14.70, 4.4)
             }
         };
         //#endregion
@@ -403,12 +403,13 @@ public final class Constants {
         //#region Command Constants
         // TODO: Determine actual speeds/timings for roller
         public static class RollerMode {
-            public static RollerMode INTAKE_CONE = new RollerMode(-0.5, .5, true);
-            public static RollerMode INTAKE_CUBE = new RollerMode(0.3, .25, true);
-            public static RollerMode OUTTAKE_CONE = new RollerMode(0.5, .5, false);
-            public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5, false);
+            public static RollerMode INTAKE_CONE = new RollerMode(-0.5, .5, GameObject.CONE, conePickupColor);
+            public static RollerMode INTAKE_CUBE = new RollerMode(0.3, .25, GameObject.CUBE, cubePickupColor);
+            public static RollerMode OUTTAKE_CONE = new RollerMode(0.5, .5, GameObject.NONE, defaultColor);
+            public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5, GameObject.NONE, defaultColor);
             public double speed, time;
-            public boolean intake;
+            public GameObject obj;
+            public Color ledColor;
     
             /**
              * @param speed  A number between -1 and 1
@@ -416,21 +417,24 @@ public final class Constants {
              *               distance sensor has detected an object
              * @param intake Whether the roller is outtaking or intaking
              */
-            public RollerMode(double speed, double time, boolean intake) {
+            public RollerMode(double speed, double time, GameObject obj, Color ledColor) {
                 this.speed = speed;
                 this.time = time;
-                this.intake = intake;
+                this.obj = obj;
+                this.ledColor = ledColor;
             }
         }
 
         // Units are in inches
+        // TODO: Get accurate values for these
         public static final double ROLLER_WIDTH = 26;
-        public static final double LEFT_LIMIT = 12;
-        public static final double RIGHT_LIMIT = 14;
-
+        public static final double CONE_RADIUS_IN = 6;
+        public static final double CUBE_RADIUS_IN = 9.5;
         //#endregion
 
-        
+        public static enum GameObject {
+            CUBE, CONE, NONE
+        }
     }
 
     public static final class OI {
@@ -445,7 +449,8 @@ public final class Constants {
             public static final int chargeStationAlignButton = Button.kBack.value;
             public static final int resetFieldOrientationButton = Button.kRightBumper.value;
             public static final int toggleFieldOrientedButton = Button.kStart.value;
-            public static final Axis driveToPointButton = Axis.kRightTrigger;
+            public static final int driveToPointPOV = 0;
+            public static final int driveToPoint2POV = 180;
             // will comment out above once testing done
             public static final Axis toggleCubeButton = Axis.kRightTrigger;
             public static final Axis alignForScoringButton = Axis.kLeftTrigger;

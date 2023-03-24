@@ -1,7 +1,6 @@
 package org.carlmontrobotics.robotcode2023.commands;
 
-import java.awt.Color;
-
+import org.carlmontrobotics.robotcode2023.Constants.Roller.GameObject;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller;
 
@@ -12,23 +11,20 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class RunRoller extends CommandBase {
 
     private final Roller roller;
-    private final Color ledColor;
     private final Timer timer = new Timer();
     private final RollerMode mode;
 
-    public RunRoller(Roller roller, RollerMode mode, Color ledColor) {
+    public RunRoller(Roller roller, RollerMode mode) {
         addRequirements(this.roller = roller);
         this.mode = mode;
-        this.ledColor = ledColor;
     }
 
     @Override
     public void initialize() {
-        roller.setSpeed(mode.speed);
-        roller.setLedColor(ledColor);
+        if(roller.hasGamePiece() && mode.obj != GameObject.NONE) cancel();
+        if(!roller.hasGamePiece() && mode.obj == GameObject.NONE) cancel();
         timer.reset();
-
-        if(roller.hasGamePiece() == mode.intake) cancel();
+        roller.setRollerMode(mode);
     }
 
     @Override
@@ -46,15 +42,13 @@ public class RunRoller extends CommandBase {
         double time = timer.get();
 
         // TODO: distance sensor detects belt when wrist is spinning (concern)
-        if (roller.hasGamePiece() == mode.intake) {
+        if (roller.getGamePiece() == mode.obj) {
             timer.start();
         }
-        SmartDashboard.putBoolean("Mode", mode.intake);
+        SmartDashboard.putString("Target Piece", mode.obj.toString());
         SmartDashboard.putNumber("Time Target", mode.time);
         SmartDashboard.putNumber("SetRoller Time Elapsed (s)", time);
 
-        // if (true)
-        //     return false;
-        return roller.hasGamePiece() == mode.intake && time > mode.time;
+        return roller.getGamePiece() == mode.obj && time > mode.time;
     }
 }

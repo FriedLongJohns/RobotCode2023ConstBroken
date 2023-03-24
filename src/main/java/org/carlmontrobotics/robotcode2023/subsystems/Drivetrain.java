@@ -14,12 +14,10 @@ import org.carlmontrobotics.lib199.path.SwerveDriveInterface;
 import org.carlmontrobotics.lib199.swerve.SwerveModule;
 
 import com.revrobotics.CANSparkMax;
-import org.carlmontrobotics.robotcode2023.commands.DriveToPoint;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -32,7 +30,6 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
@@ -277,7 +274,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         odometry.resetPosition(Rotation2d.fromDegrees(getHeading()), getModulePositions(), initialPose);
     }
 
-    public Pose2d getNearestGoal(boolean isCube, Alliance alliance)
+    public Translation2d getNearestGoal(boolean isCube, Alliance alliance)
     {
         int all = -1;
         switch (alliance) {
@@ -292,7 +289,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
                 return null;
         }
 
-        Pose2d goal = getPose();
+        Translation2d goal = getPose().getTranslation();
         if (isCube) {
             goal = goal.nearest(Arrays.asList(cubeScoringPos[all]));
         } else {
