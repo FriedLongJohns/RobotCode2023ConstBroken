@@ -72,12 +72,12 @@ public class ArmTeleop extends CommandBase {
     if (Math.abs(arm.getAsDouble()) <= Constants.OI.JOY_THRESH)
       rawArmVel = 0.0;
     else
-      rawArmVel = MAX_FF_VEL[ARM] * arm.getAsDouble();
+      rawArmVel = MAX_FF_VEL_MANUAL[ARM] * arm.getAsDouble();
 
     if (Math.abs(wrist.getAsDouble()) <= Constants.OI.JOY_THRESH)
       rawWristVel = 0.0;
     else
-      rawWristVel = MAX_FF_VEL[WRIST] * wrist.getAsDouble();
+      rawWristVel = MAX_FF_VEL_MANUAL[WRIST] * wrist.getAsDouble();
 
     return new double[] {rawArmVel, rawWristVel};
   }

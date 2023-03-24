@@ -179,7 +179,7 @@ public final class Constants {
         public static double[] kD = {0, 0}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
 
         // Arm, Wrist
-        public static double[] posToleranceRad = { .1, .05 }; // rad
+        public static double[] posToleranceRad = { .07, .05 }; // rad
         public static double[] velToleranceRadPSec = { 0.5, 0.5 }; // rad/s
 
         public static double[] offsetRad = { 4.02, -0.7 + Math.PI / 2 }; // rad
@@ -215,10 +215,11 @@ public final class Constants {
 
         // TODO: Determine actual max vel/accel
         // public static double[] MAX_FF_VEL = {.25, .25}; // rad / s
-        public static double[] MAX_FF_VEL = {1, 3}; // rad / s
-        public static double[] MAX_FF_ACCEL = {1, 1}; // rad / s^2
-        public static TrapezoidProfile.Constraints armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
-        public static TrapezoidProfile.Constraints wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
+        public static double[] MAX_FF_VEL_MANUAL = {1, 3}; // rad / s
+        public static double[] MAX_FF_VEL_AUTO = {2, 5}; // rad / s
+        public static double[] MAX_FF_ACCEL = {1, 2}; // rad / s^2
+        public static TrapezoidProfile.Constraints armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL_AUTO[ARM], MAX_FF_ACCEL[ARM]);
+        public static TrapezoidProfile.Constraints wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL_AUTO[WRIST], MAX_FF_ACCEL[WRIST]);
 
         //#endregion
 
@@ -362,7 +363,7 @@ public final class Constants {
         //#region Command Constants
         // TODO: Determine actual speeds/timings for roller
         public static class RollerMode {
-            public static RollerMode INTAKE_CONE = new RollerMode(-0.5, .5, true);
+            public static RollerMode INTAKE_CONE = new RollerMode(-0.5, 1, true);
             public static RollerMode INTAKE_CUBE = new RollerMode(0.3, .25, true);
             public static RollerMode OUTTAKE_CONE = new RollerMode(0.5, .5, false);
             public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5, false);

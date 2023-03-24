@@ -38,6 +38,8 @@ public class SetArmWristPositionV3 extends ProxyCommand {
             }
         });
 
+        name = "SetArmWristPositionV3(" + targetArmPos + ", " + targetWristPos + ")";
+
         addRequirements(arm);
     }
 
@@ -50,20 +52,15 @@ public class SetArmWristPositionV3 extends ProxyCommand {
     //#region Main Logic Paths
 
     public static Command moveSidePosToSameSide(double currentArmPos, double currentWristPos, double targetArmPos, double targetWristPos, Arm arm) {
-        if(Arm.canSafelyMoveWrist(targetArmPos)) {
-            return new SequentialCommandGroup(moveArm(targetArmPos, arm), moveWrist(targetWristPos, arm));
-        } else {
-            return new SequentialCommandGroup(
-                ensureCanMoveWrist(currentArmPos, arm),
-                moveWrist(targetWristPos, arm),
-                moveArm(targetArmPos, arm)
-            );
-        }
+        return new SequentialCommandGroup(
+            moveArm(targetArmPos, arm),
+            moveWrist(targetWristPos, arm)
+        );
     }
 
     public static Command moveSidePosIntoRobot(double currentArmPos, double currentWristPos, double targetArmPos, double targetWristPos, Arm arm) {
         return new SequentialCommandGroup(
-            ensureCanMoveWrist(currentArmPos, arm),
+            Math.signum(currentWristPos) == Math.signum(targetWristPos) ? new InstantCommand() : ensureCanMoveWrist(currentArmPos, arm),
             foldWristToSide(targetWristPos, arm),
             moveArm(targetArmPos, arm),
             moveWrist(targetWristPos, arm)
@@ -71,22 +68,12 @@ public class SetArmWristPositionV3 extends ProxyCommand {
     }
 
     public static Command moveSidePosToOtherSide(double currentArmPos, double currentWristPos, double targetArmPos, double targetWristPos, Arm arm) {
-        if(Arm.canSafelyMoveWrist(targetArmPos)) {
-            return new SequentialCommandGroup(
-                ensureCanMoveWrist(currentArmPos, arm),
-                foldWristToSide(targetWristPos, arm),
-                moveArm(targetArmPos, arm),
-                moveWrist(targetWristPos, arm)
-            );
-        } else {
-            return new SequentialCommandGroup(
-                ensureCanMoveWrist(currentArmPos, arm),
-                foldWristToSide(targetWristPos, arm),
-                moveArmToSidedSafeWristMovePosition(targetArmPos, arm),
-                moveWrist(targetWristPos, arm),
-                moveArm(targetArmPos, arm)
-            );
-        }
+        return new SequentialCommandGroup(
+            Math.signum(currentWristPos) == Math.signum(targetWristPos) ? new InstantCommand() : ensureCanMoveWrist(currentArmPos, arm),
+            foldWristToSide(targetWristPos, arm),
+            moveArm(targetArmPos, arm),
+            moveWrist(targetWristPos, arm)
+        );
     }
 
     public static Command moveRobotPosIntoRobot(double currentArmPos, double currentWristPos, double targetArmPos, double targetWristPos, Arm arm) {
@@ -108,7 +95,7 @@ public class SetArmWristPositionV3 extends ProxyCommand {
     }
 
     public static Command moveRobotPosToSide(double currentArmPos, double currentWristPos, double targetArmPos, double targetWristPos, Arm arm) {
-        if(Arm.canSafelyMoveWrist(targetArmPos)) {
+        if(Math.signum(currentWristPos) == Math.signum(targetWristPos)) {
             return new SequentialCommandGroup(
                 foldWristToSide(currentWristPos, arm),
                 moveArm(targetArmPos, arm),
