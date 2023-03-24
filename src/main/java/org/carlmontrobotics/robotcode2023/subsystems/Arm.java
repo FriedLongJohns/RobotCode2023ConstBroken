@@ -2,6 +2,8 @@ package org.carlmontrobotics.robotcode2023.subsystems;
 
 import static org.carlmontrobotics.robotcode2023.Constants.Arm.*;
 
+import java.util.function.BooleanSupplier;
+
 import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.robotcode2023.Constants.GoalPos;
@@ -27,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // Wrist angle is measured relative to the arm with 0 being parallel to the arm and bounded between -π and π (Center of Mass of Roller)
 public class Arm extends SubsystemBase {
     
-    private boolean forbFlag;
+    private static boolean forbFlag;
     private final CANSparkMax armMotor = MotorControllerFactory.createSparkMax(armMotorPort, MotorConfig.NEO);
     private final CANSparkMax wristMotor = MotorControllerFactory.createSparkMax(wristMotorPort, MotorConfig.NEO);
     private final RelativeEncoder armRelEncoder = armMotor.getEncoder();
@@ -275,7 +277,7 @@ public class Arm extends SubsystemBase {
     public boolean wristMovementForbidden(double armPos, double wristPos, double wristVelSign) {
         // If the position is not forbidden, then the movement is not forbidden
         if(positionForbidden(armPos, wristPos)) {
-            forbFlag = true;
+            
             return false;
         }
 
@@ -313,6 +315,7 @@ public class Arm extends SubsystemBase {
         boolean ground = tip.getY() < -ARM_JOINT_TOTAL_HEIGHT;
 
         //return horizontal && vertical || ground;
+        forbFlag = true;
         return false;
     }
 

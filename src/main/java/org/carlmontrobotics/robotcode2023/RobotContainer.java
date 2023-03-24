@@ -114,8 +114,8 @@ public class RobotContainer {
     new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm));
     new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
     new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, () -> true, isFront, arm));
-    new Trigger(getForbFlag).onTrue(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,1);}));
-    new Trigger(getForbFlag).onFalse(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,0);}));
+    new Trigger(() -> {return arm.getForbFlag();}).onTrue(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,1);}))
+                                                  .onFalse(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,0);}));
    
     // axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
     //   .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
