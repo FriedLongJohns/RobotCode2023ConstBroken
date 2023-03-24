@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -55,10 +56,24 @@ public class RobotContainer {
 
   public RobotContainer() {
 
+    HashMap<String, Command> eventMap = new HashMap<>();
+
+    {
+      eventMap.put("Cone High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> false, () -> false, arm));
+      eventMap.put("Stored Pos.", new SetArmWristGoalPreset(GoalPos.STORED, () -> false, () -> false, arm));
+      eventMap.put("Run Cube Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor)));
+      eventMap.put("Cube High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
+      eventMap.put("Cube Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor));
+      eventMap.put("Run Cone Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
+      eventMap.put("Run Cone Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor));
+    }
+
     autoPaths = new PPRobotPath[] {
       null,
-      new PPRobotPath("New Path", drivetrain, false, new HashMap<>()),
-      new PPRobotPath("3 game piece", drivetrain, false, new HashMap<>())
+      new PPRobotPath("New Path", drivetrain, false, eventMap),
+      new PPRobotPath("3 game piece", drivetrain, false, eventMap),
+      new PPRobotPath("Near Loading Zone 2 Game Piece + Balance", drivetrain, false, eventMap),
+      new PPRobotPath("Near Loading Zone 3 Game Piece", drivetrain, false, eventMap)
     };
 
     autoSelectors = new DigitalInput[Math.min(autoPaths.length, 26)];
@@ -110,14 +125,14 @@ public class RobotContainer {
     //   .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeCubeButton)
       .onTrue(new ConditionalCommand(
-        new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor), 
-        new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor), 
+        new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor),
+        new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor),
         isCube
       ));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
       .onTrue(new ConditionalCommand(
-        new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor), 
-        new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor), 
+        new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor),
+        new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor),
         isCube
       ));
       new JoystickButton(manipulatorController, Manipulator.stopRollerButton).onTrue(new InstantCommand(() -> roller.setSpeed(0), roller));
