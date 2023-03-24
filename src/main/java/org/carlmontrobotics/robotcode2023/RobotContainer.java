@@ -150,6 +150,8 @@ public class RobotContainer {
         break;
       }
     }
+
+    autoPath = autoPaths[4];
     return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoPath.getPathCommand(true, true);
     // return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
   }

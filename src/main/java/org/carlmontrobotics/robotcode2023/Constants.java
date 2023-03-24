@@ -298,22 +298,22 @@ public final class Constants {
         };
         public static GoalPos[][] SHELF = {
             {
-                new GoalPos(Units.degreesToRadians(-90), 0),
-                new GoalPos(0, 0)
+                new GoalPos(0.224062, -0.800449),
+                new GoalPos(0.224062, -0.800449)
             },
             {
-                new GoalPos(Units.degreesToRadians(-90), 0),
-                new GoalPos(0, 0)
+                new GoalPos(0.224062, -0.800449),
+                new GoalPos(0.224062, -0.800449)
             }
         };
         public static GoalPos[][] SUBSTATION = {
             {
-                new GoalPos(Units.degreesToRadians(-90), 0),
-                new GoalPos(0, 0)
+                new GoalPos(-1.459526, 2.417944),
+                new GoalPos(-1.459526, 2.417944)
             },
             {
-                new GoalPos(Units.degreesToRadians(-90), 0),
-                new GoalPos(0, 0)
+                new GoalPos(-3.454349, 0.771236),
+                new GoalPos(-3.454349, 0.771236)
             }
         };
         public static GoalPos[][] INTAKE = {
