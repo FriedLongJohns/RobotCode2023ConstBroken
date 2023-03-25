@@ -28,14 +28,15 @@ import org.carlmontrobotics.robotcode2023.subsystems.Roller;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -59,22 +60,23 @@ public class RobotContainer {
 
     HashMap<String, Command> eventMap = new HashMap<>();
 
-    // {
-    //   eventMap.put("Cone High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> false, () -> false, arm));
-    //   eventMap.put("Stored Pos.", new SetArmWristGoalPreset(GoalPos.STORED, () -> false, () -> false, arm));
-    //   eventMap.put("Run Cube Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor)));
-    //   eventMap.put("Cube High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
-    //   eventMap.put("Cube Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor));
-    //   eventMap.put("Run Cone Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
-    //   eventMap.put("Run Cone Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor));
-    // }
+    {
+      eventMap.put("Cone High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> false, () -> false, arm));
+      eventMap.put("Stored Pos.", new SetArmWristGoalPreset(GoalPos.STORED, () -> false, () -> false, arm));
+      eventMap.put("Run Cube Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor)));
+      eventMap.put("Cube High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
+      eventMap.put("Cube Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor));
+      eventMap.put("Run Cone Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
+      eventMap.put("Run Cone Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor));
+    }
 
     autoPaths = new PPRobotPath[] {
       null,
       new PPRobotPath("New Path", drivetrain, false, eventMap),
       new PPRobotPath("3 game piece", drivetrain, false, eventMap),
       new PPRobotPath("Near Loading Zone 2 Game Piece + Balance", drivetrain, false, eventMap),
-      new PPRobotPath("Near Loading Zone 3 Game Piece", drivetrain, false, eventMap)
+      new PPRobotPath("Near Loading Zone 3 Game Piece", drivetrain, false, eventMap),
+      new PPRobotPath("TESTING", drivetrain, false, eventMap)
     };
 
     autoSelectors = new DigitalInput[Math.min(autoPaths.length, 26)];
@@ -151,7 +153,6 @@ public class RobotContainer {
       }
     }
 
-    autoPath = autoPaths[3];
     return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoPath.getPathCommand(true, true);
     // return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
   }

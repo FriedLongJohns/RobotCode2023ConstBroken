@@ -217,7 +217,7 @@ public final class Constants {
         // public static double[] MAX_FF_VEL = {.25, .25}; // rad / s
         public static double[] MAX_FF_VEL_MANUAL = {1, 3}; // rad / s
         public static double[] MAX_FF_VEL_AUTO = {2, 5}; // rad / s
-        public static double[] MAX_FF_ACCEL = {1, 2}; // rad / s^2
+        public static double[] MAX_FF_ACCEL = {5, 5}; // rad / s^2
         public static TrapezoidProfile.Constraints armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL_AUTO[ARM], MAX_FF_ACCEL[ARM]);
         public static TrapezoidProfile.Constraints wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL_AUTO[WRIST], MAX_FF_ACCEL[WRIST]);
 

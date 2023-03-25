@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -73,7 +74,7 @@ public class Arm extends SubsystemBase {
 
         setArmTarget(goalState[ARM].position, 0);
         setWristTarget(goalState[WRIST].position, 0);
-        // wristMotor.setSmartCurrentLimit(WRIST_CURRENT_LIMIT_AMP);
+        wristMotor.setSmartCurrentLimit(WRIST_CURRENT_LIMIT_AMP);
 
         // SmartDashboard.putNumber("Arm Max Vel", MAX_FF_VEL[ARM]);
         // SmartDashboard.putNumber("Wrist Max Vel", MAX_FF_VEL[WRIST]);
@@ -86,6 +87,8 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+        if(DriverStation.isDisabled()) resetGoal();
 
         // TODO: REMOVE THIS WHEN PID CONSTANTS ARE DONE
         // MAX_FF_VEL[ARM] = SmartDashboard.getNumber("Arm Max Vel", MAX_FF_VEL[ARM]);
@@ -196,10 +199,12 @@ public class Arm extends SubsystemBase {
     }
 
     public void resetGoal() {
-        setArmTarget(getArmPos(), 0);
-        setWristTarget(getWristPos(), 0);
-        armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(getArmPos(), 0), new TrapezoidProfile.State(getArmPos(), 0));
-        wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(getWristPos(), 0), new TrapezoidProfile.State(getWristPos(), 0));
+        double armPos = getArmPos();
+        double wristPos = getWristPos();
+        goalState[ARM] = new TrapezoidProfile.State(armPos, 0);
+        goalState[WRIST] = new TrapezoidProfile.State(wristPos, 0);
+        armProfile = new TrapezoidProfile(armConstraints, goalState[ARM], goalState[ARM]);
+        wristProfile = new TrapezoidProfile(wristConstraints, goalState[WRIST], goalState[WRIST]);
     }
 
     //#endregion

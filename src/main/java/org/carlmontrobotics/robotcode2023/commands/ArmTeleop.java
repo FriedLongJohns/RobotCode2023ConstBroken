@@ -12,6 +12,7 @@ import org.carlmontrobotics.robotcode2023.Constants;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -56,7 +57,7 @@ public class ArmTeleop extends CommandBase {
     goalArmRad = MathUtil.clamp(goalArmRad, armSubsystem.getArmPos() - ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD, armSubsystem.getArmPos() + ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD);
     goalWristRad = MathUtil.clamp(goalWristRad, armSubsystem.getWristPos() - ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD, armSubsystem.getWristPos() + ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD);
 
-    if(speeds[0] != 0 || speeds[1] != 0) {
+    if((speeds[0] != 0 || speeds[1] != 0) && !DriverStation.isAutonomous()) {
       armSubsystem.setArmTarget(goalArmRad, armSubsystem.getCurrentArmGoal().velocity);
       armSubsystem.setWristTarget(goalWristRad, armSubsystem.getCurrentWristGoal().velocity);
     }
