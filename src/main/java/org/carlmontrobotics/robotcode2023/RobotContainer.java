@@ -122,9 +122,9 @@ public class RobotContainer {
     new JoystickButton(manipulatorController, Manipulator.midPosButton).onTrue(new SetArmWristGoalPreset(GoalPos.MID, isCube, isFront, arm));
     new JoystickButton(manipulatorController, Manipulator.highPosButton).onTrue(new SetArmWristGoalPreset(GoalPos.HIGH, isCube, isFront, arm));
     new POVButton(manipulatorController, Manipulator.shelfPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.SHELF, isCube, isFront, arm));
-    new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm));
-    new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
-    new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, isFront, arm));
+    new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
+    new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.SUBSTATION, isCube, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
+    new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor)));
     // axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
     //   .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeCubeButton)
