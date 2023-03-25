@@ -139,7 +139,7 @@ public class RobotContainer {
         new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor),
         isIntake
       ));
-      new JoystickButton(manipulatorController, Manipulator.stopRollerButton).onTrue(new InstantCommand(() -> roller.setSpeed(0), roller));
+
   }
 
   public Command getAutonomousCommand() {
