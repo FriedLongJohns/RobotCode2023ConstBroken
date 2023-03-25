@@ -22,6 +22,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -133,8 +134,9 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
         // Update the odometry with limelight
         if(lime != null && lime.hasTarget()) {
+            Pose2d targetPose = lime.getTransform(Limelight.Transform.TARGETPOSE_CAMERASPACE).toPose2d();
             Pose2d visionPose = lime.getTransform(limelightTransformForPoseEstimation).toPose2d();
-            if(visionPose.getTranslation().getDistance(odometry.getEstimatedPosition().getTranslation()) <= 1) {
+            if(visionPose.getTranslation().getDistance(odometry.getEstimatedPosition().getTranslation()) <= 1 && targetPose.getTranslation().getNorm() <= Units.feetToMeters(7.5)) {
                 odometry.addVisionMeasurement(
                     visionPose,
                     Timer.getFPGATimestamp() - lime.getNTEntry(limelightTransformForPoseEstimation.name().toLowerCase()).getDoubleArray(new double[7])[6] / 1000);
