@@ -128,6 +128,8 @@ public class Arm extends SubsystemBase {
     }
 
     public void autoCancelArmCommand() {
+        if(!(getDefaultCommand() instanceof ArmTeleop) || DriverStation.isAutonomous()) return;
+
         double[] requestedSpeeds = ((ArmTeleop) getDefaultCommand()).getRequestedSpeeds();
 
         if(requestedSpeeds[0] != 0 || requestedSpeeds[1] != 0) {
