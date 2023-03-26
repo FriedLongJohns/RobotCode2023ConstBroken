@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -57,10 +58,11 @@ public class RobotContainer {
 
   public final PPRobotPath[] autoPaths;
   public final DigitalInput[] autoSelectors;
+  public HashMap<String, Command> eventMap;
 
   public RobotContainer() {
 
-    HashMap<String, Command> eventMap = new HashMap<>();
+    eventMap = new HashMap<>();
 
     {
       eventMap.put("Cone High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> false, () -> false, arm));
@@ -73,6 +75,14 @@ public class RobotContainer {
       eventMap.put("Move Arm Back", new SetArmWristPositionV3((-5*Math.PI)/8, Constants.Arm.WRIST_STOW_POS_RAD, arm));
       eventMap.put("Cone Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm));
       eventMap.put("Cube Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm));
+      eventMap.put("Auto-Align", new ProxyCommand(() -> new AlignChargingStation(drivetrain)));
+      eventMap.put("PrintAlign", new PrintCommand("Aligning"));
+      eventMap.put("PrintCube", new PrintCommand("Cube"));
+      eventMap.put("PrintStored", new PrintCommand("Stored"));
+      eventMap.put("PrintOne", new PrintCommand("one"));
+      eventMap.put("PrintTwo", new PrintCommand("two"));
+      eventMap.put("PrintEnd", new PrintCommand("end"));
+      
     }
 
     autoPaths = new PPRobotPath[] {
@@ -93,7 +103,7 @@ public class RobotContainer {
 
     drivetrain.setDefaultCommand(new TeleopDrive(
       drivetrain,
-      () -> inputProcessing(getStickValue(driverController, Axis.kLeftY)),
+      () -> inputProcessing(getStickValue(driverController, Axis.kLeftY)),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
       () -> inputProcessing(getStickValue(driverController, Axis.kLeftX)),
       () -> inputProcessing(getStickValue(driverController, Axis.kRightX)),
       () -> driverController.getRawButton(Driver.slowDriveButton)
@@ -156,14 +166,14 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // PPRobotPath autoPath = new PPRobotPath("New Path", drivetrain, false, new HashMap<>());
-    PPRobotPath autoPath = null;
-    for(int i = 0; i < autoSelectors.length; i++) {
-      if(!autoSelectors[i].get()) {
-        System.out.println("Using Path: " + i);
-        autoPath = autoPaths[i];
-        break;
-      }
-    }
+    PPRobotPath autoPath = new PPRobotPath("Spit Cone", drivetrain, false, eventMap);
+    // for(int i = 0; i < autoSelectors.length; i++) {
+    //   if(!autoSelectors[i].get()) {
+    //     System.out.println("Using Path: " + i);
+    //     autoPath = autoPaths[i];
+    //     break;
+    //   }
+    // }
 
     return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoPath.getPathCommand(true, true);
     // return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);

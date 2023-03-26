@@ -132,10 +132,10 @@ public final class Constants {
 
         //#region Command Constants
 
-        public static final double kNormalDriveSpeed = 0.7; // Percent Multiplier
-        public static final double kNormalDriveRotation = 0.55; // Percent Multiplier
-        public static final double kSlowDriveSpeed = 0.25; // Percent Multiplier
-        public static final double kSlowDriveRotation = 0.30; // Percent Multiplier
+        public static final double kNormalDriveSpeed = 0.55; // Percent Multiplier
+        public static final double kNormalDriveRotation = 0.4; // Percent Multiplier
+        public static final double kSlowDriveSpeed = 0.7; // Percent Multiplier
+        public static final double kSlowDriveRotation = 0.550; // Percent Multiplier
         public static final double kAlignMultiplier = 1D/3D;
         public static final double kAlignForward = 0.6;
 
@@ -216,7 +216,7 @@ public final class Constants {
         // TODO: Determine actual max vel/accel
         // public static double[] MAX_FF_VEL = {.25, .25}; // rad / s
         public static double[] MAX_FF_VEL_MANUAL = {1, 3}; // rad / s
-        public static double[] MAX_FF_VEL_AUTO = {2, 5}; // rad / s
+        public static double[] MAX_FF_VEL_AUTO = {1.25, 5}; // rad / s
         public static double[] MAX_FF_ACCEL = {5, 5}; // rad / s^2
         public static TrapezoidProfile.Constraints armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL_AUTO[ARM], MAX_FF_ACCEL[ARM]);
         public static TrapezoidProfile.Constraints wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL_AUTO[WRIST], MAX_FF_ACCEL[WRIST]);
@@ -313,8 +313,8 @@ public final class Constants {
                 new GoalPos(-1.459526, 2.417944)
             },
             {
-                new GoalPos(-3.454349, 0.771236),
-                new GoalPos(-3.454349, 0.771236)
+                new GoalPos(-1.459526, 2.417944),
+                new GoalPos(-1.459526, 2.417944)
             }
         };
         public static GoalPos[][] INTAKE = {
@@ -350,6 +350,9 @@ public final class Constants {
 
         public static final double distSensorDepthMM = 16;
         public static final double gamePieceDetectDistanceIn = 21;
+
+        public static final double rollerToleranceRad = 1 / 20 * 2 * Math.PI;
+        public static final double rollerHoldSpeedPercent = .3;
 
         //#endregion
 
