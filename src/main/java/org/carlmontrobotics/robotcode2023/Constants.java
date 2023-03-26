@@ -132,7 +132,7 @@ public final class Constants {
 
         //#region Command Constants
 
-        public static final double kNormalDriveSpeed = 1; // Percent Multiplier
+        public static final double kNormalDriveSpeed = 0.7; // Percent Multiplier
         public static final double kNormalDriveRotation = 0.55; // Percent Multiplier
         public static final double kSlowDriveSpeed = 0.25; // Percent Multiplier
         public static final double kSlowDriveRotation = 0.30; // Percent Multiplier
@@ -367,6 +367,7 @@ public final class Constants {
             public static RollerMode INTAKE_CUBE = new RollerMode(0.3, .25, true);
             public static RollerMode OUTTAKE_CONE = new RollerMode(0.5, .5, false);
             public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5, false);
+            public static RollerMode STOP = new RollerMode(0, 0, true);
             public double speed, time;
             public boolean intake;
     

@@ -2,15 +2,15 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 2.0,
-        "y": 2.0
+        "x": 1.813652750112518,
+        "y": 3.237325597458213
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0161721797444137,
-        "y": 2.0
+        "x": 2.7567521801710275,
+        "y": 3.273598652460463
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -24,15 +24,15 @@
     },
     {
       "anchorPoint": {
-        "x": 2.0,
-        "y": 2.0
+        "x": 3.908421676492476,
+        "y": 3.2191890699570878
       },
       "prevControl": {
-        "x": 1.9638379067477842,
-        "y": 2.0
+        "x": 3.228301895200282,
+        "y": 3.210120806206526
       },
       "nextControl": null,
-      "holonomicAngle": 90.0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -45,8 +45,30 @@
       }
     }
   ],
-  "maxVelocity": 0.1,
-  "maxAcceleration": 0.01,
-  "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 0.0,
+      "names": [
+        "Run Cone Outtake"
+      ]
+    },
+    {
+      "position": 0.1545454545454546,
+      "names": [
+        "Cube Intake Pos."
+      ]
+    },
+    {
+      "position": 0.6090909090909096,
+      "names": [
+        "Stored Pos."
+      ]
+    },
+    {
+      "position": 1.0,
+      "names": [
+        "Run Cube Intake"
+      ]
+    }
+  ]
 }

@@ -42,7 +42,9 @@ public class RunRoller extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        
+
+        if(mode.speed == 0) return true;
+
         double time = timer.get();
 
         // TODO: distance sensor detects belt when wrist is spinning (concern)
