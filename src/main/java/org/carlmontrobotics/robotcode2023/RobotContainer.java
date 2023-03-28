@@ -5,7 +5,6 @@
 package org.carlmontrobotics.robotcode2023;
 
 import static org.carlmontrobotics.robotcode2023.Constants.OI.MIN_AXIS_TRIGGER_VALUE;
-import static org.mockito.Answers.values;
 
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
@@ -29,10 +28,10 @@ import org.carlmontrobotics.robotcode2023.subsystems.Roller;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -163,7 +162,7 @@ public class RobotContainer {
     // return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
   }
 
-  private double getStickValue(Joystick stick, Axis axis) {
+  private double getStickValue(GenericHID stick, Axis axis) {
     return stick.getRawAxis(axis.value) * (axis == Axis.kLeftY || axis == Axis.kRightY ? -1 : 1);
   }
 
@@ -196,10 +195,8 @@ public class RobotContainer {
    * @return A new instance of Trigger based on the given Joystick and Axis objects.
    * @throws NullPointerException if either stick or axis is null.
    */
-  private Trigger axisTrigger(Joystick stick, Axis axis) {
+  private Trigger axisTrigger(GenericHID stick, Axis axis) {
     return new Trigger(() -> Math.abs(getStickValue(stick, axis)) > MIN_AXIS_TRIGGER_VALUE);
   }
-  private Trigger axisTrigger(XboxController stick, Axis axis) {
-    return new Trigger(() -> Math.abs(getStickValue(stick, axis)) > MIN_AXIS_TRIGGER_VALUE);
-  }
+  
 }

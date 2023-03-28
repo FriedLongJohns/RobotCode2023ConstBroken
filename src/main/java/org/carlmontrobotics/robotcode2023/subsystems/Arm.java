@@ -1,8 +1,48 @@
 package org.carlmontrobotics.robotcode2023.subsystems;
 
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.*;
-
-import java.util.function.BooleanSupplier;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_DISCONTINUITY_RAD;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_JOINT_TOTAL_HEIGHT;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_LENGTH_METERS;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_LOWER_LIMIT_RAD;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_MASS_KG;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_UPPER_LIMIT_RAD;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.BACK;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.COM_ARM_LENGTH_METERS;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.COM_ROLLER_LENGTH_METERS;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.CONE;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.CUBE;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.DT_EXTENSION_FOR_ROLLER;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.DT_TOTAL_WIDTH;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.MAX_FF_ACCEL;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.MAX_FF_VEL;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.ROLLER_COM_CORRECTION_RAD;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.ROLLER_LENGTH_METERS;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.ROLLER_MASS_KG;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.SAFE_HEIGHT;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST_CURRENT_LIMIT_AMP;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST_DISCONTINUITY_RAD;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST_LOWER_LIMIT_RAD;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST_UPPER_LIMIT_RAD;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.armConstraints;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.armMotorPort;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.g;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.inverted;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.kA;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.kD;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.kG;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.kI;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.kP;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.kS;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.kV;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.offsetRad;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.posToleranceRad;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.rotationToRad;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.velToleranceRadPSec;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.wristConstraints;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.wristMotorPort;
 
 import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
@@ -313,11 +353,7 @@ public class Arm extends SubsystemBase {
 
     public boolean wristMovementForbidden(double armPos, double wristPos, double wristVelSign) {
         // If the position is not forbidden, then the movement is not forbidden
-        if(positionForbidden(armPos, wristPos)) {
-            
-            return false;
-        }
-
+        forbFlag = positionForbidden(armPos, wristPos);
        
 
         Translation2d tip = getWristTipPosition(armPos, wristPos);
@@ -328,10 +364,12 @@ public class Arm extends SubsystemBase {
 
         // If the wrist is inside the drivetrain, fold towards the
         if(horizontal && vertical) {
-            return Math.signum(getWristPos() + ROLLER_COM_CORRECTION_RAD) != Math.signum(wristVelSign);
+            forbFlag = Math.signum(getWristPos() + ROLLER_COM_CORRECTION_RAD) != Math.signum(wristVelSign);
         }
 
-        
+        if (forbFlag) {
+            return true;
+        }
 
         // Otherwise, fold away from vertical
         double tipAngle = MathUtil.inputModulus(armPos + wristPos + ROLLER_COM_CORRECTION_RAD, -3 * Math.PI / 2, Math.PI / 2);
@@ -352,8 +390,8 @@ public class Arm extends SubsystemBase {
         boolean ground = tip.getY() < -ARM_JOINT_TOTAL_HEIGHT;
 
         //return horizontal && vertical || ground;
-        forbFlag = true;
-        return false;
+        forbFlag = ((horizontal && vertical) || ground);
+        return forbFlag;
     }
 
     //#endregion
