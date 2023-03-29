@@ -14,7 +14,5 @@ public class SetArmWristGoalPreset extends ProxyCommand {
             GoalPos pos = preset[isFront.getAsBoolean() ? 0 : 1][isCube.getAsBoolean() ? 0 : 1];
             return new SetArmWristPositionV3(pos.armPos, pos.wristPos, arm);
         });
-        addRequirements(arm);
     }
-
 }
