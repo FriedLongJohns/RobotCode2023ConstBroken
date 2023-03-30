@@ -165,10 +165,6 @@ public class RobotContainer {
     return stick.getRawAxis(axis.value) * (axis == Axis.kLeftY || axis == Axis.kRightY ? -1 : 1);
   }
 
-  private double getStickValue(XboxController xbox, Axis axis) {
-    return xbox.getRawAxis(axis.value) * (axis == Axis.kLeftY || axis == Axis.kRightY ? -1 : 1);
-  }
-
   /**
    * Processes an input from the joystick into a value between -1 and 1
    * 
