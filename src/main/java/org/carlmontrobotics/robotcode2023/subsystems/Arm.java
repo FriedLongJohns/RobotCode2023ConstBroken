@@ -1,48 +1,6 @@
 package org.carlmontrobotics.robotcode2023.subsystems;
 
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_DISCONTINUITY_RAD;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_JOINT_TOTAL_HEIGHT;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_LENGTH_METERS;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_LOWER_LIMIT_RAD;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_MASS_KG;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ARM_UPPER_LIMIT_RAD;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.BACK;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.COM_ARM_LENGTH_METERS;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.COM_ROLLER_LENGTH_METERS;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.CONE;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.CUBE;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.DT_EXTENSION_FOR_ROLLER;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.DT_TOTAL_WIDTH;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.MAX_FF_ACCEL;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.MAX_FF_VEL;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ROLLER_COM_CORRECTION_RAD;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ROLLER_LENGTH_METERS;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.ROLLER_MASS_KG;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.SAFE_HEIGHT;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST_CURRENT_LIMIT_AMP;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST_DISCONTINUITY_RAD;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST_LOWER_LIMIT_RAD;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.WRIST_UPPER_LIMIT_RAD;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.armConstraints;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.armMotorPort;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.g;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.inverted;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kA;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kD;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kG;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kI;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kP;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kS;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.kV;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.offsetRad;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.posToleranceRad;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.rotationToRad;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.velToleranceRadPSec;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.wristConstraints;
-import static org.carlmontrobotics.robotcode2023.Constants.Arm.wristMotorPort;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.*;
 
 import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
@@ -70,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // Arm angle is measured from horizontal on the intake side of the robot and bounded between -3π/2 and π/2
 // Wrist angle is measured relative to the arm with 0 being parallel to the arm and bounded between -π and π (Center of Mass of Roller)
 public class Arm extends SubsystemBase {
-    
+    // a boolean meant to tell if the arm is in a forbidden posistion AKA FORBIDDEN FLAG
     private static boolean forbFlag;
     private final CANSparkMax armMotor = MotorControllerFactory.createSparkMax(armMotorPort, MotorConfig.NEO);
     private final CANSparkMax wristMotor = MotorControllerFactory.createSparkMax(wristMotorPort, MotorConfig.NEO);
@@ -93,8 +51,7 @@ public class Arm extends SubsystemBase {
 
     // rad, rad/s
     public static TrapezoidProfile.State[] goalState = { new TrapezoidProfile.State(-Math.PI / 2, 0), new TrapezoidProfile.State(0, 0) };
-    
-   
+
     public Arm() {
         armMotor.setInverted(inverted[ARM]);
         wristMotor.setInverted(inverted[WRIST]);
@@ -187,7 +144,12 @@ public class Arm extends SubsystemBase {
         double armPIDVolts = armPID.calculate(getArmPos(), state.position);
         if ((getArmPos() > ARM_UPPER_LIMIT_RAD && state.velocity > 0) || 
             (getArmPos() < ARM_LOWER_LIMIT_RAD && state.velocity < 0)) {
+                forbFlag = true;
             armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
+        }
+        else
+        {
+            forbFlag = false;
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
         // TO MASTER IF THIS IS STILL HERE)
@@ -204,7 +166,12 @@ public class Arm extends SubsystemBase {
         double wristPIDVolts = wristPID.calculate(getWristPos(), state.position);
         if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && state.velocity > 0) || 
             (getWristPos() < WRIST_LOWER_LIMIT_RAD && state.velocity < 0)) {
+            forbFlag = true;
             wristFeedVolts = kgv;
+        }
+        else
+        {
+            forbFlag = false;
         }
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
         // TO MASTER IF THIS IS STILL HERE)
@@ -218,10 +185,8 @@ public class Arm extends SubsystemBase {
     public void setArmTarget(double targetPos, double targetVel) {
         targetPos = getArmClampedGoal(targetPos);
 
-        if(positionForbidden(targetPos, getWristPos())) 
-        
+        if(positionForbidden(targetPos, getWristPos())) return;
 
-        return;
 
         armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(targetPos, targetVel), armProfile.calculate(armProfileTimer.get()));
         armProfileTimer.reset();
@@ -364,12 +329,10 @@ public class Arm extends SubsystemBase {
 
         // If the wrist is inside the drivetrain, fold towards the
         if(horizontal && vertical) {
-            forbFlag = Math.signum(getWristPos() + ROLLER_COM_CORRECTION_RAD) != Math.signum(wristVelSign);
+            return Math.signum(getWristPos() + ROLLER_COM_CORRECTION_RAD) != Math.signum(wristVelSign);
         }
 
-        if (forbFlag) {
-            return true;
-        }
+        
 
         // Otherwise, fold away from vertical
         double tipAngle = MathUtil.inputModulus(armPos + wristPos + ROLLER_COM_CORRECTION_RAD, -3 * Math.PI / 2, Math.PI / 2);
@@ -389,9 +352,8 @@ public class Arm extends SubsystemBase {
         boolean vertical = tip.getY() > -ARM_JOINT_TOTAL_HEIGHT && tip.getY() < (-ARM_JOINT_TOTAL_HEIGHT + SAFE_HEIGHT);
         boolean ground = tip.getY() < -ARM_JOINT_TOTAL_HEIGHT;
 
-        //return horizontal && vertical || ground;
-        forbFlag = ((horizontal && vertical) || ground);
-        return forbFlag;
+        return((horizontal && vertical) || ground);
+       
     }
 
     //#endregion

@@ -46,8 +46,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
   
-  public final Joystick driverController = new Joystick(Driver.port);
-  public final XboxController manipulatorController = new XboxController(Manipulator.port);
+  public final GenericHID driverController = new GenericHID(Driver.port);
+  public final GenericHID manipulatorController = new GenericHID(Manipulator.port);
 
   public final PowerDistribution pd = new PowerDistribution();
 
@@ -58,10 +58,10 @@ public class RobotContainer {
 
   public final PPRobotPath[] autoPaths;
   public final DigitalInput[] autoSelectors;
+  public static final double rumbleFullPower = 1;
+  public static final double rumbleNoPower = 0;
 
   public RobotContainer() {
-    
-    
 
     HashMap<String, Command> eventMap = new HashMap<>();
 
@@ -103,7 +103,6 @@ public class RobotContainer {
     ));
   }
   
-
   private void configureButtonBindingsDriver() {
     new JoystickButton(driverController, Driver.chargeStationAlignButton).onTrue(new AlignChargingStation(drivetrain));
     new JoystickButton(driverController, Driver.resetFieldOrientationButton).onTrue(new InstantCommand(drivetrain::resetFieldOrientation));
@@ -128,8 +127,8 @@ public class RobotContainer {
     new POVButton(manipulatorController, Manipulator.shelfPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.SHELF, isCube, isFront, arm));
     new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm));
     new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
-    new Trigger(() -> {return arm.getForbFlag();}).onTrue(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,1);}))
-                                                  .onFalse(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,0);}));
+    new Trigger(() -> {return arm.getForbFlag();}).onTrue(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleFullPower);}))
+                                                  .onFalse(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleNoPower);}));
     new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, isFront, arm));
     // axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
     //   .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
