@@ -102,7 +102,6 @@ public class RobotContainer {
       () -> inputProcessing(getStickValue(manipulatorController, Axis.kRightY))
     ));
   }
-  
   private void configureButtonBindingsDriver() {
     new JoystickButton(driverController, Driver.chargeStationAlignButton).onTrue(new AlignChargingStation(drivetrain));
     new JoystickButton(driverController, Driver.resetFieldOrientationButton).onTrue(new InstantCommand(drivetrain::resetFieldOrientation));
