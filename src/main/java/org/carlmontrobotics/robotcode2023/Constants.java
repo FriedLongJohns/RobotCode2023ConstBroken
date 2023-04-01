@@ -165,6 +165,7 @@ public final class Constants {
 
         // Feedforward
         // Arm, Wrist
+        // TODO: Get Feedforward consts for new arm/wrist
         public static final double[] kS = {0.20642, .074798};
         public static final double[] kG = {0.6697, 0.36214};
         public static final double[] kV = {4.3735, 1.6743};
@@ -172,7 +173,7 @@ public final class Constants {
         public static final double kG_WRIST = .36214; // (V)
 
         // PID
-        // FIXME BOTH WRIST AND ARM NEED TO TEST PID (Wrist PID never tested)
+        // TODO: Get pid consts for new arm/wrist
         // Arm, Wrist
         public static double[] kP = {4.2736, 6}; // 4.2736 for arm from sysid was tested and it worked fine (V / rad)
         public static double[] kI = {0, 0}; // (V / (rad * s) )
@@ -182,6 +183,7 @@ public final class Constants {
         public static double[] posToleranceRad = { .07, .05 }; // rad
         public static double[] velToleranceRadPSec = { 0.5, 0.5 }; // rad/s
 
+        // TODO: Get offsetRad
         public static double[] offsetRad = { 4.02, -0.7 + Math.PI / 2 }; // rad
 
         // needed to calculate feedforward values dynamically
