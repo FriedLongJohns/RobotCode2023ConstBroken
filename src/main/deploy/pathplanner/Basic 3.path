@@ -1,0 +1,106 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.8435291649470598,
+        "y": 4.71140868101993
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.843529164947059,
+        "y": 4.71140868101993
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.54350238800335,
+        "y": 4.802892344729054
+      },
+      "prevControl": {
+        "x": 4.86249006734818,
+        "y": 5.08877879382007
+      },
+      "nextControl": {
+        "x": 4.86249006734818,
+        "y": 5.08877879382007
+      },
+      "holonomicAngle": 0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.8435291649470598,
+        "y": 4.562747727492601
+      },
+      "prevControl": {
+        "x": 3.14688693571396,
+        "y": 4.696063209530126
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 0.0,
+      "names": [
+        "Run Cone Outtake"
+      ]
+    },
+    {
+      "position": 0.29090909090907435,
+      "names": [
+        "Cube Intake Pos."
+      ]
+    },
+    {
+      "position": 0.7709090909090438,
+      "names": [
+        "Run Cube Intake"
+      ]
+    },
+    {
+      "position": 1.1781818181817598,
+      "names": [
+        "Stored Pos."
+      ]
+    },
+    {
+      "position": 2.0,
+      "names": [
+        "Cube High Pos.",
+        "Run Cube Outtake"
+      ]
+    }
+  ]
+}

@@ -28,7 +28,7 @@ public class RunRoller extends CommandBase {
         roller.setLedColor(ledColor);
         timer.reset();
 
-        if(roller.hasGamePiece() == mode.intake) cancel();
+        //if(roller.hasGamePiece() == mode.intake) cancel();
     }
 
     @Override
@@ -42,12 +42,17 @@ public class RunRoller extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        
+
+        if(mode.speed == 0) return true;
+
         double time = timer.get();
 
         // TODO: distance sensor detects belt when wrist is spinning (concern)
         if (roller.hasGamePiece() == mode.intake) {
             timer.start();
+        } else if(roller.hasGamePiece() != mode.intake) {
+            timer.stop();
+            timer.reset();
         }
         SmartDashboard.putBoolean("Mode", mode.intake);
         SmartDashboard.putNumber("Time Target", mode.time);

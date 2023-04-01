@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 2.0,
-        "y": 2.0
+        "x": 1.8892709968016221,
+        "y": 4.654231391201726
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0161721797444137,
-        "y": 2.0
+        "x": 1.8549646229107004,
+        "y": 4.642795933238086
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -16,7 +16,9 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "Run Cone Outtake"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -24,15 +26,15 @@
     },
     {
       "anchorPoint": {
-        "x": 2.0,
-        "y": 2.0
+        "x": 1.89,
+        "y": 4.65
       },
       "prevControl": {
-        "x": 1.9638379067477842,
-        "y": 2.0
+        "x": 1.8892709968016221,
+        "y": 4.642795933238086
       },
       "nextControl": null,
-      "holonomicAngle": 90.0,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -45,8 +47,5 @@
       }
     }
   ],
-  "maxVelocity": 0.1,
-  "maxAcceleration": 0.01,
-  "isReversed": null,
   "markers": []
 }

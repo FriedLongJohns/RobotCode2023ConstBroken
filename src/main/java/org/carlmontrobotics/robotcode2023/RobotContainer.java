@@ -20,9 +20,11 @@ import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.commands.AlignChargingStation;
 import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
+import org.carlmontrobotics.robotcode2023.commands.HoldRoller;
 import org.carlmontrobotics.robotcode2023.commands.RotateToFieldRelativeAngle;
 import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.commands.SetArmWristGoalPreset;
+import org.carlmontrobotics.robotcode2023.commands.SetArmWristPositionV3;
 import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
@@ -32,6 +34,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
@@ -40,6 +45,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -61,20 +67,32 @@ public class RobotContainer {
 
   public final PPRobotPath[] autoPaths;
   public final DigitalInput[] autoSelectors;
-  
+
+  public HashMap<String, Command> eventMap;
 
   public RobotContainer() {
 
-    HashMap<String, Command> eventMap = new HashMap<>();
+    eventMap = new HashMap<>();
 
     {
       eventMap.put("Cone High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> false, () -> false, arm));
       eventMap.put("Stored Pos.", new SetArmWristGoalPreset(GoalPos.STORED, () -> false, () -> false, arm));
       eventMap.put("Run Cube Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor)));
       eventMap.put("Cube High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
-      eventMap.put("Cube Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor));
+      eventMap.put("Run Cube Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor));
       eventMap.put("Run Cone Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
       eventMap.put("Run Cone Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor));
+      eventMap.put("Move Arm Back", new SetArmWristPositionV3((-5*Math.PI)/8, Constants.Arm.WRIST_STOW_POS_RAD, arm));
+      eventMap.put("Cone Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm));
+      eventMap.put("Cube Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm));
+      eventMap.put("Auto-Align", new ProxyCommand(() -> new AlignChargingStation(drivetrain)));
+      eventMap.put("PrintAlign", new PrintCommand("Aligning"));
+      eventMap.put("PrintCube", new PrintCommand("Cube"));
+      eventMap.put("PrintStored", new PrintCommand("Stored"));
+      eventMap.put("PrintOne", new PrintCommand("one"));
+      eventMap.put("PrintTwo", new PrintCommand("two"));
+      eventMap.put("PrintEnd", new PrintCommand("end"));
+      
     }
 
     autoPaths = new PPRobotPath[] {
@@ -82,7 +100,12 @@ public class RobotContainer {
       new PPRobotPath("New Path", drivetrain, false, eventMap),
       new PPRobotPath("3 game piece", drivetrain, false, eventMap),
       new PPRobotPath("Near Loading Zone 2 Game Piece + Balance", drivetrain, false, eventMap),
-      new PPRobotPath("Near Loading Zone 3 Game Piece", drivetrain, false, eventMap)
+      new PPRobotPath("Near Loading Zone 3 Game Piece", drivetrain, false, eventMap),
+      new PPRobotPath("TESTING", drivetrain, false, eventMap),
+      new PPRobotPath("Basic", drivetrain, false, eventMap),
+      new PPRobotPath("Basic 2", drivetrain, false, eventMap),
+      new PPRobotPath("Mid Basic", drivetrain, false, eventMap),
+      new PPRobotPath("Basic 3", drivetrain, false, eventMap)
     };
 
     autoSelectors = new DigitalInput[Math.min(autoPaths.length, 26)];
@@ -90,11 +113,13 @@ public class RobotContainer {
 
     drivetrain.setDefaultCommand(new TeleopDrive(
       drivetrain,
-      () -> inputProcessing(getStickValue(driverController, Axis.kLeftY)),
+      () -> inputProcessing(getStickValue(driverController, Axis.kLeftY)),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
       () -> inputProcessing(getStickValue(driverController, Axis.kLeftX)),
       () -> inputProcessing(getStickValue(driverController, Axis.kRightX)),
       () -> driverController.getRawButton(Driver.slowDriveButton)
     ));
+
+    roller.setDefaultCommand(new HoldRoller(roller));
 
     configureButtonBindingsDriver();
     configureButtonBindingsManipulator();
@@ -118,6 +143,7 @@ public class RobotContainer {
   private void configureButtonBindingsManipulator() {
     BooleanSupplier isCube = () -> new JoystickButton(manipulatorController, Manipulator.toggleCubeButton).getAsBoolean();
     BooleanSupplier isFront = () -> new JoystickButton(manipulatorController, Manipulator.toggleFrontButton).getAsBoolean();
+    BooleanSupplier isIntake = () -> !isCube.getAsBoolean();
     // BooleanSupplier isFront = () -> false;
     //BooleanSupplier isStopped = () -> new JoystickButton(manipulatorController, Manipulator.stopRollerButton).getAsBoolean();
 
@@ -130,40 +156,52 @@ public class RobotContainer {
     new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
     new Trigger(() -> {return arm.getForbFlag();}).onTrue(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleFullPower);}))
                                                   .onFalse(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleNoPower);}));
-    
     new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, isFront, arm));
+    new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
+    new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.SUBSTATION, isCube, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
+    new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor)));
+    new JoystickButton(manipulatorController, Manipulator.stopRollerButton).onTrue(new RunRoller(roller, RollerMode.STOP, Constants.Roller.defaultColor));
+    
     // axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
     //   .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeCubeButton)
       .onTrue(new ConditionalCommand(
         new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor),
         new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor),
-        isCube
+        isIntake
       ));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
       .onTrue(new ConditionalCommand(
         new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor),
         new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor),
-        isCube
+        isIntake
       ));
-      new JoystickButton(manipulatorController, Manipulator.stopRollerButton).onTrue(new InstantCommand(() -> roller.setSpeed(0), roller));
+
   }
 
   public Command getAutonomousCommand() {
     // PPRobotPath autoPath = new PPRobotPath("New Path", drivetrain, false, new HashMap<>());
-    PPRobotPath autoPath = null;
-    for(int i = 0; i < autoSelectors.length; i++) {
-      if(!autoSelectors[i].get()) {
-        System.out.println("Using Path: " + i);
-        autoPath = autoPaths[i];
-        break;
-      }
-    }
+    PPRobotPath autoPath = new PPRobotPath("Spit Cone", drivetrain, false, eventMap);
+    // for(int i = 0; i < autoSelectors.length; i++) {
+    //   if(!autoSelectors[i].get()) {
+    //     System.out.println("Using Path: " + i);
+    //     autoPath = autoPaths[i];
+    //     break;
+    //   }
+    // }
+
     return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoPath.getPathCommand(true, true);
     // return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
   }
 
+
   private double getStickValue(GenericHID stick, Axis axis) {
+  public void onEnable() {
+    lime.getNTEntry("pipeline").setDouble(DriverStation.getAlliance() == Alliance.Red ? 1 : 0);
+  }
+
+  private double getStickValue(GenricHID stick, Axis axis) {
+
     return stick.getRawAxis(axis.value) * (axis == Axis.kLeftY || axis == Axis.kRightY ? -1 : 1);
   }
 

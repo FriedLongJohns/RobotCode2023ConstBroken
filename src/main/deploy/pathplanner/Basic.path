@@ -1,0 +1,115 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.8262016644322576,
+        "y": 4.882338652983122
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.8423738441766708,
+        "y": 4.882338652983122
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "sequential",
+        "waitBehavior": "before",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 4.462249038620759,
+        "y": 4.551312269528961
+      },
+      "prevControl": {
+        "x": 4.450235920271924,
+        "y": 4.522422675874151
+      },
+      "nextControl": {
+        "x": 4.474262156969595,
+        "y": 4.580201863183771
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "PrintOne"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 7.847144595858379,
+        "y": 4.2654258204379465
+      },
+      "prevControl": {
+        "x": 6.383405976512381,
+        "y": 4.368344942110713
+      },
+      "nextControl": {
+        "x": 9.310883215204377,
+        "y": 4.16250669876518
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "PrintTwo"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 9.76830153375,
+        "y": 3.7165238381831966
+      },
+      "prevControl": {
+        "x": 10.534477217313919,
+        "y": 3.693652922255915
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "PrintEnd"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "maxVelocity": 4.0,
+  "maxAcceleration": 3.0,
+  "isReversed": null,
+  "markers": [
+    {
+      "position": 0.0,
+      "names": [
+        "Run Cone Outtake"
+      ]
+    }
+  ]
+}

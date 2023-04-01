@@ -1,0 +1,108 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.832093706983419,
+        "y": 4.768585970838132
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.7751931370419287,
+        "y": 4.804859025840383
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.434262965536749,
+        "y": 4.505570437669563
+      },
+      "prevControl": {
+        "x": 4.880777542924109,
+        "y": 4.900917168107163
+      },
+      "nextControl": {
+        "x": 6.234745022991591,
+        "y": 3.933797539487533
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "Cube Intake Pos.",
+          "PrintCube"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "deadline",
+        "waitTime": 2.0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 4.999874626693129,
+        "y": 2.9216799778195433
+      },
+      "prevControl": {
+        "x": 5.283940409443199,
+        "y": 3.0840032822481556
+      },
+      "nextControl": {
+        "x": 4.731918230403173,
+        "y": 2.7685620370824253
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "Stored Pos.",
+          "PrintStored"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "deadline",
+        "waitTime": 2.0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.821863392663423,
+        "y": 2.824558117014394
+      },
+      "prevControl": {
+        "x": 4.170896051336397,
+        "y": 2.814851753031253
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "Auto-Align",
+          "PrintAlign"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": []
+}

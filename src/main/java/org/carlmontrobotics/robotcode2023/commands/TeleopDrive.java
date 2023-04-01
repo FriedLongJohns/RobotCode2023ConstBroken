@@ -95,6 +95,10 @@ public class TeleopDrive extends CommandBase {
     return new double[] {currentForwardVel, currentStrafeVel, -rotateClockwise};
   }
 
+  public boolean hasDriverInput() {
+    return Math.abs(fwd.getAsDouble()) > Constants.OI.JOY_THRESH || Math.abs(str.getAsDouble()) > Constants.OI.JOY_THRESH || Math.abs(rcw.getAsDouble()) > Constants.OI.JOY_THRESH;
+  }
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {

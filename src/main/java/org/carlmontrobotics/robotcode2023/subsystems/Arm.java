@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -76,8 +77,8 @@ public class Arm extends SubsystemBase {
         setWristTarget(goalState[WRIST].position, 0);
         wristMotor.setSmartCurrentLimit(WRIST_CURRENT_LIMIT_AMP);
 
-        SmartDashboard.putNumber("Arm Max Vel", MAX_FF_VEL[ARM]);
-        SmartDashboard.putNumber("Wrist Max Vel", MAX_FF_VEL[WRIST]);
+        // SmartDashboard.putNumber("Arm Max Vel", MAX_FF_VEL[ARM]);
+        // SmartDashboard.putNumber("Wrist Max Vel", MAX_FF_VEL[WRIST]);
         SmartDashboard.putNumber("ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD", ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD);
         SmartDashboard.putNumber("Arm Tolerance Pos", posToleranceRad[ARM]);
         SmartDashboard.putNumber("Wrist Tolerance Pos", posToleranceRad[WRIST]);
@@ -88,12 +89,14 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
 
+        if(DriverStation.isDisabled()) resetGoal();
+
         // TODO: REMOVE THIS WHEN PID CONSTANTS ARE DONE
-        MAX_FF_VEL[ARM] = SmartDashboard.getNumber("Arm Max Vel", MAX_FF_VEL[ARM]);
-        MAX_FF_VEL[WRIST] = SmartDashboard.getNumber("Wrist Max Vel", MAX_FF_VEL[WRIST]);
+        // MAX_FF_VEL[ARM] = SmartDashboard.getNumber("Arm Max Vel", MAX_FF_VEL[ARM]);
+        // MAX_FF_VEL[WRIST] = SmartDashboard.getNumber("Wrist Max Vel", MAX_FF_VEL[WRIST]);
         ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD = SmartDashboard.getNumber("ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD", ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD);
-        wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
-        armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
+        // wristConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[WRIST], MAX_FF_ACCEL[WRIST]);
+        // armConstraints = new TrapezoidProfile.Constraints(MAX_FF_VEL[ARM], MAX_FF_ACCEL[ARM]);
         armPID.setP(kP[ARM]);
         armPID.setI(kI[ARM]);
         armPID.setD(kD[ARM]);
@@ -126,6 +129,8 @@ public class Arm extends SubsystemBase {
     }
 
     public void autoCancelArmCommand() {
+        if(!(getDefaultCommand() instanceof ArmTeleop) || DriverStation.isAutonomous()) return;
+
         double[] requestedSpeeds = ((ArmTeleop) getDefaultCommand()).getRequestedSpeeds();
 
         if(requestedSpeeds[0] != 0 || requestedSpeeds[1] != 0) {
@@ -210,10 +215,12 @@ public class Arm extends SubsystemBase {
     }
 
     public void resetGoal() {
-        setArmTarget(getArmPos(), 0);
-        setWristTarget(getWristPos(), 0);
-        armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(getArmPos(), 0), new TrapezoidProfile.State(getArmPos(), 0));
-        wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(getWristPos(), 0), new TrapezoidProfile.State(getWristPos(), 0));
+        double armPos = getArmPos();
+        double wristPos = getWristPos();
+        goalState[ARM] = new TrapezoidProfile.State(armPos, 0);
+        goalState[WRIST] = new TrapezoidProfile.State(wristPos, 0);
+        armProfile = new TrapezoidProfile(armConstraints, goalState[ARM], goalState[ARM]);
+        wristProfile = new TrapezoidProfile(wristConstraints, goalState[WRIST], goalState[WRIST]);
     }
 
     //#endregion
@@ -356,8 +363,19 @@ public class Arm extends SubsystemBase {
         boolean vertical = tip.getY() > -ARM_JOINT_TOTAL_HEIGHT && tip.getY() < (-ARM_JOINT_TOTAL_HEIGHT + SAFE_HEIGHT);
         boolean ground = tip.getY() < -ARM_JOINT_TOTAL_HEIGHT;
 
-        return((horizontal && vertical) || ground);
-       
+        return horizontal && vertical || ground;
+    }
+
+    public static boolean isWristOutsideRobot(double armPos, double wristPos) {
+        Translation2d wristTip = Arm.getWristTipPosition(armPos, wristPos);
+        double driveTrainHalfLen = Units.inchesToMeters(31)/2;
+
+        return Math.abs(wristTip.getX())>driveTrainHalfLen;
+        //returns true if wristTip is outside of robot vertical bounds.
+    }
+
+    public static boolean canSafelyMoveWrist(double armPos) {
+        return Math.abs(armPos - ARM_VERTICAL_POS_RAD) >= MIN_WRIST_FOLD_POS_RAD;
     }
 
     //#endregion
@@ -379,9 +397,11 @@ public class Arm extends SubsystemBase {
         builder.addDoubleProperty("kD: Arm", () -> kD[ARM], x -> kD[ARM] = x);
         builder.addDoubleProperty("kD: Wis", () -> kD[WRIST], x -> kD[WRIST] = x);
         //arm control
-        builder.addDoubleProperty("Max FF Vel Arm", () -> MAX_FF_VEL[ARM],     x -> MAX_FF_VEL[ARM] = x);
+        builder.addDoubleProperty("Max Manual FF Vel Arm", () -> MAX_FF_VEL_MANUAL[ARM],     x -> MAX_FF_VEL_MANUAL[ARM] = x);
+        builder.addDoubleProperty("Max Auto FF Vel Arm", () -> MAX_FF_VEL_AUTO[ARM],     x -> MAX_FF_VEL_AUTO[ARM] = x);
         builder.addDoubleProperty("Max FF Acc Arm", () -> MAX_FF_ACCEL[ARM],   x -> MAX_FF_ACCEL[ARM] = x);
-        builder.addDoubleProperty("Max FF Vel Wis", () -> MAX_FF_VEL[WRIST],   x -> MAX_FF_VEL[WRIST] = x);
+        builder.addDoubleProperty("Max Manual FF Vel Wis", () -> MAX_FF_VEL_MANUAL[WRIST],     x -> MAX_FF_VEL_MANUAL[WRIST] = x);
+        builder.addDoubleProperty("Max Auto FF Vel Wis", () -> MAX_FF_VEL_AUTO[WRIST],     x -> MAX_FF_VEL_AUTO[WRIST] = x);
         builder.addDoubleProperty("Max FF Acc Wis", () -> MAX_FF_ACCEL[WRIST], x -> MAX_FF_ACCEL[WRIST] = x);
         //arm positions
         builder.addDoubleProperty("Arm.Back.High.Cone",  () -> GoalPos.HIGH[BACK][CONE].armPos,       x -> GoalPos.HIGH[BACK][CONE].armPos = x);
@@ -491,14 +511,14 @@ public class Arm extends SubsystemBase {
         SmartDashboard.putNumber("kD: Arm", kD[ARM]);
         SmartDashboard.putNumber("WristGoalDeg", Units.radiansToDegrees(goalState[WRIST].position));
         SmartDashboard.putNumber("ArmGoalDeg", Units.radiansToDegrees(goalState[ARM].position));
-        SmartDashboard.putNumber("Max FF Vel Arm", MAX_FF_VEL[ARM]);
+        // SmartDashboard.putNumber("Max FF Vel Arm", MAX_FF_VEL[ARM]);
         SmartDashboard.putNumber("Max FF Accel Arm", MAX_FF_ACCEL[ARM]);
     }
 
     public void getArmControlOnSmartDashboard() {
         goalState[WRIST].position = Units.degreesToRadians(SmartDashboard.getNumber("WristGoalDeg", Units.radiansToDegrees(goalState[WRIST].position)));
         goalState[ARM].position = Units.degreesToRadians(SmartDashboard.getNumber("ArmGoalDeg", Units.radiansToDegrees(goalState[ARM].position)));
-        MAX_FF_VEL[ARM] = SmartDashboard.getNumber("Max FF Vel Arm", MAX_FF_VEL[ARM]);
+        // MAX_FF_VEL[ARM] = SmartDashboard.getNumber("Max FF Vel Arm", MAX_FF_VEL[ARM]);
         MAX_FF_ACCEL[ARM] = SmartDashboard.getNumber("Max FF Accel Arm", MAX_FF_ACCEL[ARM]);
         kP[WRIST] = SmartDashboard.getNumber("kP: Wis", kP[WRIST]);
         kI[WRIST] = SmartDashboard.getNumber("kI: Wis", kI[WRIST]);
