@@ -5,6 +5,8 @@
 package org.carlmontrobotics.robotcode2023;
 
 import static org.carlmontrobotics.robotcode2023.Constants.OI.MIN_AXIS_TRIGGER_VALUE;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.rumbleFullPower;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.rumbleNoPower;
 
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
@@ -13,6 +15,7 @@ import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.path.PPRobotPath;
 import org.carlmontrobotics.robotcode2023.Constants.GoalPos;
 import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
+
 import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.commands.AlignChargingStation;
@@ -58,8 +61,7 @@ public class RobotContainer {
 
   public final PPRobotPath[] autoPaths;
   public final DigitalInput[] autoSelectors;
-  public static final double rumbleFullPower = 1;
-  public static final double rumbleNoPower = 0;
+  
 
   public RobotContainer() {
 
@@ -129,6 +131,7 @@ public class RobotContainer {
     new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
     new Trigger(() -> {return arm.getForbFlag();}).onTrue(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleFullPower);}))
                                                   .onFalse(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleNoPower);}));
+    
     new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, isFront, arm));
     // axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
     //   .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));

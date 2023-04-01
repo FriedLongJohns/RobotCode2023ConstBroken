@@ -144,13 +144,11 @@ public class Arm extends SubsystemBase {
         double armPIDVolts = armPID.calculate(getArmPos(), state.position);
         if ((getArmPos() > ARM_UPPER_LIMIT_RAD && state.velocity > 0) || 
             (getArmPos() < ARM_LOWER_LIMIT_RAD && state.velocity < 0)) {
-                forbFlag = true;
+              forbFlag = true;  
             armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
         }
-        else
-        {
-            forbFlag = false;
-        }
+       
+        
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
         // TO MASTER IF THIS IS STILL HERE)
         SmartDashboard.putNumber("ArmFeedVolts", armFeedVolts);
@@ -169,10 +167,7 @@ public class Arm extends SubsystemBase {
             forbFlag = true;
             wristFeedVolts = kgv;
         }
-        else
-        {
-            forbFlag = false;
-        }
+       
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
         // TO MASTER IF THIS IS STILL HERE)
         SmartDashboard.putNumber("WristFeedVolts", wristFeedVolts);
@@ -185,8 +180,12 @@ public class Arm extends SubsystemBase {
     public void setArmTarget(double targetPos, double targetVel) {
         targetPos = getArmClampedGoal(targetPos);
 
-        if(positionForbidden(targetPos, getWristPos())) return;
-
+        if(positionForbidden(targetPos, getWristPos())) 
+        {
+             forbFlag = true;
+            return;
+        } 
+      
 
         armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(targetPos, targetVel), armProfile.calculate(armProfileTimer.get()));
         armProfileTimer.reset();
@@ -198,8 +197,11 @@ public class Arm extends SubsystemBase {
     public void setWristTarget(double targetPos, double targetVel) {
         targetPos = getWristClampedGoal(targetPos);
 
-        if(wristMovementForbidden(getArmPos(), targetPos, targetPos - getWristPos())) return;
-
+        if(wristMovementForbidden(getArmPos(), targetPos, targetPos - getWristPos())) 
+        {
+            forbFlag = true;
+            return;
+        }
         wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(targetPos, targetVel), wristProfile.calculate(wristProfileTimer.get()));
         wristProfileTimer.reset();
 
@@ -318,8 +320,7 @@ public class Arm extends SubsystemBase {
 
     public boolean wristMovementForbidden(double armPos, double wristPos, double wristVelSign) {
         // If the position is not forbidden, then the movement is not forbidden
-        forbFlag = positionForbidden(armPos, wristPos);
-       
+        
 
         Translation2d tip = getWristTipPosition(armPos, wristPos);
 
@@ -341,8 +342,11 @@ public class Arm extends SubsystemBase {
    
     public boolean getForbFlag()
     {
-        return forbFlag;
+        boolean output = forbFlag;
+        forbFlag = false;//default: if it wasn't set to true, it's false
+        return output;
     }
+   
 
     public static boolean positionForbidden(double armPos, double wristPos) {
 

@@ -50,6 +50,7 @@ public final class Constants {
         public static final double maxForward = maxSpeed;
         public static final double maxStrafe = maxSpeed;
         
+        
         // maxRCW is the angular velocity of the robot.
         // Calculated by looking at one of the motors and treating it as a point mass moving around in a circle.
         // Tangential speed of this point mass is maxSpeed and the radius of the circle is sqrt((wheelBase/2)^2 + (trackWidth/2)^2)
@@ -184,6 +185,8 @@ public final class Constants {
         public static double[] velToleranceRadPSec = { 0.5, 0.5 }; // rad/s
 
         public static double[] offsetRad = { 4.02, -0.7 + Math.PI / 2 }; // rad
+        public static final double rumbleFullPower = 1;
+        public static final double rumbleNoPower = 0;
 
         // needed to calculate feedforward values dynamically
         public static final double ARM_MASS_KG = Units.lbsToKilograms(8.1);
