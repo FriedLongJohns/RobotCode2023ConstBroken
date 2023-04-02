@@ -10,6 +10,7 @@ import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -53,17 +54,22 @@ public class Arm extends SubsystemBase {
     public static TrapezoidProfile.State[] goalState = { new TrapezoidProfile.State(-Math.PI / 2, 0), new TrapezoidProfile.State(0, 0) };
 
     public Arm() {
-        armMotor.setInverted(inverted[ARM]);
-        wristMotor.setInverted(inverted[WRIST]);
+        armMotor.setInverted(motorInverted[ARM]);
+        wristMotor.setInverted(motorInverted[WRIST]);
+        armMotor.setIdleMode(IdleMode.kBrake);
+
+        wristMotor.setIdleMode(IdleMode.kBrake);
 
         armEncoder.setPositionConversionFactor(rotationToRad);
         wristEncoder.setPositionConversionFactor(rotationToRad);
         armEncoder.setVelocityConversionFactor(rotationToRad);
         wristEncoder.setVelocityConversionFactor(rotationToRad);
+        armEncoder.setInverted(encoderInverted[ARM]);
+        wristEncoder.setInverted(encoderInverted[WRIST]);
 
         armEncoder.setZeroOffset(offsetRad[ARM]);
         wristEncoder.setZeroOffset(offsetRad[WRIST]);
-
+        //wristEncoder.setZeroOffset(0);
         armPID.setTolerance(posToleranceRad[ARM], velToleranceRadPSec[ARM]);
         wristPID.setTolerance(posToleranceRad[WRIST], velToleranceRadPSec[WRIST]);
 

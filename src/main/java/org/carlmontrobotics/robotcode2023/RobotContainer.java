@@ -66,7 +66,8 @@ public class RobotContainer {
 
     {
       eventMap.put("Cone High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> false, () -> false, arm));
-      eventMap.put("Stored Pos.", new SetArmWristGoalPreset(GoalPos.STORED, () -> false, () -> false, arm));
+      Command fakeArmCommand = new InstantCommand(() -> System.err.println("==============Store================="), arm);
+      eventMap.put("Stored Pos.", new SequentialCommandGroup(fakeArmCommand, new WaitCommand(2)));
       eventMap.put("Run Cube Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor)));
       eventMap.put("Cube High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
       eventMap.put("Run Cube Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor));
@@ -74,7 +75,8 @@ public class RobotContainer {
       eventMap.put("Run Cone Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor));
       eventMap.put("Move Arm Back", new SetArmWristPositionV3((-5*Math.PI)/8, Constants.Arm.WRIST_STOW_POS_RAD, arm));
       eventMap.put("Cone Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm));
-      eventMap.put("Cube Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm));
+      Command fakeArm2Command = new InstantCommand(() -> System.err.println("=============Cube Intake================="), arm);
+      eventMap.put("Cube Intake Pos.", new SequentialCommandGroup(fakeArm2Command, new WaitCommand(2)));
       eventMap.put("Auto-Align", new ProxyCommand(() -> new AlignChargingStation(drivetrain)));
       eventMap.put("PrintAlign", new PrintCommand("Aligning"));
       eventMap.put("PrintCube", new PrintCommand("Cube"));
