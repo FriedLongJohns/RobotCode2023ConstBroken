@@ -5,6 +5,7 @@ import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.*;
 
@@ -23,18 +24,24 @@ public class RotateToFieldRelativeAngle extends CommandBase {
         rotationPID.setSetpoint(angle.getDegrees());
         rotationPID.setTolerance(positionTolerance[2], velocityTolerance[2]);
         SendableRegistry.addChild(this, rotationPID);
+        //SmartDashboard.pu
 
         addRequirements(drivetrain);
     }
 
     @Override
     public void execute() {
-        double[] driverRequestedSpeeds = teleopDrive.getRequestedSpeeds();
-        drivetrain.drive(driverRequestedSpeeds[0], driverRequestedSpeeds[1], rotationPID.calculate(drivetrain.getHeading()));
+        if (teleopDrive == null) drivetrain.drive(0, 0, rotationPID.calculate(drivetrain.getHeading()));
+        else {
+            double[] driverRequestedSpeeds = teleopDrive.getRequestedSpeeds();
+            drivetrain.drive(driverRequestedSpeeds[0], driverRequestedSpeeds[1], rotationPID.calculate(drivetrain.getHeading()));
+        }
     }
 
     @Override
     public boolean isFinished() {
+        SmartDashboard.putBoolean("At Setpoint", rotationPID.atSetpoint());
+        SmartDashboard.putNumber("Error", rotationPID.getPositionError());
         return rotationPID.atSetpoint();
     }
 }

@@ -33,10 +33,12 @@ public class Arm extends SubsystemBase {
     private final CANSparkMax armMotor = MotorControllerFactory.createSparkMax(armMotorPort, MotorConfig.NEO);
     private final CANSparkMax wristMotor = MotorControllerFactory.createSparkMax(wristMotorPort, MotorConfig.NEO);
     private final RelativeEncoder armRelEncoder = armMotor.getEncoder();
-    private final SparkMaxAbsoluteEncoder armEncoder = armMotor
-            .getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
-    private final SparkMaxAbsoluteEncoder wristEncoder = wristMotor
-            .getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+    private final RelativeEncoder armEncoder = armMotor.getEncoder();
+    private final RelativeEncoder wristEncoder = armMotor.getEncoder();
+    // private final SparkMaxAbsoluteEncoder armEncoder = armMotor
+    //         .getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+    // private final SparkMaxAbsoluteEncoder wristEncoder = wristMotor
+    //         .getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
 
     private final SimpleMotorFeedforward armFeed = new SimpleMotorFeedforward(kS[ARM], kV[ARM], kA[ARM]);
     private ArmFeedforward wristFeed = new ArmFeedforward(kS[WRIST], kG[WRIST], kV[WRIST], kA[WRIST]);
@@ -61,8 +63,8 @@ public class Arm extends SubsystemBase {
         armEncoder.setVelocityConversionFactor(rotationToRad);
         wristEncoder.setVelocityConversionFactor(rotationToRad);
 
-        armEncoder.setZeroOffset(offsetRad[ARM]);
-        wristEncoder.setZeroOffset(offsetRad[WRIST]);
+        // armEncoder.setZeroOffset(offsetRad[ARM]);
+        // wristEncoder.setZeroOffset(offsetRad[WRIST]);
 
         armPID.setTolerance(posToleranceRad[ARM], velToleranceRadPSec[ARM]);
         wristPID.setTolerance(posToleranceRad[WRIST], velToleranceRadPSec[WRIST]);

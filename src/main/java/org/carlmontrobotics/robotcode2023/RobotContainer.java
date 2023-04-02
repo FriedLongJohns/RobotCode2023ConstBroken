@@ -37,9 +37,11 @@ import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PerpetualCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -75,6 +77,8 @@ public class RobotContainer {
       eventMap.put("Move Arm Back", new SetArmWristPositionV3((-5*Math.PI)/8, Constants.Arm.WRIST_STOW_POS_RAD, arm));
       eventMap.put("Cone Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm));
       eventMap.put("Cube Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm));
+      eventMap.put("Field Rotate 90", new RotateToFieldRelativeAngle(new Rotation2d(90), drivetrain));
+      eventMap.put("Stop", stopDt());
       eventMap.put("Auto-Align", new ProxyCommand(() -> new AlignChargingStation(drivetrain)));
       eventMap.put("PrintAlign", new PrintCommand("Aligning"));
       eventMap.put("PrintCube", new PrintCommand("Cube"));
@@ -82,7 +86,7 @@ public class RobotContainer {
       eventMap.put("PrintOne", new PrintCommand("one"));
       eventMap.put("PrintTwo", new PrintCommand("two"));
       eventMap.put("PrintEnd", new PrintCommand("end"));
-      
+      eventMap.put("Reset Field Orientation", new InstantCommand(drivetrain::resetFieldOrientation));
     }
 
     autoPaths = new PPRobotPath[] {
@@ -164,9 +168,26 @@ public class RobotContainer {
 
   }
 
+  public Command stopDt() {
+    return (new InstantCommand(drivetrain::stop).repeatedly()).until(drivetrain::isStopped);
+  }
+
   public Command getAutonomousCommand() {
     // PPRobotPath autoPath = new PPRobotPath("New Path", drivetrain, false, new HashMap<>());
-    PPRobotPath autoPath = new PPRobotPath("Spit Cone", drivetrain, false, eventMap);
+    Command[] autoPath = {
+      new PPRobotPath("Mid Basic 3", drivetrain, false, eventMap).getPathCommand(true, true),
+      new PPRobotPath("Mid Basic 4", drivetrain, false, eventMap).getPathCommand(false, true)
+    };
+    Command[] commands = {
+      stopDt(),
+      new WaitCommand(0)
+    };
+    SequentialCommandGroup autoCommand = new SequentialCommandGroup();
+    for (int i = 0; i < autoPath.length; i++) {
+      autoCommand.addCommands(autoPath[i]);
+      autoCommand.addCommands(commands[i]);
+    }
+
     // for(int i = 0; i < autoSelectors.length; i++) {
     //   if(!autoSelectors[i].get()) {
     //     System.out.println("Using Path: " + i);
@@ -175,7 +196,7 @@ public class RobotContainer {
     //   }
     // }
 
-    return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoPath.getPathCommand(true, true);
+    return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoCommand;
     // return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
   }
 

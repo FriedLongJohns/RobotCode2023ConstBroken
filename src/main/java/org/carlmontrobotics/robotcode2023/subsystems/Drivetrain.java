@@ -225,6 +225,12 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         for(SwerveModule module: modules) module.move(0, 0);
     }
 
+    public boolean isStopped() {
+        return Math.abs(getSpeeds().vxMetersPerSecond) < 0.1 &&
+        Math.abs(getSpeeds().vyMetersPerSecond) < 0.1 &&
+        Math.abs(getSpeeds().omegaRadiansPerSecond) < 0.1;
+    }
+
     /**
      * Constructs and returns a ChassisSpeeds objects using forward, strafe, and
      * rotation values.
