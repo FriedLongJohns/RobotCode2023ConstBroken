@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 import org.carlmontrobotics.MotorConfig;
-import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.path.SwerveDriveInterface;
 import org.carlmontrobotics.lib199.swerve.SwerveModule;
@@ -15,15 +14,14 @@ import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -37,17 +35,15 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     private final AHRS gyro = new AHRS(SerialPort.Port.kMXP); // Also try kUSB and kUSB2
 
     private SwerveDriveKinematics kinematics = null;
-    private SwerveDrivePoseEstimator odometry = null;
+    private SwerveDriveOdometry odometry = null;
     private SwerveModule modules[];
-    private Limelight lime;
     private boolean fieldOriented = true;
     private double fieldOffset = 0;
 
     public final float initPitch;
     public final float initRoll;
 
-    public Drivetrain(Limelight lime) {
-        this.lime = lime;
+    public Drivetrain() {
 
         // Calibrate Gyro
         {
@@ -125,7 +121,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         }
 
         SmartDashboard.putNumber("kpTheta", thetaPIDController[0]);
-        odometry = new SwerveDrivePoseEstimator(kinematics, Rotation2d.fromDegrees(getHeading()), getModulePositions(), new Pose2d());
+        odometry = new SwerveDriveOdometry(kinematics, Rotation2d.fromDegrees(getHeading()), getModulePositions(), new Pose2d());
     }
 
     @Override
@@ -134,17 +130,6 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
         // Update the odometry with current heading and encoder position
         odometry.update(Rotation2d.fromDegrees(getHeading()), getModulePositions());
-
-        // Update the odometry with limelight
-        if(lime != null && lime.hasTarget()) {
-            Pose2d targetPose = lime.getTransform(Limelight.Transform.TARGETPOSE_CAMERASPACE).toPose2d();
-            Pose2d visionPose = lime.getTransform(limelightTransformForPoseEstimation).toPose2d();
-            if(visionPose.getTranslation().getDistance(odometry.getEstimatedPosition().getTranslation()) <= 1 && targetPose.getTranslation().getNorm() <= Units.feetToMeters(7.5)) {
-                odometry.addVisionMeasurement(
-                    visionPose,
-                    Timer.getFPGATimestamp() - lime.getNTEntry(limelightTransformForPoseEstimation.name().toLowerCase()).getDoubleArray(new double[7])[6] / 1000);
-            }
-        }
 
         autoCancelDtCommand();
 
@@ -287,7 +272,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
 
     @Override
     public Pose2d getPose() {
-        return odometry.getEstimatedPosition();
+        return odometry.getPoseMeters();
     }
 
     @Override
