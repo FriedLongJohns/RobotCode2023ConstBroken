@@ -167,37 +167,36 @@ public final class Constants {
 
         // Feedforward
         // Arm, Wrist
-        public static final double[] kS = {0.20642, .074798};
-        public static final double[] kG = {0.6697, 0.36214};
-        public static final double[] kV = {4.3735, 1.6743};
-        public static final double[] kA = {0.24914, 0.032177};
-        public static final double kG_WRIST = .36214; // (V)
+        public static final double[] kS = {0.20642, .084199};
+        public static final double[] kG = {0.6697, 0.34116};
+        public static final double[] kV = {4.3735, 2.008};
+        public static final double[] kA = {0.24914, 0.041502};
+        public static final double kG_WRIST = 0.34116; // (V)
 
         // PID
-        // FIXME BOTH WRIST AND ARM NEED TO TEST PID (Wrist PID never tested)
         // Arm, Wrist
-        public static double[] kP = {4.2736, 6}; // 4.2736 for arm from sysid was tested and it worked fine (V / rad)
+        public static double[] kP = {4.2736, 4.8804}; // 4.2736 for arm from sysid was tested and it worked fine (V / rad)
         public static double[] kI = {0, 0}; // (V / (rad * s) )
-        public static double[] kD = {0, 0}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
+        public static double[] kD = {0, 0.90262}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
 
         // Arm, Wrist
         public static double[] posToleranceRad = { .07, .05 }; // rad
         public static double[] velToleranceRadPSec = { 0.5, 0.5 }; // rad/s
 
-        public static double[] offsetRad = { 4.02, -0.7 + Math.PI / 2 }; // rad
+        public static double[] offsetRad = { 0.865, 2.93 + Math.PI / 2 }; // rad
         public static final double rumbleFullPower = 1;
         public static final double rumbleNoPower = 0;
 
         // needed to calculate feedforward values dynamically
-        public static final double ARM_MASS_KG = Units.lbsToKilograms(8.1);
+        public static final double ARM_MASS_KG = Units.lbsToKilograms(6.841);
         public static final double ARM_LENGTH_METERS = Units.inchesToMeters(38.25);
 
         // Distance from the arm motor to the center of mass of the  arm
-        public static final double COM_ARM_LENGTH_METERS = Units.inchesToMeters(13.23);
-        public static final double ROLLER_MASS_KG = Units.lbsToKilograms(14.04);
+        public static final double COM_ARM_LENGTH_METERS = Units.inchesToMeters(14.23);
+        public static final double ROLLER_MASS_KG = Units.lbsToKilograms(15);
 
         // distance of center of mass of roller to the WRIST motor
-        public static final double COM_ROLLER_LENGTH_METERS = Units.inchesToMeters(9.47);
+        public static final double COM_ROLLER_LENGTH_METERS = Units.inchesToMeters(7.86);
         public static final double ROLLER_LENGTH_METERS = Units.inchesToMeters(19.14);
         public static final double g = 9.81;
 
@@ -229,7 +228,8 @@ public final class Constants {
 
         //#region Ports
 
-        public static final boolean[] inverted = { true, false };
+        public static final boolean[] motorInverted = { true, false };
+        public static final boolean[] encoderInverted = { false, true };
         public static final double rotationToRad = 2 * Math.PI;
 
         public static final int armMotorPort = 17;
@@ -244,7 +244,7 @@ public final class Constants {
         public static final double ARM_VERTICAL_POS_RAD = -Math.PI / 2;
         public static final double MIN_WRIST_FOLD_POS_RAD = Units.degreesToRadians(70);
         public static final int WRIST_CURRENT_LIMIT_AMP = 15;
-        public static final double ROLLER_COM_CORRECTION_RAD = Units.degreesToRadians(14.48);
+        public static final double ROLLER_COM_CORRECTION_RAD = Units.degreesToRadians(18.3);
         public static double ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD = .5;
 
         //#endregion
