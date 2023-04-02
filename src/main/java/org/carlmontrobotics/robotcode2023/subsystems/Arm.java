@@ -30,7 +30,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // Arm angle is measured from horizontal on the intake side of the robot and bounded between -3π/2 and π/2
 // Wrist angle is measured relative to the arm with 0 being parallel to the arm and bounded between -π and π (Center of Mass of Roller)
 public class Arm extends SubsystemBase {
-
+    // a boolean meant to tell if the arm is in a forbidden posistion AKA FORBIDDEN FLAG
+    private static boolean forbFlag;
     private final CANSparkMax armMotor = MotorControllerFactory.createSparkMax(armMotorPort, MotorConfig.NEO);
     private final CANSparkMax wristMotor = MotorControllerFactory.createSparkMax(wristMotorPort, MotorConfig.NEO);
     private final RelativeEncoder armRelEncoder = armMotor.getEncoder();
@@ -154,8 +155,11 @@ public class Arm extends SubsystemBase {
         double armPIDVolts = armPID.calculate(getArmPos(), state.position);
         if ((getArmPos() > ARM_UPPER_LIMIT_RAD && state.velocity > 0) || 
             (getArmPos() < ARM_LOWER_LIMIT_RAD && state.velocity < 0)) {
+              forbFlag = true;  
             armFeedVolts = kgv * getCoM().getAngle().getCos() + armFeed.calculate(0, 0);
         }
+       
+        
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
         // TO MASTER IF THIS IS STILL HERE)
         SmartDashboard.putNumber("ArmFeedVolts", armFeedVolts);
@@ -171,8 +175,10 @@ public class Arm extends SubsystemBase {
         double wristPIDVolts = wristPID.calculate(getWristPos(), state.position);
         if ((getWristPos() > WRIST_UPPER_LIMIT_RAD && state.velocity > 0) || 
             (getWristPos() < WRIST_LOWER_LIMIT_RAD && state.velocity < 0)) {
+            forbFlag = true;
             wristFeedVolts = kgv;
         }
+       
         // TODO: REMOVE WHEN DONE WITH TESTING (ANY CODE REVIEWERS, PLEASE REJECT MERGES
         // TO MASTER IF THIS IS STILL HERE)
         SmartDashboard.putNumber("WristFeedVolts", wristFeedVolts);
@@ -185,7 +191,12 @@ public class Arm extends SubsystemBase {
     public void setArmTarget(double targetPos, double targetVel) {
         targetPos = getArmClampedGoal(targetPos);
 
-        if(positionForbidden(targetPos, getWristPos())) return;
+        if(positionForbidden(targetPos, getWristPos())) 
+        {
+             forbFlag = true;
+            return;
+        } 
+      
 
         armProfile = new TrapezoidProfile(armConstraints, new TrapezoidProfile.State(targetPos, targetVel), armProfile.calculate(armProfileTimer.get()));
         armProfileTimer.reset();
@@ -197,8 +208,11 @@ public class Arm extends SubsystemBase {
     public void setWristTarget(double targetPos, double targetVel) {
         targetPos = getWristClampedGoal(targetPos);
 
-        if(wristMovementForbidden(getArmPos(), targetPos, targetPos - getWristPos())) return;
-
+        if(wristMovementForbidden(getArmPos(), targetPos, targetPos - getWristPos())) 
+        {
+            forbFlag = true;
+            return;
+        }
         wristProfile = new TrapezoidProfile(wristConstraints, new TrapezoidProfile.State(targetPos, targetVel), wristProfile.calculate(wristProfileTimer.get()));
         wristProfileTimer.reset();
 
@@ -319,7 +333,7 @@ public class Arm extends SubsystemBase {
 
     public boolean wristMovementForbidden(double armPos, double wristPos, double wristVelSign) {
         // If the position is not forbidden, then the movement is not forbidden
-        if(!positionForbidden(armPos, wristPos)) return false;
+        
 
         Translation2d tip = getWristTipPosition(armPos, wristPos);
 
@@ -332,10 +346,20 @@ public class Arm extends SubsystemBase {
             return Math.signum(getWristPos() + ROLLER_COM_CORRECTION_RAD) != Math.signum(wristVelSign);
         }
 
+        
+
         // Otherwise, fold away from vertical
         double tipAngle = MathUtil.inputModulus(armPos + wristPos + ROLLER_COM_CORRECTION_RAD, -3 * Math.PI / 2, Math.PI / 2);
         return Math.signum(tipAngle + Math.PI / 2) != Math.signum(wristVelSign);
     }
+   
+    public boolean getForbFlag()
+    {
+        boolean output = forbFlag;
+        forbFlag = false;//default: if it wasn't set to true, it's false
+        return output;
+    }
+   
 
     public static boolean positionForbidden(double armPos, double wristPos) {
 
