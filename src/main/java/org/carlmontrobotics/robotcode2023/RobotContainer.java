@@ -155,8 +155,8 @@ public class RobotContainer {
     new POVButton(manipulatorController, Manipulator.shelfPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.SHELF, isCube, isFront, arm));
     new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm));
     new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
-    new Trigger(() -> {return arm.getForbFlag();}).onTrue(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleFullPower);}))
-                                                  .onFalse(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleNoPower);}));
+    // new Trigger(() -> {return arm.getForbFlag();}).onTrue(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleFullPower);}))
+    //                                               .onFalse(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleNoPower);}));
     new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, isFront, arm));
     new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
     new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.SUBSTATION, isCube, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));

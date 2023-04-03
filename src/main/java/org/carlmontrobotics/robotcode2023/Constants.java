@@ -323,7 +323,7 @@ public final class Constants {
         };
         public static GoalPos[][] INTAKE = {
             {
-                new GoalPos(-1.271106, 1.303141),
+                new GoalPos(-1.29, 1.32),
                 new GoalPos(-1.208155, 0.646987)
             },
             {
@@ -376,7 +376,7 @@ public final class Constants {
             public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5, false);
             public static RollerMode STOP = new RollerMode(0, 0, true);
             public double speed, time;
-            public boolean intake;
+            public boolean isIntake;
     
             /**
              * @param speed  A number between -1 and 1
@@ -387,7 +387,7 @@ public final class Constants {
             public RollerMode(double speed, double time, boolean intake) {
                 this.speed = speed;
                 this.time = time;
-                this.intake = intake;
+                this.isIntake = intake;
             }
         }
 
