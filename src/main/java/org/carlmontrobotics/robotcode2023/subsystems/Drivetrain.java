@@ -10,6 +10,7 @@ import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.path.SwerveDriveInterface;
 import org.carlmontrobotics.lib199.swerve.SwerveModule;
+import org.carlmontrobotics.robotcode2023.commands.RotateToFieldRelativeAngle;
 import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -169,7 +170,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // Use hasDriverInput to get around acceleration limiting on slowdown
         if(((TeleopDrive) getDefaultCommand()).hasDriverInput()) {
             Command currentDtCommand = getCurrentCommand();
-            if(currentDtCommand != getDefaultCommand() && currentDtCommand != null) {
+            if(currentDtCommand != getDefaultCommand() && !(currentDtCommand instanceof RotateToFieldRelativeAngle) && currentDtCommand != null) {
                 currentDtCommand.cancel();
             }
         }
