@@ -10,7 +10,6 @@ import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.Limelight.Transform;
 import org.carlmontrobotics.lib199.swerve.SwerveConfig;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -156,42 +155,6 @@ public final class Constants {
         public static final boolean CONE = true;
         public static final int BLUE = 0;
         public static final int RED = 1;
-
-        // x, y positions are in meters, relative to the bottom-left field 
-        // with the blue grid corner
-        // (Values obtained from PathPlanner)
-        // {blue, red}
-        // TODO: Waiting on Design for values
-        public static Translation2d[][] coneScoringPos = {
-            { // Blue side
-                new Translation2d(1.85, 4.95),
-                new Translation2d(1.85, 3.85),
-                new Translation2d(1.85, 3.3),
-                new Translation2d(1.85, 2.15),
-                new Translation2d(1.85, 1.6),
-                new Translation2d(1.85, 0.5),
-            },
-            { // Red side
-                new Translation2d(14.70, 4.95),
-                new Translation2d(14.70, 3.85),
-                new Translation2d(14.70, 3.3),
-                new Translation2d(14.70, 2.15),
-                new Translation2d(14.70, 1.6),
-                new Translation2d(14.70, 0.5)
-            }
-        };
-        public static Translation2d[][] cubeScoringPos = {
-            { // Blue side
-                new Translation2d(1.85, 1.05),
-                new Translation2d(1.85, 2.75),
-                new Translation2d(1.85, 4.4),
-            },
-            { // Red side
-                new Translation2d(14.70, 1.05),
-                new Translation2d(14.70, 2.75),
-                new Translation2d(14.70, 4.4)
-            }
-        };
         //#endregion
     }
 
@@ -449,12 +412,6 @@ public final class Constants {
             public static final int chargeStationAlignButton = Button.kBack.value;
             public static final int resetFieldOrientationButton = Button.kRightBumper.value;
             public static final int toggleFieldOrientedButton = Button.kStart.value;
-            public static final int driveToPointPOV = 0;
-            public static final int driveToPoint2POV = 180;
-            // will comment out above once testing done
-            public static final Axis toggleCubeButton = Axis.kRightTrigger;
-            public static final Axis alignForScoringButton = Axis.kLeftTrigger;
-
             public static final int rotateToFieldRelativeAngle0Deg = Button.kY.value;
             public static final int rotateToFieldRelativeAngle90Deg = Button.kB.value;
             public static final int rotateToFieldRelativeAngle180Deg = Button.kA.value;

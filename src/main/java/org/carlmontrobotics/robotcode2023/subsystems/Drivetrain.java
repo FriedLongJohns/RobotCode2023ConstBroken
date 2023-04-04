@@ -25,10 +25,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -272,30 +270,6 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     @Override
     public void setPose(Pose2d initialPose) {
         odometry.resetPosition(Rotation2d.fromDegrees(getHeading()), getModulePositions(), initialPose);
-    }
-
-    public Translation2d getNearestGoal(boolean isCube, Alliance alliance)
-    {
-        int all = -1;
-        switch (alliance) {
-            case Blue:
-                all = BLUE;
-                break;
-            case Red:
-                all = RED;
-                break;
-            case Invalid:
-                DriverStation.reportError("Invalid Alliance " + getName(), true);
-                return null;
-        }
-
-        Translation2d goal = getPose().getTranslation();
-        if (isCube) {
-            goal = goal.nearest(Arrays.asList(cubeScoringPos[all]));
-        } else {
-            goal = goal.nearest(Arrays.asList(coneScoringPos[all]));
-        }
-        return goal;
     }
 
     // Resets the gyro, so that the direction the robotic currently faces is

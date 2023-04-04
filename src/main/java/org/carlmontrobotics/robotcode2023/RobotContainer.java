@@ -17,14 +17,11 @@ import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
 import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.commands.AlignChargingStation;
-import org.carlmontrobotics.robotcode2023.commands.AlignToScoringPosition;
 import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
 import org.carlmontrobotics.robotcode2023.commands.RotateToFieldRelativeAngle;
 import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.commands.SetArmWristGoalPreset;
 import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
-import org.carlmontrobotics.robotcode2023.commands.TestDriveToPoint;
-import org.carlmontrobotics.robotcode2023.commands.TestDriveToPoint2;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller;
@@ -86,15 +83,9 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsDriver() {
-    BooleanSupplier isCube = () -> axisTrigger(driverController, Driver.toggleCubeButton).getAsBoolean();
-
     new JoystickButton(driverController, Driver.chargeStationAlignButton).onTrue(new AlignChargingStation(drivetrain));
     new JoystickButton(driverController, Driver.resetFieldOrientationButton).onTrue(new InstantCommand(drivetrain::resetFieldOrientation));
     new JoystickButton(driverController, Driver.toggleFieldOrientedButton).onTrue(new InstantCommand(() -> drivetrain.setFieldOriented(!drivetrain.getFieldOriented())));
-    new POVButton(driverController, Driver.driveToPointPOV).onTrue(new TestDriveToPoint(drivetrain)); // Remove these when done testing
-    new POVButton(driverController, Driver.driveToPoint2POV).onTrue(new TestDriveToPoint2(drivetrain)); 
-    axisTrigger(driverController, Driver.alignForScoringButton).onTrue(new AlignToScoringPosition(isCube, roller, drivetrain));
-
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle0Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(0), drivetrain));
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle90Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(-90), drivetrain));
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle180Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(180), drivetrain));

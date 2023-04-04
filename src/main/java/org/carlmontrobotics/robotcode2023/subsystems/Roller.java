@@ -14,8 +14,6 @@ import static org.carlmontrobotics.robotcode2023.Constants.Roller.*;
 import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -99,29 +97,6 @@ public class Roller extends SubsystemBase {
                                                                                 * The sensor measures from the back of
                                                                                 * the sensor
                                                                                 */) / 1000 /* Convert mm to m */);
-    }
-
-    // The robot-relative translation to correct the off-centering of the game object in the roller
-    // Measured in meters
-    public Translation2d correctPosition() {
-        double distanceToMove = 0;
-        double dist = getGamePieceDistanceIn();
-        double offset = 0;
-        if (hasGamePiece == GameObject.CUBE) offset = Units.inchesToMeters(CUBE_RADIUS_IN) / 2;
-        else if (hasGamePiece == GameObject.CONE) offset = Units.inchesToMeters(CONE_RADIUS_IN) / 2;
-
-        Translation2d translation = new Translation2d(0, 0);
-        if (dist < ROLLER_WIDTH / 2) {
-            // need to shift robot right
-            distanceToMove = ROLLER_WIDTH / 2 - dist - offset;
-            translation = new Translation2d(distanceToMove, new Rotation2d(-Math.PI / 2));
-
-        } else if (dist > ROLLER_WIDTH / 2) {
-            // need to shift robot left
-            distanceToMove = dist + offset - ROLLER_WIDTH / 2;
-            translation = new Translation2d(distanceToMove, new Rotation2d(Math.PI / 2));
-        }
-        return translation;
     }
 
     public void putRollerConstsOnSmartDashboard() {
