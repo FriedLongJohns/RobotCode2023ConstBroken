@@ -8,7 +8,6 @@ import java.awt.Color;
 
 import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
-
 import static org.carlmontrobotics.robotcode2023.Constants.Roller.*;
 
 import com.playingwithfusion.TimeOfFlight;
@@ -30,8 +29,7 @@ public class Roller extends SubsystemBase {
     private TimeOfFlight distSensor = new TimeOfFlight(10);
     private final AddressableLED led = new AddressableLED(ledPort);
     private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(ledLength);
-    private GameObject hasGamePiece = GameObject.NONE;
-    private GameObject nextGamePiece = GameObject.NONE;
+    private boolean hadGamePiece = false;
 
     private Command resetColorCommand = new SequentialCommandGroup(
             new WaitCommand(ledDefaultColorRestoreTime),
@@ -44,35 +42,33 @@ public class Roller extends SubsystemBase {
     public Roller() {
         led.setLength(ledBuffer.getLength());
         setLedColor(defaultColor);
-        // SmartDashboard.putData(this);
+        //SmartDashboard.putData(this);
+
+        // TODO: Get proper values for the speeds and timings. For future pull requests,
+        // do not merge if this is not deleted or speeds/timings have not been determined
+        
         led.start();
     }
 
     @Override
     public void periodic() {
 
-        SmartDashboard.putBoolean("Has Game Piece", getGamePiece() != GameObject.NONE);
+        SmartDashboard.putBoolean("Has Game Piece", hasGamePiece());
         SmartDashboard.putNumber("Roller Game Piece Distance", getGamePieceDistanceIn());
 
         // LED Update
         {
-            GameObject gamePiece = getGamePiece();
-            if (gamePiece != GameObject.NONE && hasGamePiece == GameObject.NONE) {
+            boolean hasGamePiece = hasGamePiece();
+            if (hasGamePiece && !hadGamePiece) {
                 setLedColor(pickupSuccessColor);
                 resetColorCommand.schedule();
             }
-            hasGamePiece = gamePiece;
+            hadGamePiece = hasGamePiece;
         }
     }
 
     public void setSpeed(double speed) {
         motor.set(speed);
-    }
-
-    public void setRollerMode(RollerMode mode) {
-        setSpeed(mode.speed);
-        nextGamePiece = mode.obj;
-        setLedColor(mode.ledColor);
     }
 
     public void setLedColor(Color color) {
@@ -81,15 +77,9 @@ public class Roller extends SubsystemBase {
         led.setData(ledBuffer);
     }
 
-    public GameObject getGamePiece() {
-        // return false;
-        if (getGamePieceDistanceIn() > gamePieceDetectDistanceIn)
-            return GameObject.NONE;
-        return (nextGamePiece != GameObject.NONE) ? nextGamePiece : hasGamePiece;
-    }
-
     public boolean hasGamePiece() {
-        return getGamePiece() != GameObject.NONE;
+        //return false;
+        return getGamePieceDistanceIn() < gamePieceDetectDistanceIn;
     }
 
     public double getGamePieceDistanceIn() {
@@ -97,6 +87,11 @@ public class Roller extends SubsystemBase {
                                                                                 * The sensor measures from the back of
                                                                                 * the sensor
                                                                                 */) / 1000 /* Convert mm to m */);
+    }
+
+    public void setRollerMode(RollerMode mode) {
+        setSpeed(mode.speed);
+        setLedColor(mode.ledColor);
     }
 
     public void putRollerConstsOnSmartDashboard() {

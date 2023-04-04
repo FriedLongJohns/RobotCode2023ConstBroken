@@ -46,9 +46,9 @@ public class RunRoller extends CommandBase {
         double time = timer.get();
 
         // TODO: distance sensor detects belt when wrist is spinning (concern)
-        if (roller.getGamePiece() == mode.obj) {
+        if (roller.hasGamePiece() == isIntake()) {
             timer.start();
-        } else {
+        } else if (roller.hasGamePiece() != isIntake()) {
             timer.stop();
             timer.reset();
         }
@@ -56,6 +56,10 @@ public class RunRoller extends CommandBase {
         SmartDashboard.putNumber("Time Target", mode.time);
         SmartDashboard.putNumber("SetRoller Time Elapsed (s)", time);
 
-        return roller.getGamePiece() == mode.obj && time > mode.time;
+        return roller.hasGamePiece() == isIntake() && time > mode.time;
+    }
+
+    public boolean isIntake() {
+        return (mode.obj != GameObject.NONE);
     }
 }
