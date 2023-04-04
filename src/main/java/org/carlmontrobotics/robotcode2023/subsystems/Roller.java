@@ -120,4 +120,9 @@ public class Roller extends SubsystemBase {
         RollerMode.INTAKE_CUBE.time = SmartDashboard.getNumber("Intake Cube Time", RollerMode.INTAKE_CUBE.time);
         RollerMode.OUTTAKE_CUBE.time = SmartDashboard.getNumber("Outtake Cube Time", RollerMode.OUTTAKE_CUBE.time);
     }
+
+    public double getPosition() {
+        return motor.getEncoder().getPosition();
+    }
+
 }

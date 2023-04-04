@@ -65,9 +65,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    CommandScheduler.getInstance().cancelAll();
     robotContainer.drivetrain.brake();
     robotContainer.getAutonomousCommand().schedule();
-    robotContainer.arm.resetGoal();
   }
 
   @Override
@@ -79,7 +79,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
-    robotContainer.arm.resetGoal();
     robotContainer.drivetrain.brake();
   }
 

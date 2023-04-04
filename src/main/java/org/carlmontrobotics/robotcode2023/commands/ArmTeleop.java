@@ -12,6 +12,7 @@ import org.carlmontrobotics.robotcode2023.Constants;
 import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -32,6 +33,8 @@ public class ArmTeleop extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    armSubsystem.setArmTarget(armSubsystem.getArmPos(), 0);
+    armSubsystem.setWristTarget(armSubsystem.getWristPos(), 0);
     lastTime = Timer.getFPGATimestamp();
   }
 
@@ -50,8 +53,14 @@ public class ArmTeleop extends CommandBase {
     goalArmRad = MathUtil.clamp(goalArmRad, ARM_LOWER_LIMIT_RAD, ARM_UPPER_LIMIT_RAD);
     goalWristRad = MathUtil.clamp(goalWristRad, WRIST_LOWER_LIMIT_RAD, WRIST_UPPER_LIMIT_RAD);
 
-    armSubsystem.setArmTarget(goalArmRad, armSubsystem.getCurrentArmGoal().velocity);
-    armSubsystem.setWristTarget(goalWristRad, armSubsystem.getCurrentWristGoal().velocity);
+    // Clamp the goal to within a certain range of the current position to prevent "lag"
+    goalArmRad = MathUtil.clamp(goalArmRad, armSubsystem.getArmPos() - ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD, armSubsystem.getArmPos() + ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD);
+    goalWristRad = MathUtil.clamp(goalWristRad, armSubsystem.getWristPos() - ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD, armSubsystem.getWristPos() + ARM_TELEOP_MAX_GOAL_DIFF_FROM_CURRENT_RAD);
+
+    if((speeds[0] != 0 || speeds[1] != 0) && !DriverStation.isAutonomous()) {
+      armSubsystem.setArmTarget(goalArmRad, armSubsystem.getCurrentArmGoal().velocity);
+      armSubsystem.setWristTarget(goalWristRad, armSubsystem.getCurrentWristGoal().velocity);
+    }
 
     lastTime = currTime;
   }
@@ -64,12 +73,12 @@ public class ArmTeleop extends CommandBase {
     if (Math.abs(arm.getAsDouble()) <= Constants.OI.JOY_THRESH)
       rawArmVel = 0.0;
     else
-      rawArmVel = MAX_FF_VEL[ARM] * arm.getAsDouble();
+      rawArmVel = MAX_FF_VEL_MANUAL[ARM] * arm.getAsDouble();
 
     if (Math.abs(wrist.getAsDouble()) <= Constants.OI.JOY_THRESH)
       rawWristVel = 0.0;
     else
-      rawWristVel = MAX_FF_VEL[WRIST] * wrist.getAsDouble();
+      rawWristVel = MAX_FF_VEL_MANUAL[WRIST] * wrist.getAsDouble();
 
     return new double[] {rawArmVel, rawWristVel};
   }

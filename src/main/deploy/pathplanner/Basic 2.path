@@ -1,0 +1,81 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.8499258051147685,
+        "y": 0.5893925822939372
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.8499258051147693,
+        "y": 0.5893925822939372
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 4.425312710274544,
+        "y": 0.6800752197995625
+      },
+      "prevControl": {
+        "x": 3.5003498077171606,
+        "y": 0.6438021647973122
+      },
+      "nextControl": {
+        "x": 5.350275612831927,
+        "y": 0.716348274801813
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.47474031790169,
+        "y": 2.2126117936446406
+      },
+      "prevControl": {
+        "x": 6.719583439166881,
+        "y": 1.2785806273366944
+      },
+      "nextControl": null,
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 0.0,
+      "names": [
+        "Run Cone Outtake"
+      ]
+    }
+  ]
+}
