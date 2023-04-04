@@ -166,7 +166,7 @@ public class RobotContainer {
       .onTrue(new ConditionalCommand(
         new RunRoller(roller, RollerMode.INTAKE_CUBE), 
         new RunRoller(roller, RollerMode.OUTTAKE_CUBE), 
-        isCube
+        isCube // This is really confusing what? isCube is also being used elsewhere so I didn't change it
       ));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
       .onTrue(new ConditionalCommand(

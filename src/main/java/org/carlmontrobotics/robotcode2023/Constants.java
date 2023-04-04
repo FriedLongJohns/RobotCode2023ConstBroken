@@ -155,8 +155,6 @@ public final class Constants {
         //#region Scoring Positions
         public static final boolean CUBE = false;
         public static final boolean CONE = true;
-        public static final int BLUE = 0;
-        public static final int RED = 1;
         //#endregion
     }
 
@@ -400,11 +398,6 @@ public final class Constants {
             }
         }
 
-        // Units are in inches
-        // TODO: Get accurate values for these
-        public static final double ROLLER_WIDTH = 26;
-        public static final double CONE_RADIUS_IN = 6;
-        public static final double CUBE_RADIUS_IN = 9.5;
         //#endregion
 
         public static enum GameObject {

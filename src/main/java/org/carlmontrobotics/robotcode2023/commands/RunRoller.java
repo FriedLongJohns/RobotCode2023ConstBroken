@@ -21,8 +21,8 @@ public class RunRoller extends CommandBase {
 
     @Override
     public void initialize() {
-        if(roller.hasGamePiece() && mode.obj != GameObject.NONE) cancel();
-        if(!roller.hasGamePiece() && mode.obj == GameObject.NONE) cancel();
+        if(roller.hasGamePiece() && isIntake()) cancel();
+        if(!roller.hasGamePiece() && !isIntake()) cancel();
         timer.reset();
         roller.setRollerMode(mode);
     }
