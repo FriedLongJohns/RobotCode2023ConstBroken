@@ -22,7 +22,7 @@ public class RunRoller extends CommandBase {
     @Override
     public void initialize() {
         if(roller.hasGamePiece() && isIntake()) cancel();
-        if(!roller.hasGamePiece() && !isIntake()) cancel();
+        if(!roller.hasGamePiece() && !isIntake() && mode.speed > 0) cancel(); // is not stopping the rollers then cancel
         timer.reset();
         roller.setRollerMode(mode);
     }
@@ -59,6 +59,8 @@ public class RunRoller extends CommandBase {
         return roller.hasGamePiece() == isIntake() && time > mode.time;
     }
 
+    // The rollerMode indicates what object it is trying to take in
+    // if the object is NONE, then it is trying to outtake
     public boolean isIntake() {
         return (mode.obj != GameObject.NONE);
     }

@@ -151,11 +151,6 @@ public final class Constants {
         public static final double[] velocityTolerance = {Units.inchesToMeters(1), Units.inchesToMeters(1), 25}; // Meters, Meters, Degrees/Second
 
         //#endregion
-
-        //#region Scoring Positions
-        public static final boolean CUBE = false;
-        public static final boolean CONE = true;
-        //#endregion
     }
 
     public static final class Arm {
@@ -363,6 +358,8 @@ public final class Constants {
         public static final double rollerToleranceRad = 1 / 20 * 2 * Math.PI;
         public static final double rollerHoldSpeedPercent = .3;
 
+        public static final int ROLLER_MAX_CURRENT_AMPS = 20;
+
         //#endregion
 
         //#region Ports
@@ -377,6 +374,8 @@ public final class Constants {
         public static class RollerMode {
             public static RollerMode INTAKE_CONE = new RollerMode(-0.5, .5, GameObject.CONE, conePickupColor);
             public static RollerMode INTAKE_CUBE = new RollerMode(0.3, .25, GameObject.CUBE, cubePickupColor);
+            // The obj indicates which game object the roller is trying to intake
+            // if obj == NONE, that means it is trying to outtake rather than intake
             public static RollerMode OUTTAKE_CONE = new RollerMode(0.5, .5, GameObject.NONE, defaultColor);
             public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5, GameObject.NONE, defaultColor);
             public static RollerMode STOP = new RollerMode(0, .1, GameObject.NONE, defaultColor);

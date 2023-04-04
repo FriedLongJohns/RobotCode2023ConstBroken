@@ -42,11 +42,7 @@ public class Roller extends SubsystemBase {
     public Roller() {
         led.setLength(ledBuffer.getLength());
         setLedColor(defaultColor);
-        //SmartDashboard.putData(this);
-
-        // TODO: Get proper values for the speeds and timings. For future pull requests,
-        // do not merge if this is not deleted or speeds/timings have not been determined
-        
+        motor.setSmartCurrentLimit(ROLLER_MAX_CURRENT_AMPS);
         led.start();
     }
 

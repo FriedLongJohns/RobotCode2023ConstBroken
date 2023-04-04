@@ -144,6 +144,7 @@ public class RobotContainer {
   private void configureButtonBindingsManipulator() {
     BooleanSupplier isCube = () -> new JoystickButton(manipulatorController, Manipulator.toggleCubeButton).getAsBoolean();
     BooleanSupplier isFront = () -> new JoystickButton(manipulatorController, Manipulator.toggleFrontButton).getAsBoolean();
+    BooleanSupplier isIntake = () -> !isCube.getAsBoolean();
 
     new JoystickButton(manipulatorController, Manipulator.storePosButton).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
     new JoystickButton(manipulatorController, Manipulator.lowPosButton).onTrue(new SetArmWristGoalPreset(GoalPos.LOW, isCube, isFront, arm));
@@ -166,13 +167,13 @@ public class RobotContainer {
       .onTrue(new ConditionalCommand(
         new RunRoller(roller, RollerMode.INTAKE_CUBE), 
         new RunRoller(roller, RollerMode.OUTTAKE_CUBE), 
-        isCube // This is really confusing what? isCube is also being used elsewhere so I didn't change it
-      ));
+        isIntake
+      )); 
     axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
       .onTrue(new ConditionalCommand(
         new RunRoller(roller, RollerMode.INTAKE_CONE), 
         new RunRoller(roller, RollerMode.OUTTAKE_CONE), 
-        isCube
+        isIntake
       ));
 
   }

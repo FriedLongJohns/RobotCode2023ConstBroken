@@ -6,8 +6,6 @@ package org.carlmontrobotics.robotcode2023.commands;
 
 import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.*;
 
-import java.util.function.Supplier;
-
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -21,7 +19,7 @@ public class CorrectToPoint extends CommandBase {
   private PIDController pidTheta;
 
   /** Creates a new CorrectToPoint. */
-  public CorrectToPoint(Supplier<Pose2d> setpoint, Drivetrain dt) {
+  public CorrectToPoint(Pose2d setpoint, Drivetrain dt) {
     addRequirements(this.dt = dt);
 
     pidX     = new PIDController( dt.getPIDConstants()[0][0], dt.getPIDConstants()[0][1], dt.getPIDConstants()[0][2]);
@@ -33,9 +31,9 @@ public class CorrectToPoint extends CommandBase {
     pidTheta.setTolerance(positionTolerance[2], velocityTolerance[2]);
     pidTheta.enableContinuousInput(-180, 180);
 
-    pidX.setSetpoint(setpoint.get().getX());
-    pidY.setSetpoint(setpoint.get().getY());
-    pidTheta.setSetpoint(setpoint.get().getRotation().getDegrees()); // The PIDController should correct for continuous input
+    pidX.setSetpoint(setpoint.getX());
+    pidY.setSetpoint(setpoint.getY());
+    pidTheta.setSetpoint(setpoint.getRotation().getDegrees()); // The PIDController should correct for continuous input
   }
 
   // Called when the command is initially scheduled.
