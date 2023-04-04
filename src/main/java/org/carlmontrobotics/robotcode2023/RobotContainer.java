@@ -21,7 +21,6 @@ import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.commands.AlignChargingStation;
 import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
-import org.carlmontrobotics.robotcode2023.commands.HoldRoller;
 import org.carlmontrobotics.robotcode2023.commands.RotateToFieldRelativeAngle;
 import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.commands.SetArmWristGoalPreset;
@@ -120,8 +119,6 @@ public class RobotContainer {
       () -> inputProcessing(getStickValue(driverController, Axis.kRightX)),
       () -> driverController.getRawButton(Driver.slowDriveButton)
     ));
-
-    roller.setDefaultCommand(new HoldRoller(roller));
 
     configureButtonBindingsDriver();
     configureButtonBindingsManipulator();

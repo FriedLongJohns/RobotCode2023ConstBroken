@@ -35,7 +35,7 @@ public class RunRoller extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         // keep it running if its a cone
-        if (mode.obj != GameObject.CONE)
+        if (mode.obj != GameObject.CONE && !interrupted)
             roller.setSpeed(0);
         timer.stop();
     }
