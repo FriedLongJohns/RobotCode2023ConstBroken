@@ -181,20 +181,20 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // PPRobotPath autoPath = new PPRobotPath("New Path", drivetrain, false, new HashMap<>());
-    Command[] autoPath = {
-      new PPRobotPath("Mid Basic 3", drivetrain, false, eventMap).getPathCommand(true, true),
-      new PPRobotPath("Mid Basic 4", drivetrain, false, eventMap).getPathCommand(false, true)
-    };
-    Command[] commands = {
-      stopDt(),
-      new WaitCommand(0)
-    };
-    SequentialCommandGroup autoCommand = new SequentialCommandGroup();
-    for (int i = 0; i < autoPath.length; i++) {
-      autoCommand.addCommands(autoPath[i]);
-      autoCommand.addCommands(commands[i]);
-    }
+    PPRobotPath autoPath = new PPRobotPath("Mid Basic 5", drivetrain, false, new HashMap<>());
+    // Command[] autoPath = {
+    //   new PPRobotPath("Mid Basic 3", drivetrain, false, eventMap).getPathCommand(true, true),
+    //   new PPRobotPath("Mid Basic 4", drivetrain, false, eventMap).getPathCommand(false, true)
+    // };
+    // Command[] commands = {
+    //   stopDt(),
+    //   new WaitCommand(0)
+    // };
+    // SequentialCommandGroup autoCommand = new SequentialCommandGroup();
+    // for (int i = 0; i < autoPath.length; i++) {
+    //   autoCommand.addCommands(autoPath[i]);
+    //   autoCommand.addCommands(commands[i]);
+    // }
 
     // for(int i = 0; i < autoSelectors.length; i++) {
     //   if(!autoSelectors[i].get()) {
@@ -204,8 +204,8 @@ public class RobotContainer {
     //   }
     // }
 
-    return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoCommand;
-    // return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
+    //return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoCommand;
+     return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
   }
 
 
