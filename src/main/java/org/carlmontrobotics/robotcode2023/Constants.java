@@ -181,7 +181,7 @@ public final class Constants {
 
         // Arm, Wrist
         public static double[] posToleranceRad = { .07, .05 }; // rad
-        public static double[] velToleranceRadPSec = { 0.5, 0.5 }; // rad/s
+        public static double[] velToleranceRadPSec = { 1, 0.5 }; // rad/s
 
         public static double[] offsetRad = { 0.865, 2.93 + Math.PI / 2 }; // rad
         public static final double rumbleFullPower = 1;
