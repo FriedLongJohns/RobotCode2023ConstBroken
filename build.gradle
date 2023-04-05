@@ -74,7 +74,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    implementation "com.github.deepbluerobotics:lib199:b2db845c8243df540f935e841c2d057f06d38111"
+    implementation "com.github.deepbluerobotics:lib199:e927b9b386f5ca85f74bccefabd21126fe7c16f9"
 }
 
 test {
