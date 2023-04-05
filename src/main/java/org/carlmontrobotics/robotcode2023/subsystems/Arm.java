@@ -334,7 +334,8 @@ public class Arm extends SubsystemBase {
     public boolean wristMovementForbidden(double armPos, double wristPos, double wristVelSign) {
         // If the position is not forbidden, then the movement is not forbidden
         
-
+        if (true)
+            return false;
         Translation2d tip = getWristTipPosition(armPos, wristPos);
 
         // Copied from positionForbidden
@@ -362,7 +363,8 @@ public class Arm extends SubsystemBase {
    
 
     public static boolean positionForbidden(double armPos, double wristPos) {
-
+        if (true)
+            return false;
         Translation2d tip = getWristTipPosition(armPos, wristPos);
 
         boolean horizontal = tip.getX() < DT_TOTAL_WIDTH / 2 + DT_EXTENSION_FOR_ROLLER && tip.getX() > -DT_TOTAL_WIDTH / 2;
