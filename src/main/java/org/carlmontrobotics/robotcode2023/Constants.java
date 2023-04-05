@@ -51,6 +51,8 @@ public final class Constants {
         public static final double maxStrafe = maxSpeed;
         
         
+        
+        
         // maxRCW is the angular velocity of the robot.
         // Calculated by looking at one of the motors and treating it as a point mass moving around in a circle.
         // Tangential speed of this point mass is maxSpeed and the radius of the circle is sqrt((wheelBase/2)^2 + (trackWidth/2)^2)
@@ -136,7 +138,7 @@ public final class Constants {
 
         public static final double kNormalDriveSpeed = 1; // Percent Multiplier
         public static final double kNormalDriveRotation = 0.5; // Percent Multiplier
-        public static final double kSlowDriveSpeed = 0.3; // Percent Multiplier
+        public static final double kSlowDriveSpeed = 0.4; // Percent Multiplier
         public static final double kSlowDriveRotation = 0.250; // Percent Multiplier
         public static final double kAlignMultiplier = 1D/3D;
         public static final double kAlignForward = 0.6;
