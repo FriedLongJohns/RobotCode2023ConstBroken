@@ -5,6 +5,9 @@
 package org.carlmontrobotics.robotcode2023;
 
 import static org.carlmontrobotics.robotcode2023.Constants.OI.MIN_AXIS_TRIGGER_VALUE;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.rumbleFullPower;
+import static org.carlmontrobotics.robotcode2023.Constants.Arm.rumbleNoPower;
+
 
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
@@ -13,11 +16,11 @@ import org.carlmontrobotics.lib199.Limelight;
 import org.carlmontrobotics.lib199.path.PPRobotPath;
 import org.carlmontrobotics.robotcode2023.Constants.GoalPos;
 import org.carlmontrobotics.robotcode2023.Constants.OI.Driver;
+
 import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.commands.AlignChargingStation;
 import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
-import org.carlmontrobotics.robotcode2023.commands.HoldRoller;
 import org.carlmontrobotics.robotcode2023.commands.RotateToFieldRelativeAngle;
 import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.commands.SetArmWristGoalPreset;
@@ -29,9 +32,11 @@ import org.carlmontrobotics.robotcode2023.subsystems.Roller;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Joystick;
+
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,10 +50,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-public class RobotContainer {
 
-  public final Joystick driverController = new Joystick(Driver.port);
-  public final Joystick manipulatorController = new Joystick(Manipulator.port);
+
+public class RobotContainer {
+  
+  public final GenericHID driverController = new GenericHID(Driver.port);
+  public final GenericHID manipulatorController = new GenericHID(Manipulator.port);
 
   public final PowerDistribution pd = new PowerDistribution();
 
@@ -59,6 +66,7 @@ public class RobotContainer {
 
   public final PPRobotPath[] autoPaths;
   public final DigitalInput[] autoSelectors;
+
   public HashMap<String, Command> eventMap;
 
   public RobotContainer() {
@@ -67,12 +75,13 @@ public class RobotContainer {
 
     {
       eventMap.put("Cone High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> false, () -> false, arm));
-      eventMap.put("Stored Pos.", new SetArmWristGoalPreset(GoalPos.STORED, () -> false, () -> false, arm));
-      eventMap.put("Run Cube Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor)));
+      Command fakeArmCommand = new InstantCommand(() -> System.err.println("==============Store================="), arm);
+      eventMap.put("Stored Pos.", new SequentialCommandGroup(fakeArmCommand, new WaitCommand(2)));
+      eventMap.put("Run Cube Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CUBE)));
       eventMap.put("Cube High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
-      eventMap.put("Run Cube Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor));
-      eventMap.put("Run Cone Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
-      eventMap.put("Run Cone Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor));
+      eventMap.put("Run Cube Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CUBE));
+      eventMap.put("Run Cone Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CONE)));
+      eventMap.put("Run Cone Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CONE));
       eventMap.put("Move Arm Back", new SetArmWristPositionV3((-5*Math.PI)/8, Constants.Arm.WRIST_STOW_POS_RAD, arm));
       eventMap.put("Cone Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm));
       eventMap.put("Cube Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm));
@@ -112,8 +121,6 @@ public class RobotContainer {
       () -> driverController.getRawButton(Driver.slowDriveButton)
     ));
 
-    roller.setDefaultCommand(new HoldRoller(roller));
-
     configureButtonBindingsDriver();
     configureButtonBindingsManipulator();
     arm.setDefaultCommand(new ArmTeleop(
@@ -122,12 +129,10 @@ public class RobotContainer {
       () -> inputProcessing(getStickValue(manipulatorController, Axis.kRightY))
     ));
   }
-
   private void configureButtonBindingsDriver() {
     new JoystickButton(driverController, Driver.chargeStationAlignButton).onTrue(new AlignChargingStation(drivetrain));
     new JoystickButton(driverController, Driver.resetFieldOrientationButton).onTrue(new InstantCommand(drivetrain::resetFieldOrientation));
     new JoystickButton(driverController, Driver.toggleFieldOrientedButton).onTrue(new InstantCommand(() -> drivetrain.setFieldOriented(!drivetrain.getFieldOriented())));
-
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle0Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(0), drivetrain));
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle90Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(-90), drivetrain));
     new JoystickButton(driverController, Driver.rotateToFieldRelativeAngle180Deg).onTrue(new RotateToFieldRelativeAngle(Rotation2d.fromDegrees(180), drivetrain));
@@ -138,30 +143,34 @@ public class RobotContainer {
     BooleanSupplier isCube = () -> new JoystickButton(manipulatorController, Manipulator.toggleCubeButton).getAsBoolean();
     BooleanSupplier isFront = () -> new JoystickButton(manipulatorController, Manipulator.toggleFrontButton).getAsBoolean();
     BooleanSupplier isIntake = () -> !isCube.getAsBoolean();
-    // BooleanSupplier isFront = () -> false;
-    //BooleanSupplier isStopped = () -> new JoystickButton(manipulatorController, Manipulator.stopRollerButton).getAsBoolean();
 
     new JoystickButton(manipulatorController, Manipulator.storePosButton).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
     new JoystickButton(manipulatorController, Manipulator.lowPosButton).onTrue(new SetArmWristGoalPreset(GoalPos.LOW, isCube, isFront, arm));
     new JoystickButton(manipulatorController, Manipulator.midPosButton).onTrue(new SetArmWristGoalPreset(GoalPos.MID, isCube, isFront, arm));
     new JoystickButton(manipulatorController, Manipulator.highPosButton).onTrue(new SetArmWristGoalPreset(GoalPos.HIGH, isCube, isFront, arm));
     new POVButton(manipulatorController, Manipulator.shelfPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.SHELF, isCube, isFront, arm));
-    new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
-    new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.SUBSTATION, isCube, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor)));
-    new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor)));
-    new JoystickButton(manipulatorController, Manipulator.stopRollerButton).onTrue(new RunRoller(roller, RollerMode.STOP, Constants.Roller.defaultColor));
+    new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm));
+    new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.STORED, isCube, isFront, arm));
+    // new Trigger(() -> {return arm.getForbFlag();}).onTrue(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleFullPower);}))
+    //                                               .onFalse(new InstantCommand(() -> {manipulatorController.setRumble(RumbleType.kBothRumble,rumbleNoPower);}));
+    new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, isFront, arm));
+    new POVButton(manipulatorController, Manipulator.intakeConePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CONE)));
+    new POVButton(manipulatorController, Manipulator.substationPickupPOV).onTrue(new SetArmWristGoalPreset(GoalPos.SUBSTATION, isCube, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CONE)));
+    new POVButton(manipulatorController, Manipulator.intakeCubePOV).onTrue(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, isFront, arm).andThen(new RunRoller(roller, RollerMode.INTAKE_CUBE)));
+    new JoystickButton(manipulatorController, Manipulator.stopRollerButton).onTrue(new RunRoller(roller, RollerMode.STOP));
+    
     // axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
     //   .onTrue(new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor));
     axisTrigger(manipulatorController, Manipulator.rollerIntakeCubeButton)
       .onTrue(new ConditionalCommand(
-        new RunRoller(roller, RollerMode.INTAKE_CUBE, Constants.Roller.cubePickupColor),
-        new RunRoller(roller, RollerMode.OUTTAKE_CUBE, Constants.Roller.defaultColor),
+        new RunRoller(roller, RollerMode.INTAKE_CUBE), 
+        new RunRoller(roller, RollerMode.OUTTAKE_CUBE), 
         isIntake
-      ));
+      )); 
     axisTrigger(manipulatorController, Manipulator.rollerIntakeConeButton)
       .onTrue(new ConditionalCommand(
-        new RunRoller(roller, RollerMode.INTAKE_CONE, Constants.Roller.conePickupColor),
-        new RunRoller(roller, RollerMode.OUTTAKE_CONE, Constants.Roller.defaultColor),
+        new RunRoller(roller, RollerMode.INTAKE_CONE), 
+        new RunRoller(roller, RollerMode.OUTTAKE_CONE), 
         isIntake
       ));
 
@@ -199,11 +208,13 @@ public class RobotContainer {
     // return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
   }
 
+
   public void onEnable() {
     lime.getNTEntry("pipeline").setDouble(DriverStation.getAlliance() == Alliance.Red ? 1 : 0);
   }
 
-  private double getStickValue(Joystick stick, Axis axis) {
+  private double getStickValue(GenericHID stick, Axis axis) {
+
     return stick.getRawAxis(axis.value) * (axis == Axis.kLeftY || axis == Axis.kRightY ? -1 : 1);
   }
 
@@ -232,7 +243,8 @@ public class RobotContainer {
    * @return A new instance of Trigger based on the given Joystick and Axis objects.
    * @throws NullPointerException if either stick or axis is null.
    */
-  private Trigger axisTrigger(Joystick stick, Axis axis) {
+  private Trigger axisTrigger(GenericHID stick, Axis axis) {
     return new Trigger(() -> Math.abs(getStickValue(stick, axis)) > MIN_AXIS_TRIGGER_VALUE);
   }
+  
 }

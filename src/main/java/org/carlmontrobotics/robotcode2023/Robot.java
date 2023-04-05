@@ -4,10 +4,10 @@
 
 package org.carlmontrobotics.robotcode2023;
 
+import com.pathplanner.lib.server.PathPlannerServer;
+
 import org.carlmontrobotics.lib199.MotorErrors;
 import org.carlmontrobotics.lib199.sim.MockedSparkEncoder;
-
-import com.pathplanner.lib.server.PathPlannerServer;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;

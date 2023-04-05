@@ -9,6 +9,7 @@ import org.carlmontrobotics.MotorConfig;
 import org.carlmontrobotics.lib199.MotorControllerFactory;
 import org.carlmontrobotics.lib199.path.SwerveDriveInterface;
 import org.carlmontrobotics.lib199.swerve.SwerveModule;
+import org.carlmontrobotics.robotcode2023.commands.RotateToFieldRelativeAngle;
 import org.carlmontrobotics.robotcode2023.commands.TeleopDrive;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -39,6 +40,8 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
     private SwerveModule modules[];
     private boolean fieldOriented = true;
     private double fieldOffset = 0;
+
+    
 
     public final float initPitch;
     public final float initRoll;
@@ -120,6 +123,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
             for(CANSparkMax driveMotor : driveMotors) driveMotor.setSmartCurrentLimit(80);
         }
 
+        
         SmartDashboard.putNumber("kpTheta", thetaPIDController[0]);
         odometry = new SwerveDriveOdometry(kinematics, Rotation2d.fromDegrees(getHeading()), getModulePositions(), new Pose2d());
     }
@@ -137,7 +141,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         SmartDashboard.putNumber("Odometry Y", getPose().getTranslation().getY());;
         // SmartDashboard.putNumber("Pitch", gyro.getPitch());
         // SmartDashboard.putNumber("Roll", gyro.getRoll());
-       // SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
+       SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
         SmartDashboard.putNumber("Robot Heading", getHeading());
         // SmartDashboard.putNumber("AdjRoll", gyro.getPitch() - initPitch);
         // SmartDashboard.putNumber("AdjPitch", gyro.getRoll() - initRoll);
@@ -154,7 +158,7 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
         // Use hasDriverInput to get around acceleration limiting on slowdown
         if(((TeleopDrive) getDefaultCommand()).hasDriverInput()) {
             Command currentDtCommand = getCurrentCommand();
-            if(currentDtCommand != getDefaultCommand() && currentDtCommand != null) {
+            if(currentDtCommand != getDefaultCommand() && !(currentDtCommand instanceof RotateToFieldRelativeAngle) && currentDtCommand != null) {
                 currentDtCommand.cancel();
             }
         }
