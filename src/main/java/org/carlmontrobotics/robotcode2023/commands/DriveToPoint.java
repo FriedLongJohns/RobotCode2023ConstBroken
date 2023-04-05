@@ -4,7 +4,6 @@ import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.autoMaxAcc
 import static org.carlmontrobotics.robotcode2023.Constants.Drivetrain.maxSpeed;
 
 import java.util.HashMap;
-
 import org.carlmontrobotics.lib199.path.PPRobotPath;
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 
@@ -32,7 +31,7 @@ public class DriveToPoint extends SequentialCommandGroup {
                         ),
                         PathPoint.fromCurrentHolonomicState(
                             targetPose,
-                            new ChassisSpeeds(0, 0, 0)
+                            new ChassisSpeeds()
                         )
                     ),
                     drivetrain,
@@ -40,7 +39,6 @@ public class DriveToPoint extends SequentialCommandGroup {
                 ).getPathCommand(true, true)
             ),
             new CorrectToPoint(targetPose, drivetrain)
-
         );
         addRequirements(drivetrain);
     }

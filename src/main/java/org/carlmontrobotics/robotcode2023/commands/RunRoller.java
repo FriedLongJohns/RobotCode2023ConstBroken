@@ -1,7 +1,6 @@
 package org.carlmontrobotics.robotcode2023.commands;
 
-import java.awt.Color;
-
+import org.carlmontrobotics.robotcode2023.Constants.Roller.GameObject;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.subsystems.Roller;
 
@@ -12,23 +11,22 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class RunRoller extends CommandBase {
 
     private final Roller roller;
-    private final Color ledColor;
     private final Timer timer = new Timer();
     private final RollerMode mode;
 
-    public RunRoller(Roller roller, RollerMode mode, Color ledColor) {
+    public RunRoller(Roller roller, RollerMode mode) {
         addRequirements(this.roller = roller);
         this.mode = mode;
-        this.ledColor = ledColor;
     }
 
     @Override
     public void initialize() {
-        roller.setSpeed(mode.speed);
-        roller.setLedColor(ledColor);
+        if (mode.speed > 0) { // should not interrupt command to stop rollers
+            if(roller.hasGamePiece() && isIntake()) cancel();
+            if(!roller.hasGamePiece() && !isIntake()) cancel(); 
+        }
         timer.reset();
-
-        //if(roller.hasGamePiece() == mode.intake) cancel();
+        roller.setRollerMode(mode);
     }
 
     @Override
@@ -36,7 +34,9 @@ public class RunRoller extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        roller.setSpeed(0);
+        // keep it running if its a cone
+        if (mode.obj != GameObject.CONE && !interrupted)
+            roller.setSpeed(0);
         timer.stop();
     }
 
@@ -48,18 +48,22 @@ public class RunRoller extends CommandBase {
         double time = timer.get();
 
         // TODO: distance sensor detects belt when wrist is spinning (concern)
-        if (roller.hasGamePiece() == mode.isIntake) {
+        if (roller.hasGamePiece() == isIntake()) {
             timer.start();
-        } else if(roller.hasGamePiece() != mode.isIntake) {
+        } else if (roller.hasGamePiece() != isIntake()) {
             timer.stop();
             timer.reset();
         }
-        SmartDashboard.putBoolean("Mode", mode.isIntake);
+        SmartDashboard.putString("Target Piece", mode.obj.toString());
         SmartDashboard.putNumber("Time Target", mode.time);
         SmartDashboard.putNumber("SetRoller Time Elapsed (s)", time);
 
-        // if (true)
-        //     return false;
-        return roller.hasGamePiece() == mode.isIntake && time > mode.time;
+        return roller.hasGamePiece() == isIntake() && time > mode.time;
+    }
+
+    // The rollerMode indicates what object it is trying to take in
+    // if the object is NONE, then it is trying to outtake
+    public boolean isIntake() {
+        return (mode.obj != GameObject.NONE);
     }
 }

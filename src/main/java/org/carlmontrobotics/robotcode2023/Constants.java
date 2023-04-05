@@ -134,10 +134,10 @@ public final class Constants {
 
         //#region Command Constants
 
-        public static final double kNormalDriveSpeed = 0.55; // Percent Multiplier
-        public static final double kNormalDriveRotation = 0.4; // Percent Multiplier
-        public static final double kSlowDriveSpeed = 0.7; // Percent Multiplier
-        public static final double kSlowDriveRotation = 0.550; // Percent Multiplier
+        public static final double kNormalDriveSpeed = 1; // Percent Multiplier
+        public static final double kNormalDriveRotation = 0.5; // Percent Multiplier
+        public static final double kSlowDriveSpeed = 0.3; // Percent Multiplier
+        public static final double kSlowDriveRotation = 0.250; // Percent Multiplier
         public static final double kAlignMultiplier = 1D/3D;
         public static final double kAlignForward = 0.6;
 
@@ -358,6 +358,8 @@ public final class Constants {
         public static final double rollerToleranceRad = 1 / 20 * 2 * Math.PI;
         public static final double rollerHoldSpeedPercent = .3;
 
+        public static final int ROLLER_MAX_CURRENT_AMPS = 20;
+
         //#endregion
 
         //#region Ports
@@ -370,13 +372,16 @@ public final class Constants {
         //#region Command Constants
         // TODO: Determine actual speeds/timings for roller
         public static class RollerMode {
-            public static RollerMode INTAKE_CONE = new RollerMode(-0.5, 1, true);
-            public static RollerMode INTAKE_CUBE = new RollerMode(0.3, .25, true);
-            public static RollerMode OUTTAKE_CONE = new RollerMode(0.5, .5, false);
-            public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5, false);
-            public static RollerMode STOP = new RollerMode(0, 0, true);
+            public static RollerMode INTAKE_CONE = new RollerMode(-0.5, .5, GameObject.CONE, conePickupColor);
+            public static RollerMode INTAKE_CUBE = new RollerMode(0.4, .25, GameObject.CUBE, cubePickupColor);
+            // The obj indicates which game object the roller is trying to intake
+            // if obj == NONE, that means it is trying to outtake rather than intake
+            public static RollerMode OUTTAKE_CONE = new RollerMode(0.5, .5, GameObject.NONE, defaultColor);
+            public static RollerMode OUTTAKE_CUBE = new RollerMode(-0.5, .5, GameObject.NONE, defaultColor);
+            public static RollerMode STOP = new RollerMode(0, .1, GameObject.NONE, defaultColor);
             public double speed, time;
-            public boolean isIntake;
+            public GameObject obj;
+            public Color ledColor;
     
             /**
              * @param speed  A number between -1 and 1
@@ -384,14 +389,19 @@ public final class Constants {
              *               distance sensor has detected an object
              * @param intake Whether the roller is outtaking or intaking
              */
-            public RollerMode(double speed, double time, boolean intake) {
+            public RollerMode(double speed, double time, GameObject obj, Color ledColor) {
                 this.speed = speed;
                 this.time = time;
-                this.isIntake = intake;
+                this.obj = obj;
+                this.ledColor = ledColor;
             }
         }
 
         //#endregion
+
+        public static enum GameObject {
+            CUBE, CONE, NONE
+        }
     }
 
     public static final class OI {
@@ -406,7 +416,6 @@ public final class Constants {
             public static final int chargeStationAlignButton = Button.kBack.value;
             public static final int resetFieldOrientationButton = Button.kRightBumper.value;
             public static final int toggleFieldOrientedButton = Button.kStart.value;
-
             public static final int rotateToFieldRelativeAngle0Deg = Button.kY.value;
             public static final int rotateToFieldRelativeAngle90Deg = Button.kB.value;
             public static final int rotateToFieldRelativeAngle180Deg = Button.kA.value;
