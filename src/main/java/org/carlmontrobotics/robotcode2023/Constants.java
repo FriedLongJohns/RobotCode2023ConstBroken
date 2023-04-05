@@ -136,7 +136,7 @@ public final class Constants {
 
         public static final double kNormalDriveSpeed = 1; // Percent Multiplier
         public static final double kNormalDriveRotation = 0.5; // Percent Multiplier
-        public static final double kSlowDriveSpeed = 0.3; // Percent Multiplier
+        public static final double kSlowDriveSpeed = 0.4; // Percent Multiplier
         public static final double kSlowDriveRotation = 0.250; // Percent Multiplier
         public static final double kAlignMultiplier = 1D/3D;
         public static final double kAlignForward = 0.6;
