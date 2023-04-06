@@ -78,6 +78,10 @@ public class RobotContainer {
       Command fakeArmCommand = new InstantCommand(() -> System.err.println("==============Store================="), arm);
       eventMap.put("Stored Pos.", new SequentialCommandGroup(fakeArmCommand, new WaitCommand(2)));
       eventMap.put("Run Cube Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CUBE)));
+      
+      eventMap.put("Extend Arm High Cube", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
+      eventMap.put("Store Arm", new SetArmWristGoalPreset(GoalPos.STORED, () -> true, () -> false, arm));
+
       eventMap.put("Cube High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
       eventMap.put("Run Cube Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CUBE));
       eventMap.put("Run Cone Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CONE)));
@@ -181,7 +185,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    PPRobotPath autoPath = new PPRobotPath("Mid Basic 5", drivetrain, false, new HashMap<>());
+    PPRobotPath autoPath = new PPRobotPath("Mid Basic 5", drivetrain, false, eventMap);
     // Command[] autoPath = {
     //   new PPRobotPath("Mid Basic 3", drivetrain, false, eventMap).getPathCommand(true, true),
     //   new PPRobotPath("Mid Basic 4", drivetrain, false, eventMap).getPathCommand(false, true)

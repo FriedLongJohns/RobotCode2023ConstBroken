@@ -182,8 +182,8 @@ public final class Constants {
         public static double[] kD = {0, 0.90262}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
 
         // Arm, Wrist
-        public static double[] posToleranceRad = { .07, .05 }; // rad
-        public static double[] velToleranceRadPSec = { 0.5, 0.5 }; // rad/s
+        public static double[] posToleranceRad = { .07, .07 }; // rad
+        public static double[] velToleranceRadPSec = { 1, 1 }; // rad/s
 
         public static double[] offsetRad = { 0.865, 2.93 + Math.PI / 2 }; // rad
         public static final double rumbleFullPower = 1;

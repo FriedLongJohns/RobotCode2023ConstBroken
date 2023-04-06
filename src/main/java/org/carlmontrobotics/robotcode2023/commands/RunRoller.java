@@ -21,10 +21,13 @@ public class RunRoller extends CommandBase {
 
     @Override
     public void initialize() {
+        System.err.println("=============================RunRoller is Started=============================");
+
         if (mode.speed > 0) { // should not interrupt command to stop rollers
             if(roller.hasGamePiece() && isIntake()) cancel();
             if(!roller.hasGamePiece() && !isIntake()) cancel(); 
         }
+        System.err.println("=============================RunRoller is initialized=============================");
         timer.reset();
         roller.setRollerMode(mode);
     }
@@ -38,6 +41,8 @@ public class RunRoller extends CommandBase {
         if (mode.obj != GameObject.CONE && !interrupted)
             roller.setSpeed(0);
         timer.stop();
+        System.err.println("=============================RunRoller has ended==========================================================");
+
     }
 
     @Override
