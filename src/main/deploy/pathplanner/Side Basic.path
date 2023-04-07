@@ -2,67 +2,15 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.8244929759090307,
-        "y": 0.8960478497880076
+        "x": 1.8341278990250307,
+        "y": 0.94
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8244929759090303,
-        "y": 0.8960478497880076
+        "x": 2.83412789902503,
+        "y": 0.94
       },
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [
-          "Cube High Pos.",
-          "Run Cube Outtake"
-        ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 3.1155726734530416,
-        "y": 0.8478732342080071
-      },
-      "prevControl": {
-        "x": 3.1290090560950374,
-        "y": 0.8382383110920069
-      },
-      "nextControl": {
-        "x": 3.1021362908110457,
-        "y": 0.8575081573240073
-      },
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "Stored Pos."
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.314367147965067,
-        "y": 0.8575081573240079
-      },
-      "prevControl": {
-        "x": 5.314367147965067,
-        "y": 0.8575081573240079
-      },
-      "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -72,6 +20,111 @@
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.96,
+        "y": 0.94
+      },
+      "prevControl": {
+        "x": 1.7656535093412167,
+        "y": 0.94
+      },
+      "nextControl": {
+        "x": 2.1543464906587833,
+        "y": 0.94
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "Extend Arm High Cube"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.83,
+        "y": 0.94
+      },
+      "prevControl": {
+        "x": 1.4114510999933374,
+        "y": 0.94
+      },
+      "nextControl": {
+        "x": 2.248548900006663,
+        "y": 0.94
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "Run Cube Outtake"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.96,
+        "y": 0.94
+      },
+      "prevControl": {
+        "x": 1.823543489155193,
+        "y": 0.94
+      },
+      "nextControl": {
+        "x": 2.0964565108448068,
+        "y": 0.94
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "Store Arm"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.417712350403304,
+        "y": 0.9377075530185282
+      },
+      "prevControl": {
+        "x": 5.742632799201301,
+        "y": 0.9377075530185282
+      },
+      "nextControl": null,
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "Run Intake Cube"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 3.0
       }
     }
   ],

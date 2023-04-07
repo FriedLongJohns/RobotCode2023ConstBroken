@@ -2,23 +2,21 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.9350128286561847,
-        "y": 2.973219070546557
+        "x": 1.8341278990250307,
+        "y": 0.94
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.541092100729137,
-        "y": 2.973219070546557
+        "x": 2.83412789902503,
+        "y": 0.94
       },
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "Run Cone Outtake"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -26,25 +24,25 @@
     },
     {
       "anchorPoint": {
-        "x": 2.449608437020012,
-        "y": 2.9617836125829164
+        "x": 1.96,
+        "y": 0.94
       },
       "prevControl": {
-        "x": 2.2858775961199873,
-        "y": 2.9617836125829164
+        "x": 1.7656535093412167,
+        "y": 0.94
       },
       "nextControl": {
-        "x": 2.6211403064746213,
-        "y": 2.9617836125829164
+        "x": 2.1543464906587833,
+        "y": 0.94
       },
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "Cube Intake Pos."
+          "Extend Arm High Cube"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -53,22 +51,49 @@
     },
     {
       "anchorPoint": {
-        "x": 4.7481354877117745,
-        "y": 2.9274772386919947
+        "x": 1.83,
+        "y": 0.94
       },
       "prevControl": {
-        "x": 3.7481354877117745,
-        "y": 2.9274772386919947
+        "x": 1.4114510999933374,
+        "y": 0.94
+      },
+      "nextControl": {
+        "x": 2.248548900006663,
+        "y": 0.94
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "Run Cube Outtake"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.96,
+        "y": 0.94
+      },
+      "prevControl": {
+        "x": 1.823543489155193,
+        "y": 0.94
       },
       "nextControl": null,
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "Auto-Align"
+          "Store Arm"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",

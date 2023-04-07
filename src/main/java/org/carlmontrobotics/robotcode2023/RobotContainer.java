@@ -75,8 +75,8 @@ public class RobotContainer {
 
     {
       eventMap.put("Cone High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> false, () -> false, arm));
-      Command fakeArmCommand = new InstantCommand(() -> System.err.println("==============Store================="), arm);
-      eventMap.put("Stored Pos.", new SequentialCommandGroup(fakeArmCommand, new WaitCommand(2)));
+      // Command fakeArmCommand = new InstantCommand(() -> System.err.println("==============Store================="), arm);
+      // eventMap.put("Stored Pos.", new SequentialCommandGroup(fakeArmCommand, new WaitCommand(2)));
       eventMap.put("Run Cube Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CUBE)));
       
       eventMap.put("Extend Arm High Cube", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
@@ -100,26 +100,20 @@ public class RobotContainer {
       eventMap.put("Field Rotate 90", new RotateToFieldRelativeAngle(new Rotation2d(Math.PI / 2), drivetrain));
       eventMap.put("Stop", stopDt());
       eventMap.put("Auto-Align", new ProxyCommand(() -> new AlignChargingStation(drivetrain)));
-      eventMap.put("PrintAlign", new PrintCommand("Aligning"));
-      eventMap.put("PrintCube", new PrintCommand("Cube"));
-      eventMap.put("PrintStored", new PrintCommand("Stored"));
-      eventMap.put("PrintOne", new PrintCommand("one"));
-      eventMap.put("PrintTwo", new PrintCommand("two"));
-      eventMap.put("PrintEnd", new PrintCommand("end"));
+      // eventMap.put("PrintAlign", new PrintCommand("Aligning"));
+      // eventMap.put("PrintCube", new PrintCommand("Cube"));
+      // eventMap.put("PrintStored", new PrintCommand("Stored"));
+      // eventMap.put("PrintOne", new PrintCommand("one"));
+      // eventMap.put("PrintTwo", new PrintCommand("two"));
+      // eventMap.put("PrintEnd", new PrintCommand("end"));
       eventMap.put("Reset Field Orientation", new InstantCommand(drivetrain::resetFieldOrientation));
     }
 
     autoPaths = new PPRobotPath[] {
       null,
-      new PPRobotPath("New Path", drivetrain, false, eventMap),
-      new PPRobotPath("3 game piece", drivetrain, false, eventMap),
-      new PPRobotPath("Near Loading Zone 2 Game Piece + Balance", drivetrain, false, eventMap),
-      new PPRobotPath("Near Loading Zone 3 Game Piece", drivetrain, false, eventMap),
-      new PPRobotPath("TESTING", drivetrain, false, eventMap),
-      new PPRobotPath("Basic", drivetrain, false, eventMap),
-      new PPRobotPath("Basic 2", drivetrain, false, eventMap),
       new PPRobotPath("Mid Basic", drivetrain, false, eventMap),
-      new PPRobotPath("Basic 3", drivetrain, false, eventMap)
+      new PPRobotPath("Side Basic", drivetrain, false, eventMap),
+      new PPRobotPath("Place Cone", drivetrain, false, eventMap)
     };
 
     autoSelectors = new DigitalInput[Math.min(autoPaths.length, 26)];
@@ -193,7 +187,8 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    PPRobotPath autoPath = new PPRobotPath("Basic 7", drivetrain, false, eventMap);
+    PPRobotPath autoPath = null;
+    //PPRobotPath autoPath = new PPRobotPath("Basic 7", drivetrain, false, eventMap);
     // Command[] autoPath2 = {
     //   new PPRobotPath("Mid Basic 3", drivetrain, false, eventMap).getPathCommand(true, true), 
     //   new PPRobotPath("Mid Basic 4", drivetrain, false, eventMap).getPathCommand(false, true)
@@ -208,13 +203,13 @@ public class RobotContainer {
     //   //autoCommand.addCommands(commands[i]);
     // }
 
-    // for(int i = 0; i < autoSelectors.length; i++) {
-    //   if(!autoSelectors[i].get()) {
-    //     System.out.println("Using Path: " + i);
-    //     autoPath = autoPaths[i];
-    //     break;
-    //   }
-    // }
+    for(int i = 0; i < autoSelectors.length; i++) {
+      if(!autoSelectors[i].get()) {
+        System.out.println("Using Path: " + i);
+        autoPath = autoPaths[i];
+        break;
+      }
+    }
 
     //return autoPath == null ? new PrintCommand("No Autonomous Routine selected") : autoCommand;
      return autoPath == null ? new PrintCommand("null :(") : autoPath.getPathCommand(true, true);
