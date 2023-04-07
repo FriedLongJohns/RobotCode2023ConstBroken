@@ -6,7 +6,6 @@ import org.carlmontrobotics.robotcode2023.subsystems.Arm;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -53,7 +52,7 @@ public class SetArmWristPositionV3 extends ProxyCommand {
     //#region Main Logic Paths
 
     public static Command moveSidePosToSameSide(double currentArmPos, double currentWristPos, double targetArmPos, double targetWristPos, Arm arm) {
-        return new ParallelCommandGroup(
+        return new SequentialCommandGroup(
             moveArm(targetArmPos, arm),
             moveWrist(targetWristPos, arm)
         );
@@ -61,7 +60,8 @@ public class SetArmWristPositionV3 extends ProxyCommand {
 
     public static Command moveSidePosIntoRobot(double currentArmPos, double currentWristPos, double targetArmPos, double targetWristPos, Arm arm) {
         return new SequentialCommandGroup(
-            parallelFoldWrist(currentArmPos, currentWristPos, targetWristPos, arm),
+            Math.signum(currentWristPos) == Math.signum(targetWristPos) ? new InstantCommand() : ensureCanMoveWrist(currentArmPos, arm),
+            foldWristToSide(targetWristPos, arm),
             moveArm(targetArmPos, arm),
             moveWrist(targetWristPos, arm)
         );
@@ -69,8 +69,10 @@ public class SetArmWristPositionV3 extends ProxyCommand {
 
     public static Command moveSidePosToOtherSide(double currentArmPos, double currentWristPos, double targetArmPos, double targetWristPos, Arm arm) {
         return new SequentialCommandGroup(
-            parallelFoldWrist(currentArmPos, currentWristPos, targetWristPos, arm),
-            safelyUnfoldWrist(currentArmPos, targetArmPos, targetWristPos, arm)
+            Math.signum(currentWristPos) == Math.signum(targetWristPos) ? new InstantCommand() : ensureCanMoveWrist(currentArmPos, arm),
+            foldWristToSide(targetWristPos, arm),
+            moveArm(targetArmPos, arm),
+            moveWrist(targetWristPos, arm)
         );
     }
 
@@ -93,10 +95,11 @@ public class SetArmWristPositionV3 extends ProxyCommand {
     }
 
     public static Command moveRobotPosToSide(double currentArmPos, double currentWristPos, double targetArmPos, double targetWristPos, Arm arm) {
-        if(Math.signum(currentWristPos) == Math.signum(targetWristPos) || Arm.canSafelyMoveWrist(targetArmPos)) {
+        if(Math.signum(currentWristPos) == Math.signum(targetWristPos)) {
             return new SequentialCommandGroup(
                 foldWristToSide(currentWristPos, arm),
-                safelyUnfoldWrist(currentArmPos, targetArmPos, targetWristPos, arm)
+                moveArm(targetArmPos, arm),
+                moveWrist(targetWristPos, arm)
             );
         } else {
             return new SequentialCommandGroup(
@@ -132,35 +135,6 @@ public class SetArmWristPositionV3 extends ProxyCommand {
 
     public static Command ensureCanMoveWrist(double armPos, Arm arm) {
         return Arm.canSafelyMoveWrist(armPos) ? new InstantCommand() : moveArmToSidedSafeWristMovePosition(armPos, arm);
-    }
-
-    // Folds the wrist while moving the arm if possible
-    public static Command parallelFoldWrist(double currentArmPos, double currentWristPos, double targetWristPos, Arm arm) {
-        if(Math.signum(currentWristPos) == Math.signum(targetWristPos) || Arm.canSafelyMoveWrist(currentArmPos)) {
-            return new ParallelCommandGroup(
-                foldWristToSide(targetWristPos, arm),
-                Arm.canSafelyMoveWrist(currentArmPos) ? moveArmToSidedSafeWristMovePosition(currentArmPos, arm) : new InstantCommand()
-            );
-        } else {
-            return new SequentialCommandGroup(
-                moveArmToSidedSafeWristMovePosition(currentArmPos, arm),
-                foldWristToSide(targetWristPos, arm)
-            );
-        }
-    }
-
-    // Assumes that no additional arm movement is needed past the arm target position to move the wrist
-    public static Command safelyUnfoldWrist(double currentArmPos, double targetArmPos, double targetWristPos, Arm arm) {
-        return new ParallelCommandGroup(
-            moveArm(targetArmPos, arm),
-            new SequentialCommandGroup(
-                new WaitUntilCommand(() -> {
-                    double armPos = arm.getArmPos();
-                    return (Math.signum(ARM_VERTICAL_POS_RAD - armPos) == Math.signum(ARM_VERTICAL_POS_RAD - targetArmPos) && Arm.canSafelyMoveWrist(armPos)) || arm.armAtSetpoint();
-                }),
-                moveWrist(targetWristPos, arm)
-            )
-        );
     }
 
     //#endregion
