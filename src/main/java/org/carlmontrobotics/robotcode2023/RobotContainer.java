@@ -80,15 +80,23 @@ public class RobotContainer {
       eventMap.put("Run Cube Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CUBE)));
       
       eventMap.put("Extend Arm High Cube", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
-      eventMap.put("Store Arm", new SetArmWristGoalPreset(GoalPos.STORED, () -> true, () -> false, arm));
+      eventMap.put("Store Arm", new SetArmWristGoalPreset(GoalPos.STORED, () -> true, () -> false, arm).raceWith(new WaitCommand(2)));
 
-      eventMap.put("Cube High Pos.", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
+      eventMap.put("Cube High Pos.", new SequentialCommandGroup(
+        new PrintCommand("================================Cube High Pos. Started=================================="),
+        new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm),
+        new PrintCommand("================================Cube High Pos. Ended==================================")
+        ));
       eventMap.put("Run Cube Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CUBE));
       eventMap.put("Run Cone Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CONE)));
       eventMap.put("Run Cone Outtake", new RunRoller(roller, RollerMode.OUTTAKE_CONE));
       eventMap.put("Move Arm Back", new SetArmWristPositionV3((-5*Math.PI)/8, Constants.Arm.WRIST_STOW_POS_RAD, arm));
       eventMap.put("Cone Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> false, () -> false, arm));
-      eventMap.put("Cube Intake Pos.", new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm));
+      eventMap.put("Cube Intake Pos.", new SequentialCommandGroup(
+        new PrintCommand("================================Cube Intake Pos. Started=================================="),
+        new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm).raceWith(new WaitCommand(5)),
+        new PrintCommand("================================Cube Intake Pos. Ended==================================")
+      ));
       eventMap.put("Field Rotate 90", new RotateToFieldRelativeAngle(new Rotation2d(Math.PI / 2), drivetrain));
       eventMap.put("Stop", stopDt());
       eventMap.put("Auto-Align", new ProxyCommand(() -> new AlignChargingStation(drivetrain)));
@@ -185,9 +193,9 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    PPRobotPath autoPath = new PPRobotPath("Mid Basic 5", drivetrain, false, eventMap);
-    // Command[] autoPath = {
-    //   new PPRobotPath("Mid Basic 3", drivetrain, false, eventMap).getPathCommand(true, true),
+    PPRobotPath autoPath = new PPRobotPath("Basic 7", drivetrain, false, eventMap);
+    // Command[] autoPath2 = {
+    //   new PPRobotPath("Mid Basic 3", drivetrain, false, eventMap).getPathCommand(true, true), 
     //   new PPRobotPath("Mid Basic 4", drivetrain, false, eventMap).getPathCommand(false, true)
     // };
     // Command[] commands = {
@@ -195,9 +203,9 @@ public class RobotContainer {
     //   new WaitCommand(0)
     // };
     // SequentialCommandGroup autoCommand = new SequentialCommandGroup();
-    // for (int i = 0; i < autoPath.length; i++) {
-    //   autoCommand.addCommands(autoPath[i]);
-    //   autoCommand.addCommands(commands[i]);
+    // for (int i = 0; i < autoPath2.length; i++) {
+    //   autoCommand.addCommands(autoPath2[i]);
+    //   //autoCommand.addCommands(commands[i]);
     // }
 
     // for(int i = 0; i < autoSelectors.length; i++) {

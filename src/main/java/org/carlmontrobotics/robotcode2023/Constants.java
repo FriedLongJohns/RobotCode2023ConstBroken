@@ -289,7 +289,7 @@ public final class Constants {
             },
             {
                 new GoalPos(-3.415958, 1.700500),
-                new GoalPos(-3.414373, 0.644038)
+                new GoalPos(-3.414373, 0.667)
             }
         };
         // TODO: Get positions for STORED, SHELF, and SUBSTATION
