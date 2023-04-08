@@ -70,7 +70,6 @@ public class Arm extends SubsystemBase {
 
         armEncoder.setZeroOffset(offsetRad[ARM]);
         wristEncoder.setZeroOffset(offsetRad[WRIST]);
-        //wristEncoder.setZeroOffset(0);
         armPID.setTolerance(posToleranceRad[ARM], velToleranceRadPSec[ARM]);
         wristPID.setTolerance(posToleranceRad[WRIST], velToleranceRadPSec[WRIST]);
 

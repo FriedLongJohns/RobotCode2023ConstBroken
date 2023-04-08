@@ -1,0 +1,135 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.8052231296770305,
+        "y": 3.102445243352026
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.8052231296770294,
+        "y": 3.102445243352026
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "Run Cone Outtake"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 4.406652370997051,
+        "y": 3.102445243352026
+      },
+      "prevControl": {
+        "x": 3.7315728197950486,
+        "y": 3.102445243352026
+      },
+      "nextControl": {
+        "x": 5.081731922199054,
+        "y": 3.102445243352026
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "Cube Intake Pos."
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 5.0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.487795764053068,
+        "y": 3.092810320236026
+      },
+      "prevControl": {
+        "x": 5.996414685137064,
+        "y": 3.063905550888026
+      },
+      "nextControl": {
+        "x": 5.996414685137064,
+        "y": 3.063905550888026
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "Run Cube Intake"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "deadline",
+        "waitTime": 1.5
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.495398683109502,
+        "y": 3.0639055508905653
+      },
+      "prevControl": {
+        "x": 5.707366991665945,
+        "y": 3.073540474009105
+      },
+      "nextControl": {
+        "x": 5.243488716277581,
+        "y": 3.0524550978499727
+      },
+      "holonomicAngle": 90.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "Stored Pos."
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 4.29103329360505,
+        "y": 3.0831753971200255
+      },
+      "prevControl": {
+        "x": 5.379779605713059,
+        "y": 3.063905550888026
+      },
+      "nextControl": null,
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "Auto-Align",
+          "Run Cube Outtake"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": []
+}
