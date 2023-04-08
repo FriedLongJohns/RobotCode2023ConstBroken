@@ -31,7 +31,7 @@ public final class Constants {
     public static final class Drivetrain {
 
         //#region Subsystem Constants
-
+        
         public static final double wheelBase = Units.inchesToMeters(19.75);
         public static final double trackWidth = Units.inchesToMeters(28.75);
         // "swerveRadius" is the distance from the center of the robot to one of the modules
@@ -49,6 +49,8 @@ public final class Constants {
         public static final double maxSpeed = NEOFreeSpeed * (wheelDiameterMeters / 2.0) / driveGearing;
         public static final double maxForward = maxSpeed;
         public static final double maxStrafe = maxSpeed;
+       // seconds it takes to go from 0 to 12 volts(aka MAX)
+        public static final double secsPer12Volts = 0.1;
         
         
         

@@ -120,8 +120,8 @@ public class Drivetrain extends SubsystemBase implements SwerveDriveInterface {
                     MotorControllerFactory.createCANCoder(canCoderPortBR), 3,
                     pitchSupplier, rollSupplier);
             modules = new SwerveModule[] { moduleFL, moduleFR, moduleBL, moduleBR };
-
-            for(CANSparkMax driveMotor : driveMotors) driveMotor.setSmartCurrentLimit(80);
+            for(CANSparkMax driveMotor: driveMotors) driveMotor.setOpenLoopRampRate(secsPer12Volts);
+            //for(CANSparkMax driveMotor : driveMotors) driveMotor.setSmartCurrentLimit(80);
         }
 
         
