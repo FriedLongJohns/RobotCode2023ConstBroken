@@ -17,6 +17,7 @@ import org.carlmontrobotics.robotcode2023.Constants.OI.Manipulator;
 import org.carlmontrobotics.robotcode2023.Constants.Roller.RollerMode;
 import org.carlmontrobotics.robotcode2023.commands.AlignChargingStation;
 import org.carlmontrobotics.robotcode2023.commands.ArmTeleop;
+import org.carlmontrobotics.robotcode2023.commands.DriveOverChargeStation;
 import org.carlmontrobotics.robotcode2023.commands.RotateToFieldRelativeAngle;
 import org.carlmontrobotics.robotcode2023.commands.RunRoller;
 import org.carlmontrobotics.robotcode2023.commands.SetArmWristGoalPreset;
@@ -74,7 +75,7 @@ public class RobotContainer {
       // Command fakeArmCommand = new InstantCommand(() -> System.err.println("==============Store================="), arm);
       // eventMap.put("Stored Pos.", new SequentialCommandGroup(fakeArmCommand, new WaitCommand(2)));
       eventMap.put("Run Cube Intake", new SequentialCommandGroup(new SetArmWristGoalPreset(GoalPos.INTAKE, () -> true, () -> false, arm), new RunRoller(roller, RollerMode.INTAKE_CUBE)));
-      
+      eventMap.put("DriveOverChargeStation", new DriveOverChargeStation(drivetrain));
       eventMap.put("Extend Arm High Cube", new SetArmWristGoalPreset(GoalPos.HIGH, () -> true, () -> false, arm));
       eventMap.put("Extend Arm Mid Cube", new SetArmWristGoalPreset(GoalPos.MID, () -> true, () -> false, arm));
       eventMap.put("Store Arm", new SetArmWristGoalPreset(GoalPos.STORED, () -> true, () -> false, arm));
@@ -116,8 +117,10 @@ public class RobotContainer {
       .getPathCommand(true, true).andThen(
         new PPRobotPath("Side Basic 2", drivetrain, false, eventMap).getPathCommand(false, true)
       ),
-      new PPRobotPath("Mid Basic 5-1", drivetrain, false, eventMap).getPathCommand(true, true).andThen(
-        new PPRobotPath("Mid Basic 5-2", drivetrain, false, eventMap).getPathCommand(false, true)
+      new SequentialCommandGroup(
+        new PPRobotPath("Mid Basic 5-1", drivetrain, false, eventMap).getPathCommand(true, true),
+        new ProxyCommand(new RotateToFieldRelativeAngle(new Rotation2d(Units.degreesToRadians(drivetrain.getHeadingDeg() + 180)), drivetrain)),
+        new PPRobotPath("Mid Basic 5-2", drivetrain, false, eventMap).getPathCommand(true, true)
       )
     };
 

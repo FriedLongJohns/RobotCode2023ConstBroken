@@ -26,39 +26,12 @@
     },
     {
       "anchorPoint": {
-        "x": 2.826978549820152,
-        "y": 2.78
+        "x": 3.673256635612798,
+        "y": 2.7733966368406673
       },
       "prevControl": {
-        "x": 2.320743920224466,
-        "y": 2.78
-      },
-      "nextControl": {
-        "x": 3.333213179415839,
-        "y": 2.78
-      },
-      "holonomicAngle": 180.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "Cube Intake Pos."
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.394841434476022,
-        "y": 2.744509911273745
-      },
-      "prevControl": {
-        "x": 5.719761883274019,
-        "y": 2.744509911273745
+        "x": 3.167022006017112,
+        "y": 2.7733966368406673
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -68,11 +41,12 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "Rotate 180"
+          "Cube Intake Pos.",
+          "DriveOverChargeStation"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
-        "waitTime": 3.0
+        "waitTime": 0
       }
     }
   ],
