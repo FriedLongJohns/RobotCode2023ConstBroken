@@ -2,6 +2,7 @@ package org.carlmontrobotics.robotcode2023.commands;
 
 import org.carlmontrobotics.robotcode2023.subsystems.Drivetrain;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.SendableRegistry;
@@ -21,7 +22,7 @@ public class RotateToFieldRelativeAngle extends CommandBase {
         this.teleopDrive = (TeleopDrive) drivetrain.getDefaultCommand();
 
         rotationPID.enableContinuousInput(-180, 180);
-        rotationPID.setSetpoint(angle.getDegrees());
+        rotationPID.setSetpoint(MathUtil.inputModulus(angle.getDegrees(), -180, 180));
         rotationPID.setTolerance(positionTolerance[2], velocityTolerance[2]);
         SendableRegistry.addChild(this, rotationPID);
         //SmartDashboard.pu
