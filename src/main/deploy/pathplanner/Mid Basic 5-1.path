@@ -26,36 +26,38 @@
     },
     {
       "anchorPoint": {
+        "x": 2.826978549820152,
+        "y": 2.78
+      },
+      "prevControl": {
+        "x": 2.320743920224466,
+        "y": 2.78
+      },
+      "nextControl": {
+        "x": 3.333213179415839,
+        "y": 2.78
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "Cube Intake Pos."
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
         "x": 6.394841434476022,
         "y": 2.744509911273745
       },
       "prevControl": {
         "x": 5.719761883274019,
-        "y": 2.744509911273745
-      },
-      "nextControl": {
-        "x": 5.719761883274019,
-        "y": 2.744509911273745
-      },
-      "holonomicAngle": 180.0,
-      "isReversal": true,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "after",
-        "waitTime": 3.0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 4.073443467856978,
-        "y": 2.744509911273745
-      },
-      "prevControl": {
-        "x": 4.971035218222802,
         "y": 2.744509911273745
       },
       "nextControl": null,
@@ -66,11 +68,11 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "Auto-Align"
+          "Rotate 180"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
-        "waitTime": 0
+        "waitTime": 3.0
       }
     }
   ],
