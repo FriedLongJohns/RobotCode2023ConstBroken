@@ -31,7 +31,7 @@ public final class Constants {
     public static final class Drivetrain {
 
         //#region Subsystem Constants
-        
+
         public static final double wheelBase = Units.inchesToMeters(19.75);
         public static final double trackWidth = Units.inchesToMeters(28.75);
         // "swerveRadius" is the distance from the center of the robot to one of the modules
@@ -51,10 +51,10 @@ public final class Constants {
         public static final double maxStrafe = maxSpeed;
        // seconds it takes to go from 0 to 12 volts(aka MAX)
         public static final double secsPer12Volts = 0.1;
-        
-        
-        
-        
+
+
+
+
         // maxRCW is the angular velocity of the robot.
         // Calculated by looking at one of the motors and treating it as a point mass moving around in a circle.
         // Tangential speed of this point mass is maxSpeed and the radius of the circle is sqrt((wheelBase/2)^2 + (trackWidth/2)^2)
@@ -181,7 +181,7 @@ public final class Constants {
         // Arm, Wrist
         public static double[] kP = {4.2736, 4.8804}; // 4.2736 for arm from sysid was tested and it worked fine (V / rad)
         public static double[] kI = {0, 0}; // (V / (rad * s) )
-        public static double[] kD = {0, 0.90262}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
+        public static double[] kD = {0.1, 0.90262}; // 0 for arm from sysid was tested and it worked fine (V / (rad / s) )
 
         // Arm, Wrist
         public static double[] posToleranceRad = { .07, .07 }; // rad
@@ -212,7 +212,7 @@ public final class Constants {
         public static final double DT_EXTENSION_FOR_ROLLER = Units.inchesToMeters(14);
 
         // TODO: Replace these values with Design's actual values
-        public static final double MARGIN_OF_ERROR = Math.toRadians(10);
+        public static final double MARGIN_OF_ERROR = Math.PI/18;
         public static final double ARM_LOWER_LIMIT_RAD = -3.569 + MARGIN_OF_ERROR;
         public static final double ARM_UPPER_LIMIT_RAD = .36 - MARGIN_OF_ERROR;
         public static final double ARM_DISCONTINUITY_RAD = (ARM_LOWER_LIMIT_RAD + ARM_UPPER_LIMIT_RAD) / 2 - Math.PI;
@@ -386,7 +386,7 @@ public final class Constants {
             public double speed, time;
             public GameObject obj;
             public Color ledColor;
-    
+
             /**
              * @param speed  A number between -1 and 1
              * @param time   Amount of time in seconds to keep the motor running after
