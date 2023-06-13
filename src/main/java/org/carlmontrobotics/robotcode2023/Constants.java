@@ -38,17 +38,17 @@ public final class Constants {
         public static final double swerveRadius = Math.sqrt(Math.pow(wheelBase / 2, 2) + Math.pow(trackWidth / 2, 2));
         // The gearing reduction from the drive motor controller to the wheels
         // Gearing for the Swerve Modules is 6.75 : 1
-        public static final double driveGearing = 6.75;
+        public static final double gearingDrive = 6.75;
 
         public static final double driveModifier = 1;
-        public static final double wheelDiameterMeters = Units.inchesToMeters(4.0) * 7.36/7.65 /* empirical correction */;
+        public static final double wheelDiameterMters = Units.inchesToMeters(4.0) * 7.36/7.65 /* empirical correction */;
         public static final double mu = 0.5; /* 70/83.2;  */
 
         public static final double NEOFreeSpeed = 5676 * (2 * Math.PI) / 60;    // radians/s
         // Angular speed to translational speed --> v = omega * r / gearing
         public static final double maxSpeed = NEOFreeSpeed * (wheelDiameterMeters / 2.0) / driveGearing;
         public static final double maxForward = maxSpeed;
-        public static final double maxStrafe = maxSpeed;
+        public static final double maxstrafe = maxSpeed;
        // seconds it takes to go from 0 to 12 volts(aka MAX)
         public static final double secsPer12Volts = 0.1;
 
